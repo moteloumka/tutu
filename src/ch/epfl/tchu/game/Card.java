@@ -15,7 +15,6 @@ public enum Card {
 
      Card(){
          this.color = this.color();
-         //this is a git hub  test
     }
 
     public static Card of(Color color){
@@ -41,7 +40,7 @@ public enum Card {
         }
         return null;
     }
-
+    
     Color color(){
         if(this!=Card.LOCOMOTIVE){
             //this is more "clever" but idk if it's "right"
