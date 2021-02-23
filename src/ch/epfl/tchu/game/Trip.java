@@ -25,9 +25,9 @@ public final class Trip {
         Preconditions.checkArgument(!(from.isEmpty()||to.isEmpty()||points<=0));
         List<Trip> trips = new ArrayList<>();
 
-        for(int i=0; i<from.size();++i){
-            for(int j=0;  j<to.size();++j){
-                trips.add(new Trip(from.get(i),to.get(j),points));
+        for(Station f : from){
+            for(Station t : to){
+                trips.add(new Trip(f, t, points));
             }
         }
         return trips;
@@ -39,15 +39,16 @@ public final class Trip {
     public Station to(){
         return this.to;
     }
-    int points(){
+    public int points(){
         return this.points;
     }
-    //idk yet
-    /**
-    int points(StationConnectivity connectivity){
-
+    public int points(StationConnectivity connectivity){
+        if (connectivity.connected(this.from, this.to)){
+            return this.points;
+        }
+        else return -(this.points);
     }
-    */
+
 
     }
 
