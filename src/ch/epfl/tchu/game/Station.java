@@ -1,9 +1,7 @@
 package ch.epfl.tchu.game;
-
 import ch.epfl.tchu.Preconditions;
 
 public class Station {
-    private int suckysuckyky;
     private int id;
     private String name;
     Station(int id, String name){
