@@ -1,8 +1,5 @@
 package ch.epfl.tchu.game;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 
 public final class Ticket implements Comparable<Ticket> {
@@ -10,16 +7,19 @@ public final class Ticket implements Comparable<Ticket> {
     private String text;
 
     public Ticket(List<Trip> trips){
-        if (trips==null){
+       if (trips==null){
             throw new IllegalArgumentException();
         }
+
+
         //checking that all trips leave from a station with the same name
+        this.trips = Objects.requireNonNull(trips, "trips must not be null");
         for (Trip t : trips){
             if (!(trips.get(0).from().name().equals(t.from().name()))){
                 throw new IllegalArgumentException();
             }
         }
-        this.trips = Objects.requireNonNull(trips, "trips must not be null");
+
         this.trips = trips;
         this.text = computeText();
     }
@@ -36,26 +36,23 @@ public final class Ticket implements Comparable<Ticket> {
 
     private String computeText(){
         String ticketText = "";
+        ticketText += this.trips.get(0).from().toString() + " - ";
+        TreeSet <String> toList = new TreeSet<>();
         if (this.trips.size() >= 2) {
-            ticketText += this.trips.get(0).from().toString() + " - {";
+            ticketText += "{";
             for (Trip t : trips) {
-                int i = 0;
-                ++i;
-                if (i != trips.size())
-                    ticketText += t.to().toString() + " (" + t.points() + ")";
-                else{
-                    ticketText += t.to().toString() + " (" + t.points() + ")}";
-                }
+                toList.add(t.to().name() + " (" + t.points() + ")");
             }
+            ticketText += String.join(", ", toList);
+            ticketText += "}";
         }
         else {
-            ticketText += this.trips.get(0).from().toString() + " - ";
             ticketText+= this.trips.get(0).to().toString();
             ticketText += " (" + this.trips.get(0).points() + ")";
         }
+
         return ticketText;
     }
-
 
 
     public String toString(){
@@ -72,6 +69,6 @@ public final class Ticket implements Comparable<Ticket> {
 
     @Override
     public int compareTo(Ticket that) {
-        return that.text.compareTo(this.text);
+        return this.text.compareTo(that.text);
     }
 }
