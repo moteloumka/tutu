@@ -6,8 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public enum Card {
+
     BLACK, VIOLET, BLUE, GREEN, YELLOW, ORANGE, RED, WHITE,
     LOCOMOTIVE;
+
     public final static List<Card> ALL = List.of(Card.values());
     public final static int COUNT = ALL.size();
     public final static List<Card> CARS = List.of(BLACK, VIOLET, BLUE, GREEN, YELLOW, ORANGE, RED, WHITE);
@@ -20,6 +22,7 @@ public enum Card {
     public static Card of(Color color){
         //this would be easier but then there's a possibility of an error
         //return CARS.get(color.ordinal());
+
         switch (color){
             case BLACK:
                 return Card.BLACK;
@@ -38,11 +41,11 @@ public enum Card {
             case WHITE:
                 return Card.WHITE;
         }
-        return null;
+         return null;
     }
     
     Color color(){
-        if(this!=Card.LOCOMOTIVE){
+        if(this!= Card.LOCOMOTIVE){
             //this is more "clever" but idk if it's "right"
             //return Color.ALL.get(this.ordinal());
             switch (this){
