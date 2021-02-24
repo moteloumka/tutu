@@ -2,8 +2,8 @@ package ch.epfl.tchu.game;
 import ch.epfl.tchu.Preconditions;
 
 public final class Station {
-    private int id;
-    private String name;
+    private final int id;
+    private final String name;
 
     public Station(int id, String name){
         Preconditions.checkArgument((!(id<0) && (id<= 50)));
@@ -12,7 +12,8 @@ public final class Station {
     }
 
     public int id(){return this.id;}
+
     public String name(){return this.name;}
 
-    public String toString(){return name();}
+    public String toString(){return this.name;}
 }
