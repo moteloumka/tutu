@@ -1,5 +1,8 @@
 package ch.epfl.tchu.game;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 
 public final class Ticket implements Comparable<Ticket> {
@@ -16,6 +19,7 @@ public final class Ticket implements Comparable<Ticket> {
                 throw new IllegalArgumentException();
             }
         }
+        this.trips = Objects.requireNonNull(trips, "trips must not be null");
         this.trips = trips;
         this.text = computeText();
     }
@@ -59,7 +63,11 @@ public final class Ticket implements Comparable<Ticket> {
     }
 
     public int points (StationConnectivity connectivity){
-        return 0;
+        List<Integer> pointsList = new ArrayList<>();
+        for (Trip t : trips){
+            pointsList.add(t.points(connectivity));
+        }
+        return Collections.max(pointsList);
     }
 
     @Override
