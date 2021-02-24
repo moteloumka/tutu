@@ -12,9 +12,7 @@ public final class Trip {
     private int points;
 
     public Trip(Station from, Station to, int points){
-        if(from==null||to==null){
-            throw new NullPointerException();
-            }
+
         Preconditions.checkArgument(points>0);
         this.from = Objects.requireNonNull(from,"from Station must be not null");
         this.to = Objects.requireNonNull(to, "to Station must be not null");
@@ -31,7 +29,7 @@ public final class Trip {
             }
         }
         return trips;
-        }
+    }
 
     public Station from(){
         return this.from;
