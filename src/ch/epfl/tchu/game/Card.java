@@ -5,24 +5,27 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public enum Card {
 
-    BLACK, VIOLET, BLUE, GREEN, YELLOW, ORANGE, RED, WHITE,
-    LOCOMOTIVE;
+    BLACK(Color.BLACK), VIOLET(Color.VIOLET), BLUE(Color.BLUE), GREEN(Color.GREEN), YELLOW(Color.YELLOW),
+    ORANGE(Color.ORANGE), RED(Color.RED), WHITE(Color.WHITE),
+    LOCOMOTIVE(null);
 
     public final static List<Card> ALL = List.of(Card.values());
     public final static int COUNT = ALL.size();
     public final static List<Card> CARS = List.of(BLACK, VIOLET, BLUE, GREEN, YELLOW, ORANGE, RED, WHITE);
     private final Color color;
 
-     Card(){
-         this.color = this.color();
+    private Card(Color color){
+         this.color = color;
     }
 
     public static Card of(Color color){
-        //this would be easier but then there's a possibility of an error
-        //return CARS.get(color.ordinal());
-
+        //assuring that the colors are written in the same order
+        //we can directly access them by their order in the enums
+        return CARS.get(color.ordinal());
+        /**
         switch (color){
             case BLACK:
                 return Card.BLACK;
@@ -42,12 +45,14 @@ public enum Card {
                 return Card.WHITE;
         }
          return null;
+         */
     }
     
-    Color color(){
+    public Color color(){
         if(this!= Card.LOCOMOTIVE){
-            //this is more "clever" but idk if it's "right"
-            //return Color.ALL.get(this.ordinal());
+            //same idea as in the method Card of(Color color)
+            return Color.ALL.get(this.ordinal());
+            /**
             switch (this){
                 case BLACK:
                     return Color.BLACK;
@@ -66,7 +71,9 @@ public enum Card {
                 case WHITE:
                     return Color.WHITE;
             }
+             */
         }
         return null;
+
     }
 }
