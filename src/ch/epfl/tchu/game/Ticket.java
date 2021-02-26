@@ -1,25 +1,30 @@
 package ch.epfl.tchu.game;
+import ch.epfl.tchu.Preconditions;
+
 import java.util.*;
 
+/**
+ * @author Nikolay (314355)
+ * @author Gullien (316143)
+ */
 public final class Ticket implements Comparable<Ticket> {
     private List<Trip> trips;
     private String text;
 
     /**
      * @param trips list of trips the ticket contains. Must be at least one.
+     * @throws NullPointerException if the List provided is null
      */
     public Ticket(List<Trip> trips){
-       if (trips==null || trips.size()==0){
-            throw new IllegalArgumentException();
-        }
-           //checking that all trips leave from a station with the same name
-           this.trips = Objects.requireNonNull(trips, "trips must not be null");
-           for (Trip t : trips) {
-               if (!(trips.get(0).from().name().equals(t.from().name()))) {
-                   throw new IllegalArgumentException();
-               }
-           this.trips = trips;
-           this.text = computeText();
+        Preconditions.checkArgument(!(trips==null || trips.size()==0));
+        //checking that all trips leave from a station with the same name
+        this.trips = Objects.requireNonNull(trips, "trips must not be null");
+        for (Trip t : trips) {
+            if (!(trips.get(0).from().name().equals(t.from().name()))) {
+                throw new IllegalArgumentException();
+            }
+    this.trips = trips;
+    this.text = computeText();
        }
     }
 

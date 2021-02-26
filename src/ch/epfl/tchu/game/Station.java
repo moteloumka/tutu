@@ -1,16 +1,21 @@
 package ch.epfl.tchu.game;
 import ch.epfl.tchu.Preconditions;
 
+/**
+ @author Nikolay (314355)
+ @author Gullien (316143)
+ */
 public final class Station {
-    //the id number of the station > 0
+    //the id number of the station >= 0
     private final int id;
     //the name of a station
     private final String name;
 
     /**
      * Class constructor
-     * @param id
-     * @param name
+     * @param id the id number of the station >= 0
+     * @param name the name of a station
+     * @throws IllegalArgumentException if the station id is < 0
      */
     public Station(int id, String name){
         Preconditions.checkArgument(!(id<0));

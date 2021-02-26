@@ -1,5 +1,9 @@
 package ch.epfl.tchu;
 
+/**
+ *  @author Nikolay (314355)
+ *  @author Gullien (316143)
+ */
 public final class Preconditions {
     /**
      * private constructor, because an utility class shouldn't

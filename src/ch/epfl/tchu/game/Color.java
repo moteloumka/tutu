@@ -6,6 +6,8 @@ import java.util.List;
 
 /**
  * colors are used trough out the project, representing the 8 colors in the game
+ * @author Nikolay (314355)
+ * @author Gullien (316143)
  */
 public enum Color {
     BLACK, VIOLET, BLUE, GREEN, YELLOW, ORANGE, RED, WHITE;

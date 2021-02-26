@@ -7,6 +7,8 @@ import java.util.List;
 
 /**
  *a card represents a wagon or a locomotive that will later take part in the game
+ * @author Nikolay (314355)
+ * @author Gullien (316143)
  */
 public enum Card {
 
