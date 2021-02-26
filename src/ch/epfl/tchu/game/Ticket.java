@@ -89,7 +89,7 @@ public final class Ticket implements Comparable<Ticket> {
     }
 
     /**
-     * compares both tickets by alphabetical order
+     * compares both tickets by alphabetical order.
      * @param that the ticket with which we're comparing this ticket
      * @return negative int if this comes before that, 0 if same ticket, positive int if this comes after that
      */
