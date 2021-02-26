@@ -17,6 +17,7 @@ public final class Ticket implements Comparable<Ticket> {
      */
     public Ticket(List<Trip> trips){
         Preconditions.checkArgument(!(trips==null || trips.size()==0));
+
         //checking that all trips leave from a station with the same name
         this.trips = Objects.requireNonNull(trips, "trips must not be null");
         for (Trip t : trips) {
