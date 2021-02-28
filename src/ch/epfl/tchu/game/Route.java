@@ -13,12 +13,12 @@ import java.util.Objects;
  * a Route links two stations, can be controlled by a player
  */
 public final class Route {
-    String id;
-    Station station1;
-    Station station2;
-    int length;
-    Level level;
-    Color color;
+    final String id;
+    final Station station1;
+    final Station station2;
+    final int length;
+    final Level level;
+    final Color color;
 
     /**
      * enum Level: the two states a road can have
