@@ -162,7 +162,7 @@ public final class Route {
         int count = 0;
         Color color=null;
         Preconditions.checkArgument(this.level==Level.UNDERGROUND
-                && drawnCards.size()==3);
+                && drawnCards.size()==Constants.ADDITIONAL_TUNNEL_CARDS);
 
         for (int i = 0; i < this.length; i++) {
             //find if at least one CAR Card was used (not locomotive)
