@@ -13,12 +13,12 @@ import java.util.Objects;
  * a Route links two stations, can be controlled by a player
  */
 public final class Route {
-    final String id;
-    final Station station1;
-    final Station station2;
-    final int length;
-    final Level level;
-    final Color color;
+    private final String id;
+    private final Station station1;
+    private final Station station2;
+    private final int length;
+    private final Level level;
+    private final Color color;
 
     /**
      * enum Level: the two states a road can have
@@ -164,7 +164,7 @@ public final class Route {
         Preconditions.checkArgument(this.level==Level.UNDERGROUND
                 && drawnCards.size()==Constants.ADDITIONAL_TUNNEL_CARDS);
 
-        for (int i = 0; i < this.length; i++) {
+        for (int i = 0; i < claimCards.size(); i++) {
             //find if at least one CAR Card was used (not locomotive)
             if(claimCards.get(i) != null){
                 color = claimCards.get(i).color();
@@ -184,7 +184,7 @@ public final class Route {
     /**
      * @return number of points obtained by a player for obtaining the route
      */
-    int claimPoints(){
+    public int claimPoints(){
         List<Integer> points = Constants.ROUTE_CLAIM_POINTS;
         //no need in precondition check bc there is one in the class constructor
         //shall we start from 1 instead of 0?
