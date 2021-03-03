@@ -42,7 +42,7 @@ public final class Trail {
      */
     public Trail(Route route){
         this(route.length(), route.station1(), route.station2(),
-             List.of(route.station1(),route.station2()),List.of(route) );
+                List.of(route.station1(),route.station2()),List.of(route) );
     }
 
     /**
@@ -63,58 +63,65 @@ public final class Trail {
         return trail;
     }
 
+    private boolean isOppositeSingleTrail (Trail t){
+        return this.station1().equals(t.station2()) && this.station2().equals(t.station1())
+                && this.getRoutes().equals(t.getRoutes());
+    }
+
+
     /**
      *
      * @param routes list of routes
      * @return the longest possible trail consisting of routes that were passed as a parameter
      */
     public static Trail longest(List<Route> routes){
-       if (routes.isEmpty()){
-           return new Trail();
-       }
-       List<Trail> cs = new ArrayList<>();
-       List<Trail> singleTrail = new ArrayList<>();
+        if (routes.isEmpty()){
+            return new Trail();
+        }
+        List<Trail> cs = new ArrayList<>();
+        List<Trail> singleTrail = new ArrayList<>();
 
-       //creating all possible single trails
-       for(Route r:routes){
-           cs.add(new Trail(r));
-           singleTrail.add(new Trail(r));
-           cs.add(makeTrailOpposite(r));
-           singleTrail.add(makeTrailOpposite(r));
-       }
+        //creating all possible single trails
+        for(Route r:routes){
+            cs.add(new Trail(r));
+            singleTrail.add(new Trail(r));
+            cs.add(makeTrailOpposite(r));
+            singleTrail.add(makeTrailOpposite(r));
+        }
 
-       List<Trail> csPrime = new ArrayList<>();
-       List<Trail> rs = new ArrayList<>();
+        List<Trail> csPrime = new ArrayList<>();
+        List<Trail> rs = new ArrayList<>();
 
         //creating biggest possible trail candidates until there are no possibilities of stretching the trail
-       do{
-           for (Trail c : cs) {
-               rs.clear();
+        do{
+            for (Trail c : cs) {
+                rs.clear();
                 for (Trail t : singleTrail) {
-                     if (t.station1.equals(c.station2) && !c.routes.contains(t)) {
-                          rs.add(t);
-                     }
+                    if (t.station1.equals(c.station2) && !c.routes.contains(t) && !c.isOppositeSingleTrail(t)) {
+                        rs.add(t);
+                    }
                 }
                 for (Trail r : rs) { csPrime.add(merge(c, r)); }
-           cs = csPrime;
-           }
-       } while (rs.size()!=0);
+                cs = csPrime;
+            }
+        } while (rs.size()!=0);
 
-       //finding out what the maximum possible length is
-       List<Integer> lengthList = new ArrayList<>();
-       int maxLength;
-       for (Trail c : cs) { lengthList.add(c.length); }
-       maxLength = Collections.max(lengthList);
+        //finding out what the maximum possible length is
+        List<Integer> lengthList = new ArrayList<>();
+        int maxLength;
+        for (Trail c : cs) { lengthList.add(c.length); }
+        maxLength = Collections.max(lengthList);
 
-       //making a list of trails which have the biggest length
-       List<Trail> maxLengthTrails = new ArrayList<>();
-       for (Trail t : cs){
-           if (t.length == maxLength) { maxLengthTrails.add(t); }
-       }
+        //making a list of trails which have the biggest length
+        List<Trail> maxLengthTrails = new ArrayList<>();
+        for (Trail t : cs){
+            if (t.length == maxLength) { maxLengthTrails.add(t); }
+        }
 
-       //picking the first one of the list, doesn't matter which one
-       return maxLengthTrails.get(0);
-   }
+        //picking the first one of the list, doesn't matter which one
+        return maxLengthTrails.get(0);
+    }
+
 
     /**
      *
@@ -140,6 +147,11 @@ public final class Trail {
     public Station station2() {
         if (this.length==0){ return null; }
         else { return station2; }
+    }
+
+    private List<Route> getRoutes () {
+        if (this.routes==null){ return null; }
+        else { return this.routes; }
     }
 
     /**
@@ -178,9 +190,9 @@ public final class Trail {
      */
     @Override
     public String toString(){
-       String trailText = "";
-       trailText += String.join(" - ", this.stations.toString());
-       trailText += " (" + this.length + ")";
-       return trailText;
+        String trailText = "";
+        trailText += String.join(" - ", this.stations.toString());
+        trailText += " (" + this.length + ")";
+        return trailText;
     }
 }
