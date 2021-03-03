@@ -158,7 +158,7 @@ public final class Route {
      * @param drawnCards cards drawn from the deck (3)
      * @return the number of cards the player has to add to obtain the tunnel
      */
-    int additionalClaimCardsCount(SortedBag<Card> claimCards, SortedBag<Card> drawnCards){
+    public int additionalClaimCardsCount(SortedBag<Card> claimCards, SortedBag<Card> drawnCards){
         int count = 0;
         Color color=null;
         Preconditions.checkArgument(this.level==Level.UNDERGROUND

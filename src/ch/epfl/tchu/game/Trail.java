@@ -1,8 +1,11 @@
 package ch.epfl.tchu.game;
 
+import ch.epfl.tchu.Preconditions;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author Nikolay (314355)
@@ -15,16 +18,38 @@ public final class Trail {
     private final List<Station> stations;
     private final List<Route> routes;
 
+    /**
+     * the constructors for this class are private so that an instance of a trail can only be created through methods
+     * that construct it using "elaborated" algorithms such as the method longest
+     * @param length length of the trail: sum of the lengths of the routes in the trail
+     * @param station1 first station on one side of the trail
+     * @param station2 last station on the opposite side of station1
+     * @param stations all the stations that are in the trail (sorted from station 1 to station 2)
+     * @param routes all routes in the trail (also sorted going form station 1 to station 2)
+     */
     private Trail(int length, Station station1, Station station2, List<Station> stations, List<Route> routes) {
+
         this.length = length;
         this.station1 = station1;
         this.station2 = station2;
         this.stations = stations;
         this.routes = routes;
     }
+
+    /**
+     * Constructor for a trail, consisting from only one route
+     * @param route the only route in the trail
+     */
     private Trail(Route route){
         this(route.length(), route.station1(), route.station2(),
              List.of(route.station1(),route.station2()),List.of(route) );
+    }
+
+    /**
+     * constructor for an instance of a trail that is null
+     */
+    private Trail(){
+        this(0,null,null,null,null);
     }
 
     /**
@@ -32,16 +57,20 @@ public final class Trail {
      * @param route the route of the trail we want to invert
      * @return the opposite trail
      */
-    private Trail makeTrailOpposite (Route route){
+    private static Trail makeTrailOpposite (Route route){
         Trail trail = new Trail(route.length(), route.station2(), route.station1(),
                 List.of(route.station2(), route.station1()), List.of(route));
         return trail;
     }
 
-
-    public Trail longest(List<Route> routes){
+    /**
+     *
+     * @param routes list of routes
+     * @return the longest possible trail consisting of routes that were passed as a parameter
+     */
+    public static Trail longest(List<Route> routes){
        if (routes.isEmpty()){
-           return new Trail(0,null,null,null,null);
+           return new Trail();
        }
        List<Trail> cs = new ArrayList<>();
        List<Trail> singleTrail = new ArrayList<>();
@@ -55,20 +84,21 @@ public final class Trail {
        }
 
        List<Trail> csPrime = new ArrayList<>();
-        List<Trail> rs = new ArrayList<>();
+       List<Trail> rs = new ArrayList<>();
 
         //creating biggest possible trail candidates until there are no possibilities of stretching the trail
        do{
            for (Trail c : cs) {
+               rs.clear();
                 for (Trail t : singleTrail) {
                      if (t.station1.equals(c.station2) && !c.routes.contains(t)) {
                           rs.add(t);
                      }
                 }
-                for (Trail r : rs) { csPrime.add(stretch(c, r)); }
+                for (Trail r : rs) { csPrime.add(merge(c, r)); }
            cs = csPrime;
            }
-       } while (rs!=null);
+       } while (rs.size()!=0);
 
        //finding out what the maximum possible length is
        List<Integer> lengthList = new ArrayList<>();
@@ -86,33 +116,62 @@ public final class Trail {
        return maxLengthTrails.get(0);
    }
 
-
-
+    /**
+     *
+     * @return the trail length
+     */
     public int length() {
         return length;
     }
 
+    /**
+     *
+     * @return the first station of the trail
+     */
     public Station station1() {
         if (this.length==0){ return null; }
         else { return station1; }
     }
 
+    /**
+     *
+     * @return the last station of the trail
+     */
     public Station station2() {
         if (this.length==0){ return null; }
         else { return station2; }
     }
 
-    private Trail stretch(Trail originalTrail, Trail addedTrail){
+    /**
+     * Static method that merges two existing instances of trails as follows:
+     * adds the second trail to the end of the first one
+     * - it is important that station 2 of originalTrail and station 1 of addedTrail are the same
+     * @param originalTrail first trail (has to finish where the second begins)
+     * @param addedTrail second trail that will be merged to original trail
+     * @return new merged trail that starts at station1 of originalTrail and ends at station2 of addedTrail
+     * @throws IllegalArgumentException if the stations don't match
+     * @throws NullPointerException if one of the trails is null
+     */
+    private static Trail merge(Trail originalTrail, Trail addedTrail){
+
+        Objects.requireNonNull(originalTrail,"first trail to stretch must be not null");
+        Objects.requireNonNull(addedTrail,"second trail to stretch must be not null");
+        Preconditions.checkArgument(originalTrail.station2.id() == addedTrail.station1.id());
+
         List<Station> newStations = originalTrail.stations;
-        newStations.add(addedTrail.station2());
+        newStations.addAll(addedTrail.stations);
         List<Route> newRoutes = originalTrail.routes;
-        newRoutes.add(addedTrail.routes.get(0));
-        Trail trail = new Trail(originalTrail.length+addedTrail.length(),this.station1,
-                addedTrail.station2(),newStations ,newRoutes);
+        newRoutes.addAll(addedTrail.routes);
+        Trail trail = new Trail(originalTrail.length+addedTrail.length(),originalTrail.station1,
+                addedTrail.station2,newStations ,newRoutes);
 
         return trail;
     }
 
+    /**
+     * computes the string with the information on the trail
+     * @return
+     */
     @Override
     public String toString(){
        String trailText = "";
