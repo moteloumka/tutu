@@ -149,6 +149,8 @@ public final class Route {
                 list.add(card);
             }
         }
+        //adds the line of locomotives in the end (is done in both situations and avoids a new for iteration)
+        list.add(SortedBag.of(this.length,Card.LOCOMOTIVE));
         return list;
     }
 
@@ -160,7 +162,7 @@ public final class Route {
      */
     public int additionalClaimCardsCount(SortedBag<Card> claimCards, SortedBag<Card> drawnCards){
         int count = 0;
-        Color color=null;
+        Color color = null;
         Preconditions.checkArgument(this.level==Level.UNDERGROUND
                 && drawnCards.size()==Constants.ADDITIONAL_TUNNEL_CARDS);
 
