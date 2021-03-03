@@ -1,6 +1,7 @@
 package ch.epfl.tchu.game;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -26,40 +27,97 @@ public final class Trail {
              List.of(route.station1(),route.station2()),List.of(route) );
     }
 
+    /**
+     * Used for trails with single route, inverses the direction of the trail
+     * @param route the route of the trail we want to invert
+     * @return the opposite trail
+     */
+    private Trail makeTrailOpposite (Route route){
+        Trail trail = new Trail(route.length(), route.station2(), route.station1(),
+                List.of(route.station2(), route.station1()), List.of(route));
+        return trail;
+    }
+
 
     public Trail longest(List<Route> routes){
        if (routes.isEmpty()){
            return new Trail(0,null,null,null,null);
        }
-       List<Trail> trails = new ArrayList<>();
+       List<Trail> cs = new ArrayList<>();
+       List<Trail> singleTrail = new ArrayList<>();
+
+       //creating all possible single trails
        for(Route r:routes){
-           trails.add(new Trail(r));
+           cs.add(new Trail(r));
+           singleTrail.add(new Trail(r));
+           cs.add(makeTrailOpposite(r));
+           singleTrail.add(makeTrailOpposite(r));
        }
 
+       List<Trail> csPrime = new ArrayList<>();
+        List<Trail> rs = new ArrayList<>();
+
+        //creating biggest possible trail candidates until there are no possibilities of stretching the trail
+       do{
+           for (Trail c : cs) {
+                for (Trail t : singleTrail) {
+                     if (t.station1.equals(c.station2) && !c.routes.contains(t)) {
+                          rs.add(t);
+                     }
+                }
+                for (Trail r : rs) { csPrime.add(stretch(c, r)); }
+           cs = csPrime;
+           }
+       } while (rs!=null);
+
+       //finding out what the maximum possible length is
+       List<Integer> lengthList = new ArrayList<>();
+       int maxLength;
+       for (Trail c : cs) { lengthList.add(c.length); }
+       maxLength = Collections.max(lengthList);
+
+       //making a list of trails which have the biggest length
+       List<Trail> maxLengthTrails = new ArrayList<>();
+       for (Trail t : cs){
+           if (t.length == maxLength) { maxLengthTrails.add(t); }
+       }
+
+       //picking the first one of the list, doesn't matter which one
+       return maxLengthTrails.get(0);
    }
 
-    public int getLength() {
+
+
+    public int length() {
         return length;
     }
 
-    public Station getStation1() {
-        return station1;
+    public Station station1() {
+        if (this.length==0){ return null; }
+        else { return station1; }
     }
 
-    public Station getStation2() {
-        return station2;
+    public Station station2() {
+        if (this.length==0){ return null; }
+        else { return station2; }
     }
 
-    private Trail stretch(Route route){
-        List<Station> newStations = this.stations.subList(0,this.stations.size()-1);
-        newStations.add(route.station2());
-        List<Route> newRoutes = this.routes.subList(0,this.routes.size()-1);
-        newRoutes.add(route);
-        new Trail(this.length+route.length(),this.station1,route.station2(),newStations ,newRoutes);
+    private Trail stretch(Trail originalTrail, Trail addedTrail){
+        List<Station> newStations = originalTrail.stations;
+        newStations.add(addedTrail.station2());
+        List<Route> newRoutes = originalTrail.routes;
+        newRoutes.add(addedTrail.routes.get(0));
+        Trail trail = new Trail(originalTrail.length+addedTrail.length(),this.station1,
+                addedTrail.station2(),newStations ,newRoutes);
+
+        return trail;
     }
 
     @Override
     public String toString(){
-        return (this.station1+" - "+this.station2+" ("+this.length+")");
+       String trailText = "";
+       trailText += String.join(" - ", this.stations.toString());
+       trailText += " (" + this.length + ")";
+       return trailText;
     }
 }
