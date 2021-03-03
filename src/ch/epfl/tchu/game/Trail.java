@@ -95,17 +95,26 @@ public final class Trail {
         //creating biggest possible trail candidates until there are no possibilities of stretching the trail
         do{
             for (Trail c : cs) {
+                                System.out.println( " c : " + c.station1().toString());
                 rs.clear();
                 for (Trail t : singleTrail) {
+                                System.out.println( " t : " + t.station1().toString());
                     if (t.station1.equals(c.station2) && !c.routes.contains(t) && !c.isOppositeSingleTrail(t)) {
                         rs.add(t);
                     }
                 }
-                for (Trail r : rs) { csPrime.add(merge(c, r)); }
-                cs = csPrime;
+                for (Trail r : rs) {
+                                System.out.println(" r : " + r.station1().toString());
+                                csPrime.add(merge(c, r)); }
+                if (csPrime.size()!=0){
+                    cs = csPrime;
+                }
             }
         } while (rs.size()!=0);
 
+        if (rs.size()==0){
+
+        }
         //finding out what the maximum possible length is
         List<Integer> lengthList = new ArrayList<>();
         int maxLength;
