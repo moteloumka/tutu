@@ -158,14 +158,14 @@ public final class Trail {
         Objects.requireNonNull(addedTrail,"second trail to stretch must be not null");
         Preconditions.checkArgument(originalTrail.station2.id() == addedTrail.station1.id());
 
-        List<Station> newStations = originalTrail.stations;
-        for (Station s : addedTrail.stations){
-            newStations.add(s);
-        }
-        List<Route> newRoutes = originalTrail.routes;
-        for (Route r : addedTrail.routes){
-            newRoutes.add(r);
-        }
+        List<Station> newStations = new ArrayList<>();
+        for(Station s : originalTrail.stations){ newStations.add(s); }
+        for (Station s : addedTrail.stations){ newStations.add(s); }
+
+        List<Route> newRoutes = new ArrayList<>();
+        for (Route r : originalTrail.routes){ newRoutes.add(r); }
+        for (Route r : addedTrail.routes){ newRoutes.add(r); }
+
         Trail trail = new Trail(originalTrail.length+addedTrail.length(),originalTrail.station1,
                 addedTrail.station2,newStations ,newRoutes);
 
