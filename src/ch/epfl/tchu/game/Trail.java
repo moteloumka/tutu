@@ -27,7 +27,7 @@ public final class Trail {
      * @param stations all the stations that are in the trail (sorted from station 1 to station 2)
      * @param routes all routes in the trail (also sorted going form station 1 to station 2)
      */
-    private Trail(int length, Station station1, Station station2, List<Station> stations, List<Route> routes) {
+    public Trail(int length, Station station1, Station station2, List<Station> stations, List<Route> routes) {
 
         this.length = length;
         this.station1 = station1;
@@ -40,7 +40,7 @@ public final class Trail {
      * Constructor for a trail, consisting from only one route
      * @param route the only route in the trail
      */
-    private Trail(Route route){
+    public Trail(Route route){
         this(route.length(), route.station1(), route.station2(),
              List.of(route.station1(),route.station2()),List.of(route) );
     }
@@ -48,7 +48,7 @@ public final class Trail {
     /**
      * constructor for an instance of a trail that is null
      */
-    private Trail(){
+    public Trail(){
         this(0,null,null,null,null);
     }
 
@@ -159,9 +159,13 @@ public final class Trail {
         Preconditions.checkArgument(originalTrail.station2.id() == addedTrail.station1.id());
 
         List<Station> newStations = originalTrail.stations;
-        newStations.addAll(addedTrail.stations);
+        for (Station s : addedTrail.stations){
+            newStations.add(s);
+        }
         List<Route> newRoutes = originalTrail.routes;
-        newRoutes.addAll(addedTrail.routes);
+        for (Route r : addedTrail.routes){
+            newRoutes.add(r);
+        }
         Trail trail = new Trail(originalTrail.length+addedTrail.length(),originalTrail.station1,
                 addedTrail.station2,newStations ,newRoutes);
 
