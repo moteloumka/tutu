@@ -1,5 +1,6 @@
 package ch.epfl.tchu.game;
 
+import ch.epfl.tchu.SortedBag;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -144,12 +145,38 @@ class RouteTest {
         Route route1 = new Route(id1,station1,station2,length, Route.Level.OVERGROUND,Color.BLACK);
         Route route2 = new Route(id1,station2,station1,length, Route.Level.UNDERGROUND,null);
 
-        //route1.possibleClaimCards();
+        route1.possibleClaimCards();
         route2.possibleClaimCards();
     }
 
     @Test
     void additionalClaimCardsCount() {
+
+        Station station1 =  new Station(0,"TEST1");
+        Station station2 =  new Station(1,"TEST2");
+
+        String id1 = station1.name();
+        String id2 = station2.name();
+
+        int length = 4;
+
+        Route route1 = new Route(id1,station1,station2,length, Route.Level.OVERGROUND,Color.BLACK);
+        Route route2 = new Route(id1,station2,station1,length, Route.Level.UNDERGROUND,null);
+
+        SortedBag.Builder<Card> cardsOwnedBuilder = new SortedBag.Builder<>();
+        cardsOwnedBuilder.add(2,Card.ORANGE);
+        cardsOwnedBuilder.add(Card.LOCOMOTIVE);
+        SortedBag<Card> cardsOwned = cardsOwnedBuilder.build();
+
+        SortedBag.Builder<Card> cardsDrawnBuilder = new SortedBag.Builder<>();
+        cardsDrawnBuilder.add(Card.ORANGE);
+        cardsDrawnBuilder.add(Card.RED);
+        cardsDrawnBuilder.add(Card.LOCOMOTIVE);
+        SortedBag<Card> carsDrawn = cardsDrawnBuilder.build();
+
+        int intReturn = route2.additionalClaimCardsCount(cardsOwned,carsDrawn);
+        assertEquals(1,intReturn);
+
     }
 
     @Test
