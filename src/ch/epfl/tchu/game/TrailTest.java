@@ -16,7 +16,14 @@ class TrailTest {
                 List.of(r1.station1(),r1.station2()), List.of(r1));
         Trail longestTrail = new Trail();
         longestTrail = longestTrail.longest(List.of(r1));
-        assertEquals(t1, longestTrail);
+        System.out.println(t1.toString());
+        assertEquals(t1.toString(), longestTrail.toString());
+    }
+
+
+    @Test
+    void longestTrailForMultipleRoutesTrail() {
+
     }
 
     @Test

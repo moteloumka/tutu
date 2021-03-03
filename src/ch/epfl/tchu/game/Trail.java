@@ -99,7 +99,7 @@ public final class Trail {
                 rs.clear();
                 for (Trail t : singleTrail) {
                                 System.out.println( " t : " + t.station1().toString());
-                    if (t.station1.equals(c.station2) && !c.routes.contains(t) && !c.isOppositeSingleTrail(t)) {
+                    if (t.station1.equals(c.station2) && !c.routes.contains(t.getRoutes().get(0)) && !c.isOppositeSingleTrail(t)) {
                         rs.add(t);
                     }
                 }
