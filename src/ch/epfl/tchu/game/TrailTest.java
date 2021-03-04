@@ -61,13 +61,4 @@ class TrailTest {
         System.out.println(added);
     }
 
-    @Test
-    void checkMerge(){
-
-        Trail merged1 = Trail.merge(trail1,trail2);
-        System.out.println(merged1);
-        Trail merged2= Trail.merge(merged1,trail3);
-        System.out.println(merged2);
-
-    }
 }
