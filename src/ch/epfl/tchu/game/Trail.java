@@ -78,56 +78,69 @@ public final class Trail {
         if (routes.isEmpty()){
             return new Trail();
         }
-        List<Trail> cs = new ArrayList<>();
-        List<Trail> singleTrail = new ArrayList<>();
+        List<Trail> currentTrails = new ArrayList<>();
 
         //creating all possible single trails
         for(Route r:routes){
-            cs.add(new Trail(r));
-            singleTrail.add(new Trail(r));
-            cs.add(makeTrailOpposite(r));
-            singleTrail.add(makeTrailOpposite(r));
+            currentTrails.add(new Trail(r));
+            currentTrails.add(makeTrailOpposite(r));
         }
 
         List<Trail> csPrime = new ArrayList<>();
-        List<Trail> rs = new ArrayList<>();
+        List<Route> toBeMergedlist = new ArrayList<>();
+        boolean hasMergeOccured;
 
         //creating biggest possible trail candidates until there are no possibilities of stretching the trail
         do{
-            for (Trail c : cs) {
-                                System.out.println( " c : " + c.station1().toString());
-                rs.clear();
-                for (Trail t : singleTrail) {
-                                System.out.println( " t : " + t.station1().toString());
-                    if (t.station1.equals(c.station2) && !c.routes.contains(t.getRoutes().get(0)) && !c.isOppositeSingleTrail(t)) {
-                        rs.add(t);
+            hasMergeOccured = false;
+            for (Trail trail1 : currentTrails) {
+
+                System.out.println( " trail1 : " + trail1.station1());
+                for (Route route: trail1.routes) {
+                    System.out.println(route);
+                }
+                toBeMergedlist.clear();
+
+                for (Route route : routes) {
+                    System.out.println( " route : " + route.station1());
+
+                    if (route.station1().equals(trail1.station2) && !trail1.routes.contains(route)){
+                        toBeMergedlist.add(route);
+                        System.out.println("added");
                     }
                 }
-                for (Trail r : rs) {
-                                System.out.println(" r : " + r.station1().toString());
-                                csPrime.add(merge(c, r)); }
-                if (csPrime.size()!=0){
-                    cs = csPrime;
+
+                System.out.println("here's the list of stuff to be merged");
+                for(Route r: toBeMergedlist){
+                    System.out.println("    trail: "+r);
                 }
+
+                for (Route r : toBeMergedlist) {
+                    System.out.println(" r : " + r.station1());
+                    csPrime.add(addRoute(trail1,r));
+                    hasMergeOccured = true;
+                }
+
             }
-        } while (rs.size()!=0);
+            if (csPrime.size()!=0){
+                currentTrails = csPrime;
+            }
+        } while (false);
 
-        if (rs.size()==0){
-
-        }
         //finding out what the maximum possible length is
         List<Integer> lengthList = new ArrayList<>();
         int maxLength;
-        for (Trail c : cs) { lengthList.add(c.length); }
+        for (Trail c : currentTrails) { lengthList.add(c.length); }
         maxLength = Collections.max(lengthList);
 
         //making a list of trails which have the biggest length
         List<Trail> maxLengthTrails = new ArrayList<>();
-        for (Trail t : cs){
+        for (Trail t : currentTrails){
             if (t.length == maxLength) { maxLengthTrails.add(t); }
         }
 
         //picking the first one of the list, doesn't matter which one
+        System.out.println(maxLengthTrails.get(0));
         return maxLengthTrails.get(0);
     }
 
@@ -158,9 +171,23 @@ public final class Trail {
         else { return station2; }
     }
 
-    private List<Route> getRoutes () {
+    public List<Route> getRoutes () {
         if (this.routes==null){ return null; }
         else { return this.routes; }
+    }
+
+    public static Trail addRoute(Trail trail ,Route route){
+        Objects.requireNonNull(route,"route has to be non null to be added");
+        Preconditions.checkArgument(trail.station2 == route.station1());
+
+        List<Station> newStations = new ArrayList<>(trail.stations);
+        newStations.add(route.station2());
+
+        List<Route> newRoutes = new ArrayList<>(trail.routes);
+        newRoutes.add(route);
+
+        return new Trail(trail.length + route.length(),trail.station1,
+                route.station2(),newStations ,newRoutes);
     }
 
     /**
@@ -168,34 +195,31 @@ public final class Trail {
      * adds the second trail to the end of the first one
      * - it is important that station 2 of originalTrail and station 1 of addedTrail are the same
      * @param originalTrail first trail (has to finish where the second begins)
-     * @param addedTrail second trail that will be merged to original trail
+     * @param addedTrail second trail that will be merged to original trail HAS TO BE CONSISTING OF ONLY ONE ROUTE
      * @return new merged trail that starts at station1 of originalTrail and ends at station2 of addedTrail
      * @throws IllegalArgumentException if the stations don't match
      * @throws NullPointerException if one of the trails is null
      */
-    private static Trail merge(Trail originalTrail, Trail addedTrail){
+    public static Trail merge(Trail originalTrail, Trail addedTrail){
 
         Objects.requireNonNull(originalTrail,"first trail to stretch must be not null");
         Objects.requireNonNull(addedTrail,"second trail to stretch must be not null");
-        Preconditions.checkArgument(originalTrail.station2.id() == addedTrail.station1.id());
+        Preconditions.checkArgument(originalTrail.station2.id() == addedTrail.station1.id()
+                && addedTrail.routes.size() == 1);
 
-        List<Station> newStations = new ArrayList<>();
-        for(Station s : originalTrail.stations){ newStations.add(s); }
-        for (Station s : addedTrail.stations){ newStations.add(s); }
+        List<Station> newStations = new ArrayList<>(originalTrail.stations);
+        newStations.add(addedTrail.station2);
 
-        List<Route> newRoutes = new ArrayList<>();
-        for (Route r : originalTrail.routes){ newRoutes.add(r); }
-        for (Route r : addedTrail.routes){ newRoutes.add(r); }
+        List<Route> newRoutes = new ArrayList<>(originalTrail.routes);
+        newRoutes.add(addedTrail.routes.get(0));
 
-        Trail trail = new Trail(originalTrail.length+addedTrail.length(),originalTrail.station1,
+        return new Trail(originalTrail.length+addedTrail.length,originalTrail.station1,
                 addedTrail.station2,newStations ,newRoutes);
-
-        return trail;
     }
 
     /**
      * computes the string with the information on the trail
-     * @return
+     * @return information on the trail
      */
     @Override
     public String toString(){
