@@ -93,39 +93,40 @@ public final class Trail {
         //creating biggest possible trail candidates until there are no possibilities of stretching the trail
         do{
             hasMergeOccured = false;
-            for (Trail trail1 : currentTrails) {
+            for (int i=0; i<currentTrails.size();++i) {
 
-                System.out.println( " trail1 : " + trail1.station1());
-                for (Route route: trail1.routes) {
-                    System.out.println(route);
-                }
+                System.out.println( i +" iteration trail1 : " + currentTrails.get(i).station1());
                 toBeMergedlist.clear();
 
                 for (Route route : routes) {
-                    System.out.println( " route : " + route.station1());
-
-                    if (route.station1().equals(trail1.station2) && !trail1.routes.contains(route)){
+                    //System.out.println( " route : " + route.station1());
+                    if (route.station1().equals(currentTrails.get(i).station2) && !currentTrails.get(i).routes.contains(route)){
                         toBeMergedlist.add(route);
-                        System.out.println("added");
+                        System.out.println(route+"added");
                     }
                 }
 
                 System.out.println("here's the list of stuff to be merged");
                 for(Route r: toBeMergedlist){
-                    System.out.println("    trail: "+r);
+                    System.out.println("route gonna b merged : "+r);
                 }
 
-                for (Route r : toBeMergedlist) {
-                    System.out.println(" r : " + r.station1());
-                    csPrime.add(addRoute(trail1,r));
-                    hasMergeOccured = true;
+                if (!toBeMergedlist.isEmpty()){
+                    for (Route r : toBeMergedlist) {
+                        System.out.println(" r : " + r.station1());
+                        csPrime.add(addRoute(currentTrails.get(i),r));
+                        hasMergeOccured = true;
+                    }
                 }
-
             }
             if (csPrime.size()!=0){
                 currentTrails = csPrime;
+                System.out.println("we got to the bottom of this");
+                System.out.println(toBeMergedlist.size());
+                toBeMergedlist.clear();
+                //csPrime.clear();
             }
-        } while (false);
+        } while (hasMergeOccured);
 
         //finding out what the maximum possible length is
         List<Integer> lengthList = new ArrayList<>();

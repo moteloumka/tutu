@@ -162,7 +162,7 @@ public final class Route {
      */
     public int additionalClaimCardsCount(SortedBag<Card> claimCards, SortedBag<Card> drawnCards){
         int count = 0;
-        Color color = null;
+        List<Color> color = new ArrayList<>();
         //we don't really have anything that checks the different cards provided in claimCards (?)
         Preconditions.checkArgument(this.level==Level.UNDERGROUND
                 && drawnCards.size()==Constants.ADDITIONAL_TUNNEL_CARDS);
@@ -170,17 +170,14 @@ public final class Route {
         for (int i = 0; i < claimCards.size(); i++) {
             //find if at least one CAR Card was used (not locomotive)
             if(claimCards.get(i) != null){
-
-                /**
-                 * PROBLEM! color doesn't get saved
-                 */
-                color = claimCards.get(i).color();
+                //the only way we have found to save the color, since it's an enum
+                color.add(claimCards.get(i).color());
             }
         }
         for (int i = 0; i < drawnCards.size(); i++) {
             //add a card to the counter if it's the same color as the one found before (color) or if it's a locomotive
             //if (color) is a locomotive (null), it's still counted once
-            if( drawnCards.get(i).color() == null || (color!=null && drawnCards.get(i).color().equals(color)) ){
+            if( drawnCards.get(i).color() == null || (!color.isEmpty() && drawnCards.get(i).color().equals(color.get(0))) ){
                 ++count;
             }
         }
