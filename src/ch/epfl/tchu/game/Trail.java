@@ -90,43 +90,54 @@ public final class Trail {
         List<Route> toBeMergedlist = new ArrayList<>();
         boolean hasMergeOccured;
 
+        int otsosi=0;
         //creating biggest possible trail candidates until there are no possibilities of stretching the trail
         do{
+            otsosi++;
             hasMergeOccured = false;
             for (int i=0; i<currentTrails.size();++i) {
 
-                System.out.println( i +" iteration trail1 : " + currentTrails.get(i).station1());
+                //System.out.println( i +" iteration trail1 : " + currentTrails.get(i).station1());
                 toBeMergedlist.clear();
 
                 for (Route route : routes) {
                     //System.out.println( " route : " + route.station1());
                     if (route.station1().equals(currentTrails.get(i).station2) && !currentTrails.get(i).routes.contains(route)){
                         toBeMergedlist.add(route);
-                        System.out.println(route+"added");
+                        //System.out.println(route+" added");
                     }
                 }
 
-                System.out.println("here's the list of stuff to be merged");
+                //System.out.println("here's the list of stuff to be merged");
                 for(Route r: toBeMergedlist){
-                    System.out.println("route gonna b merged : "+r);
+                    //System.out.println("route gonna b merged : "+r);
+                    //System.out.println(hasMergeOccured);
                 }
 
                 if (!toBeMergedlist.isEmpty()){
+                    System.out.println(toBeMergedlist.get(0));
                     for (Route r : toBeMergedlist) {
-                        System.out.println(" r : " + r.station1());
+                        //System.out.println(" r : " + r.station1());
                         csPrime.add(addRoute(currentTrails.get(i),r));
+                        for (Trail t:  csPrime) {
+                            System.out.println("attention attention :");
+                            System.out.println(t);
+                        }
                         hasMergeOccured = true;
                     }
                 }
             }
             if (csPrime.size()!=0){
-                currentTrails = csPrime;
-                System.out.println("we got to the bottom of this");
-                System.out.println(toBeMergedlist.size());
+                System.out.println("we got to the bottom of this 0");
+                currentTrails.clear();
+                currentTrails.addAll(csPrime);
+                //System.out.println("we got to the bottom of this 1");
+                //System.out.println("is empty? "+toBeMergedlist.isEmpty());
+                System.out.println(toBeMergedlist.size() + " yet " +hasMergeOccured);
                 toBeMergedlist.clear();
-                //csPrime.clear();
+                csPrime.clear();
             }
-        } while (hasMergeOccured);
+        } while (otsosi<10);
 
         //finding out what the maximum possible length is
         List<Integer> lengthList = new ArrayList<>();

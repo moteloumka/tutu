@@ -1,6 +1,8 @@
 package ch.epfl.tchu.game;
 import ch.epfl.tchu.Preconditions;
 
+import java.util.Objects;
+
 /**
  @author Nikolay (314355)
  @author Gullien (316143)
@@ -39,4 +41,17 @@ public final class Station {
      */
     @Override
     public String toString(){return this.name;}
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Station station = (Station) o;
+        return id == station.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name);
+    }
 }

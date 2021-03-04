@@ -22,7 +22,7 @@ class TrailTest {
     Route route1 = new Route(id1,station1,station2,1, Route.Level.OVERGROUND,Color.BLACK);
     Route route2 = new Route(id2,station2,station3,6, Route.Level.UNDERGROUND,null);
     Route route3 = new Route(id3,station3,station4,1, Route.Level.UNDERGROUND,null);
-    Route route4 = new Route(id3,station4,station5,6, Route.Level.UNDERGROUND,null);
+    Route route4 = new Route(id4,station4,station5,6, Route.Level.UNDERGROUND,null);
 
 
     Trail trail1 = new Trail(route1);
