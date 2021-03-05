@@ -1,7 +1,7 @@
 package ch.epfl.tchu.game;
 
 import ch.epfl.tchu.Preconditions;
-import org.junit.jupiter.api.Test;
+
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -59,9 +59,9 @@ public final class Trail {
      * @return the opposite trail
      */
     private static Trail makeTrailOpposite (Route route){
-        Trail trail = new Trail(route.length(), route.station2(), route.station1(),
+
+        return new Trail(route.length(), route.station2(), route.station1(),
                 List.of(route.station2(), route.station1()), List.of(route));
-        return trail;
     }
 
     /**
@@ -151,11 +151,6 @@ public final class Trail {
         else { return station2; }
     }
 
-    public List<Route> getRoutes () {
-        if (this.routes==null){ return null; }
-        else { return this.routes; }
-    }
-
     /**
      * adds a route to an existing trail
      * @param trail a trail
@@ -211,7 +206,7 @@ public final class Trail {
         if (obj == null || getClass() != obj.getClass()) return false;
         Trail trail = (Trail) obj;
         //in case both trail have no routes
-        if (this.length==0 && ((Trail) obj).length==0) return true;
-        return this.getRoutes().toString().equals(((Trail) obj).getRoutes().toString());
+        if (this.length==0 && trail.length==0) return true;
+        return this.routes.toString().equals(trail.routes.toString());
     }
 }
