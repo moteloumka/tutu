@@ -68,6 +68,6 @@ public final class CardState extends PublicCardState{
     }
 
     public CardState withMoreDiscardedCards(SortedBag<Card> additionalDiscards){
-        return new CardState( this.faceUpCards() , this.faceDownCards , this.outOfGameCards.union(additionalDiscards) ) ;
+        return new CardState( this.faceUpCards() , this.faceDownCards , this.outOfGameCards.union(additionalDiscards) );
     }
 }
