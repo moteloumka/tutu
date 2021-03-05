@@ -1,5 +1,7 @@
-package ch.epfl.tchu.game;
+package ch.epfl.test;
 
+import ch.epfl.tchu.game.Card;
+import ch.epfl.tchu.game.Color;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

@@ -1,5 +1,9 @@
-package ch.epfl.tchu.game;
+package ch.epfl.test;
 
+import ch.epfl.tchu.game.Color;
+import ch.epfl.tchu.game.Route;
+import ch.epfl.tchu.game.Station;
+import ch.epfl.tchu.game.Trail;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -24,7 +28,7 @@ class TrailTest {
     String id5 = "EEE";
     String id6 = "FFF";
 
-    Route route1 = new Route(id1,station1,station2,1, Route.Level.OVERGROUND,Color.BLACK);
+    Route route1 = new Route(id1,station1,station2,1, Route.Level.OVERGROUND, Color.BLACK);
     Route route2 = new Route(id2,station2,station3,6, Route.Level.UNDERGROUND,null);
     Route route3 = new Route(id3,station3,station4,1, Route.Level.UNDERGROUND,null);
     Route route4 = new Route(id4,station4,station5,6, Route.Level.UNDERGROUND,null);

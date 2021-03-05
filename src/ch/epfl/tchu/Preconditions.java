@@ -20,5 +20,11 @@ public final class Preconditions {
             throw new IllegalArgumentException();
         }
     }
+    public static void checkArgument(boolean shouldBeTrue, String errorMessage){
+        if(!shouldBeTrue){
+            throw new IllegalArgumentException(errorMessage);
+        }
+
+    }
 
 }

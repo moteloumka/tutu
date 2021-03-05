@@ -1,5 +1,5 @@
 <component name="ArtifactManager">
-  <artifact name="rendu">
+  <artifact build-on-make="true" name="rendu">
     <output-path>$PROJECT_DIR$/out/artifacts/rendu</output-path>
     <root id="root">
       <element id="archive" name="rendu.zip">

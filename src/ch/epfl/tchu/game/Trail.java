@@ -28,7 +28,7 @@ public final class Trail {
      * @param stations all the stations that are in the trail (sorted from station 1 to station 2)
      * @param routes all routes in the trail (also sorted going form station 1 to station 2)
      */
-    public Trail(int length, Station station1, Station station2, List<Station> stations, List<Route> routes) {
+    private Trail(int length, Station station1, Station station2, List<Station> stations, List<Route> routes) {
 
         this.length = length;
         this.station1 = station1;
@@ -41,7 +41,7 @@ public final class Trail {
      * Constructor for a trail, consisting from only one route
      * @param route the only route in the trail
      */
-    public Trail(Route route){
+    private Trail(Route route){
         this(route.length(), route.station1(), route.station2(),
                 List.of(route.station1(),route.station2()),List.of(route) );
     }
@@ -49,7 +49,7 @@ public final class Trail {
     /**
      * constructor for an instance of a trail that is null
      */
-    public Trail(){
+    private Trail(){
         this(0,null,null,null,null);
     }
 
@@ -157,14 +157,21 @@ public final class Trail {
     }
 
     /**
-     *
-     * @param trail
-     * @param route
-     * @return
+     * adds a route to an existing trail
+     * @param trail a trail
+     * @param route a route (that is connected to the trail and isn't contained in the trail's routes)
+     * @return new trail with route added
+     * @throws NullPointerException if route or trail are null
+     * @throws IllegalArgumentException if the trail isn't connected to the route
+     * or if  the route is contained in the trail already
      */
-    public static Trail addRoute(Trail trail ,Route route){
+    private static Trail addRoute(Trail trail ,Route route){
+        Objects.requireNonNull(trail,"trail has to be non null to be added");
         Objects.requireNonNull(route,"route has to be non null to be added");
-        Preconditions.checkArgument(trail.station2 == route.station1());
+        Preconditions.checkArgument(trail.station2 == route.station1(),
+                "route cannot be added to this trail");
+        Preconditions.checkArgument(!trail.routes.contains(route),
+                "trail already contains this route");
 
         List<Station> newStations = new ArrayList<>(trail.stations);
         newStations.add(route.station2());
