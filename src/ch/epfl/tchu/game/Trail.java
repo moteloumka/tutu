@@ -1,6 +1,7 @@
 package ch.epfl.tchu.game;
 
 import ch.epfl.tchu.Preconditions;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -95,7 +96,6 @@ public final class Trail {
                     }
                 }
                 if (!toBeMergedlist.isEmpty()) {
-                    System.out.println(toBeMergedlist.get(0));
                     for (Route r : toBeMergedlist) {
                         csPrime.add(addRoute(currentTrail, r));
                         hasMergeOccured = true;
@@ -123,7 +123,6 @@ public final class Trail {
         }
 
         //picking the first one of the list, doesn't matter which one
-        System.out.println(maxLengthTrails.get(0));
         return maxLengthTrails.get(0);
     }
 
@@ -184,8 +183,28 @@ public final class Trail {
     @Override
     public String toString(){
         String trailText = "";
-        trailText += String.join(" - ", this.stations.toString());
+        List<String> trailList = new ArrayList<>();
+        for (Station s : stations){
+            trailList.add(s.toString());
+        }
+        trailText += String.join(" - ", trailList);
         trailText += " (" + this.length + ")";
         return trailText;
+    }
+
+
+    /**
+     * overrides the equal method
+     * @param obj with which we want to compare this trail to
+     * @return true if they have the same ordered list of routes which basically means they're the same
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Trail trail = (Trail) obj;
+        //in case both trail have no routes
+        if (this.length==0 && ((Trail) obj).length==0) return true;
+        return this.getRoutes().toString().equals(((Trail) obj).getRoutes().toString());
     }
 }
