@@ -53,7 +53,7 @@ public final class CardState extends PublicCardState{
         return faceDownCards.topCard();
     }
 
-    public CardState withoutTopCard(){
+    public CardState withoutTopDeckCard(){
         Preconditions.checkArgument(!this.faceDownCards.isEmpty(),
                 "can't recreate a card state with an empty deck");
 

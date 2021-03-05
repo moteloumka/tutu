@@ -67,7 +67,7 @@ public final class Deck<C extends Comparable<C> > {
      * creates a new deck
      * @return new deck without the top one
      */
-    Deck<C> withoutTopCard(){
+    public Deck<C> withoutTopCard(){
         Preconditions.checkArgument(!this.isEmpty(),"deck can't be empty");
         return new Deck<>( this.deck.subList(1,this.size()) );
     }
@@ -77,7 +77,7 @@ public final class Deck<C extends Comparable<C> > {
      * @param count the amount of cards  you want
      * @return SortedBag of the first few cards from the deck
      */
-    SortedBag<C> topCards(int count){
+    public SortedBag<C> topCards(int count){
         Preconditions.checkArgument(count  <= this.size() && count  >=  0);
         SortedBag.Builder<C> builder = new SortedBag.Builder<>();
         for (int i= 1; i<count;++i){
@@ -90,7 +90,7 @@ public final class Deck<C extends Comparable<C> > {
      * @param count amounts of cards to remove from the top
      * @return new deck without the first "count" on top of the old one
      */
-    Deck<C> withoutTopCards(int count){
+    public Deck<C> withoutTopCards(int count){
         return new Deck<>( this.deck.subList( count,this.size() ) );
     }
 

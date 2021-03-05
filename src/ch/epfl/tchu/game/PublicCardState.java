@@ -35,9 +35,7 @@ public class PublicCardState {
         return faceUpCards.size()+deckSize+discardsSize;
     }
 
-    public Card faceUpCard(int slot){
-        return faceUpCards.get( Objects.checkIndex(slot,Constants.FACE_UP_CARD_SLOTS.size()) );
-    }
+    public Card faceUpCard(int slot){return faceUpCards.get( Objects.checkIndex(slot,Constants.FACE_UP_CARD_SLOTS.size()) );}
 
     public List<Card> faceUpCards() {
         return new ArrayList<>(faceUpCards);
@@ -51,9 +49,6 @@ public class PublicCardState {
         return discardsSize;
     }
 
-    public boolean isDeckEmpty(){
-        //not sure, shall we put <= ?
-        return discardsSize == 0;
-    }
+    public boolean isDeckEmpty(){return discardsSize == 0;}
 
 }
