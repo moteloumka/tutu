@@ -74,11 +74,15 @@ public final class Trail {
             return new Trail();
         }
         List<Trail> currentTrails = new ArrayList<>();
+        List<Route> bidirRoutes = new ArrayList<>();
 
         //creating all possible single trails
         for(Route r:routes){
-            currentTrails.add(new Trail(r));
+            Trail trailR = new Trail(r);
+            currentTrails.add(trailR);
             currentTrails.add(makeTrailOpposite(r));
+            bidirRoutes.add(r);
+            bidirRoutes.add(r.makeRouteOpposite(r));
         }
 
         List<Trail> csPrime = new ArrayList<>();
@@ -90,7 +94,7 @@ public final class Trail {
             hasMergeOccured = false;
             for (Trail currentTrail : currentTrails) {
                 toBeMergedlist.clear();
-                for (Route route : routes) {
+                for (Route route : bidirRoutes) {
                     if (route.station1().equals(currentTrail.station2) && !currentTrail.routes.contains(route)) {
                         toBeMergedlist.add(route);
                     }
@@ -102,8 +106,8 @@ public final class Trail {
                     }
                 }
             }
-            if (csPrime.size()!=0){
-                currentTrails.clear();
+            if (!csPrime.isEmpty()){
+                currentTrails.removeIf(t -> t.length < findMaxLength(csPrime));
                 currentTrails.addAll(csPrime);
                 toBeMergedlist.clear();
                 csPrime.clear();
@@ -149,6 +153,15 @@ public final class Trail {
     public Station station2() {
         if (this.length==0){ return null; }
         else { return station2; }
+    }
+
+
+    private static int findMaxLength (List<Trail> trails){
+        ArrayList<Integer> lengthList = new ArrayList<>();
+        for (Trail trail : trails){
+            lengthList.add(trail.length);
+        }
+        return Collections.max(lengthList);
     }
 
     /**

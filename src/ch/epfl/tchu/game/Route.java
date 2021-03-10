@@ -114,6 +114,10 @@ public final class Route {
         return station == station1 ? this.station2 : this.station1;
     }
 
+    public Route makeRouteOpposite (Route route){
+        return new Route(this.id, this.station2, this.station1, this.length, this.level, this.color);
+    }
+
     /**
      * @return list of all possible ways to obtain the given route
      *
@@ -201,8 +205,18 @@ public final class Route {
         return 0;
     }
 
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        if (this.id.equals(((Route) obj).id)) return true;
+        else return false;
+    }
+
     @Override
     public String toString() {
-        return "id='" + id;
+        //return "id = " + id;
+        return " | " + station1.toString() + " - " + station2.toString() + " | ";
     }
 }

@@ -26,6 +26,7 @@ class TrailTest {
                 new Route("F", s4, s2, 1, Route.Level.OVERGROUND, Color.ORANGE));
 
         var longest = Trail.longest(routes);
+        System.out.println(longest);
         assertEquals(13, longest.length());
         if (s2.equals(longest.station1()))
             assertEquals(s5, longest.station2());
