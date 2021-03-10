@@ -40,7 +40,7 @@ public final class Route {
     public Route(String id, Station station1, Station station2, int length, Level level, Color color) {
         Preconditions.checkArgument(!station1.equals(station2) &&
                 !(length<Constants.MIN_ROUTE_LENGTH || length>Constants.MAX_ROUTE_LENGTH));
-        this.id = id;
+        this.id = Objects.requireNonNull(id,"route id can't be null");
         this.station1 = Objects.requireNonNull(station1,"station 1 can't be null when constructing a route");
         this.station2 = Objects.requireNonNull(station2,"station 2 can't be null when constructing a route");
         this.length = length;
@@ -129,32 +129,49 @@ public final class Route {
     public List<SortedBag<Card>> possibleClaimCards(){
         List<SortedBag<Card>> list = new ArrayList<>();
 
-        //in the case where a route has no color, all combinations have to be shown
-        if(this.color==null){
-            for(int i=0;i<this.length;++i){
-                SortedBag.Builder<Card> builder = new SortedBag.Builder<>();
-                //creating all combinations  by going through all the colors
-                for(Color color: Color.values()){
-                    builder.add(this.length-i,Card.of(color));
-                    //adding locomotives as missing cards
+
+        if(this.level==Level.UNDERGROUND){
+            if(this.color == null){
+                for(int i=0;i<this.length;++i){
+                    //creating all combinations  by going through all the colors
+                    for(Color color: Color.values()){
+                        SortedBag.Builder<Card> builder = new SortedBag.Builder<>();
+                        builder.add(this.length-i,Card.of(color));
+                        //adding locomotives as missing cards
+                        builder.add(i,Card.LOCOMOTIVE);
+                        SortedBag<Card> card = builder.build();
+                        //adding the new combinations to the list
+                        list.add(card);
+                    }
+                }
+            } else {
+                for (int i = 0; i<this.length; i++) {
+                    SortedBag.Builder<Card> builder = new SortedBag.Builder<>();
+                    builder.add(this.length-i,Card.of(this.color));
                     builder.add(i,Card.LOCOMOTIVE);
                     SortedBag<Card> card = builder.build();
-                    //adding the new combinations to the list
                     list.add(card);
                 }
             }
-        } else {
-            //same idea as the if block above but this time there is no need to go through all the colors
-            for (int i = 0; i<this.length; i++) {
+            list.add(SortedBag.of(this.length,Card.LOCOMOTIVE));
+        }else{
+            if (this.color == null){
+                for( Color  color: Color.values()){
+                    SortedBag.Builder<Card> builder = new SortedBag.Builder<>();
+                    builder.add(this.length,Card.of(color));
+                    SortedBag<Card> card = builder.build();
+                    list.add(card);
+                }
+            }else{
                 SortedBag.Builder<Card> builder = new SortedBag.Builder<>();
-                builder.add(this.length-i,Card.of(this.color));
-                builder.add(i,Card.LOCOMOTIVE);
+                builder.add(this.length,Card.of(this.color));
                 SortedBag<Card> card = builder.build();
                 list.add(card);
             }
         }
+
         //adds the line of locomotives in the end (is done in both situations and avoids a new for iteration)
-        list.add(SortedBag.of(this.length,Card.LOCOMOTIVE));
+
         return list;
     }
 
