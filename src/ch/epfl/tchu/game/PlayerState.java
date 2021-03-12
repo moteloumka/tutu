@@ -3,8 +3,7 @@ package ch.epfl.tchu.game;
 import ch.epfl.tchu.Preconditions;
 import ch.epfl.tchu.SortedBag;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author Nikolay (314355)
@@ -77,8 +76,30 @@ public final class PlayerState extends PublicPlayerState {
         Preconditions.checkArgument(drawnCards.size()==3,
                 "there  has to be exactly 3 drawn cards");
 
-        List<SortedBag<Card>> comboTab = new ArrayList<>();
-        return null;
+        List<Card> cardsTab = new ArrayList<>();
+        for (Card card : initialCards){
+            if (card.color() != null)
+                cardsTab.add(card);
+        }
+
+        SortedBag.Builder<Card> builder = new SortedBag.Builder<>();
+
+        this.cards.countOf(Card.LOCOMOTIVE);
+        builder.add(this.cards.countOf(Card.LOCOMOTIVE),Card.LOCOMOTIVE);
+        if(!cardsTab.isEmpty()){
+            int colVo = this.cards.countOf(cardsTab.get(0)) - cardsTab.size();
+            if (colVo > 0)
+                builder.add(colVo,cardsTab.get(0));
+        }
+
+        SortedBag<Card> daBag = builder.build();
+
+        Set<SortedBag<Card>> ssb  = daBag.subsetsOfSize(additionalCardsCount);
+        List<SortedBag<Card>> options = new ArrayList<>(ssb);
+        options.sort(
+                Comparator.comparingInt(cs -> cs.countOf(Card.LOCOMOTIVE)));
+
+        return options;
     }
 
     public PlayerState withClaimedRoute(Route route, SortedBag<Card> claimCards){
