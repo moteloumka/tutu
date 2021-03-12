@@ -22,7 +22,7 @@ public final class Deck<C extends Comparable<C> > {
      * @param deck the deck that will be the deck...
      */
     private Deck (List<C> deck){
-        this.deck =  deck;
+        this.deck = deck;
     }
 
     /**

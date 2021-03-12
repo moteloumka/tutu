@@ -1,7 +1,6 @@
 package ch.epfl.tchu.game;
 import ch.epfl.tchu.Preconditions;
 
-import java.util.Objects;
 
 /**
  @author Nikolay (314355)
@@ -50,8 +49,4 @@ public final class Station {
         return id == station.id;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, name);
-    }
 }

@@ -7,9 +7,9 @@ import java.util.List;
 import java.util.Objects;
 
 public final class Trip {
-    private Station from;
-    private Station to;
-    private int points;
+    private final Station from;
+    private final Station to;
+    private final int points;
 
     /**
      * class constructor
@@ -71,6 +71,7 @@ public final class Trip {
      * @return + points the trip is worth if the stations are connected
      * - points --//-- aren't connected
      */
+
     public int points(StationConnectivity connectivity){
         if (connectivity.connected(this.from, this.to)){
             return this.points;
