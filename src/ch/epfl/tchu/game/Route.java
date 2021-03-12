@@ -2,6 +2,7 @@ package ch.epfl.tchu.game;
 
 import ch.epfl.tchu.Preconditions;
 import ch.epfl.tchu.SortedBag;
+import ch.epfl.tchu.gui.StringsFr;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -233,7 +234,6 @@ public final class Route {
 
     @Override
     public String toString() {
-        //return "id = " + id;
-        return " | " + station1.toString() + " - " + station2.toString() + " | ";
+        return station1.toString() + StringsFr.EN_DASH_SEPARATOR + station2.toString();
     }
 }

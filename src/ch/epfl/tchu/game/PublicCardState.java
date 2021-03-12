@@ -20,7 +20,7 @@ public class PublicCardState {
     public PublicCardState(List<Card> faceUpCards, int deckSize, int discardsSize){
 
         Preconditions.checkArgument(faceUpCards.size() == Constants.FACE_UP_CARDS_COUNT,
-                "there isn't precisely"+Constants.FACE_UP_CARDS_COUNT+"face up cards");
+                "there isn't precisely "+Constants.FACE_UP_CARDS_COUNT+" face up cards");
         Preconditions.checkArgument(deckSize >= 0,
                 "deck size can't be < 0");
         Preconditions.checkArgument(discardsSize >= 0,
