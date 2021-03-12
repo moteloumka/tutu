@@ -51,6 +51,7 @@ public final class StationPartition implements StationConnectivity{
             }
         }
 
+
         /**
          * connects two stations by changing the index of the second one in the reference Array
          * by the number referenced by the other station
@@ -62,6 +63,7 @@ public final class StationPartition implements StationConnectivity{
             this.buildTab[station2.id()]= representative(station1.id());
             return this;
         }
+
 
         /**
          * creates a new instance of StationPartition, passing the Array buildTab as the reference tab
@@ -76,6 +78,7 @@ public final class StationPartition implements StationConnectivity{
             return new StationPartition(this.buildTab);
         }
 
+
         /**
          * method that finds the "real" reference of a station
          * @param rep the station id
@@ -88,7 +91,5 @@ public final class StationPartition implements StationConnectivity{
             }while (answer!=this.buildTab[answer]);
             return answer;
         }
-
-
     }
 }
