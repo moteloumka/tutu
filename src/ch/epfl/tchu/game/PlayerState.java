@@ -61,7 +61,7 @@ public final class PlayerState extends PublicPlayerState {
     }
 
     /**
-     * ONE LAST METHOD LEFT
+     *
      * @param additionalCardsCount
      * @param initialCards
      * @param drawnCards
@@ -69,6 +69,7 @@ public final class PlayerState extends PublicPlayerState {
      */
     public List<SortedBag<Card>> possibleAdditionalCards
             (int additionalCardsCount, SortedBag<Card> initialCards, SortedBag<Card> drawnCards){
+
         Preconditions.checkArgument(additionalCardsCount<=3 && additionalCardsCount >= 1,
                 "the number of additional cards has to be 1, 2 or 3");
         Preconditions.checkArgument(!initialCards.isEmpty() && initialCards.toSet().size() > 3,
@@ -84,12 +85,13 @@ public final class PlayerState extends PublicPlayerState {
 
         SortedBag.Builder<Card> builder = new SortedBag.Builder<>();
 
-        this.cards.countOf(Card.LOCOMOTIVE);
-        builder.add(this.cards.countOf(Card.LOCOMOTIVE),Card.LOCOMOTIVE);
+        int locoCards = this.cards.countOf(Card.LOCOMOTIVE) - initialCards.countOf(Card.LOCOMOTIVE);
+        if (locoCards > 0)
+            builder.add(locoCards,Card.LOCOMOTIVE);
         if(!cardsTab.isEmpty()){
-            int colVo = this.cards.countOf(cardsTab.get(0)) - cardsTab.size();
-            if (colVo > 0)
-                builder.add(colVo,cardsTab.get(0));
+            int coloredCards = this.cards.countOf(cardsTab.get(0)) - cardsTab.size();
+            if (coloredCards > 0)
+                builder.add(coloredCards,cardsTab.get(0));
         }
 
         SortedBag<Card> daBag = builder.build();
@@ -111,17 +113,15 @@ public final class PlayerState extends PublicPlayerState {
     //do not forget  to activate
     public int ticketPoints(){
         int ans = 0;
-        //StationPartition partition = partitionConstructor();
+        StationPartition partition = partitionConstructor();
         for (Ticket ticket : this.tickets){
-            //ans += ticket.points(partition);
+            ans += ticket.points(partition);
         }
         return ans;
     }
 
     public int finalPoints(){return ticketPoints()+ super.claimPoints(); }
 
-    /**
-     * HAVE TO FINISH THIS
     private StationPartition partitionConstructor(){
         int max = -1;
         List<Route> routes = List.copyOf(this.routes());
@@ -138,10 +138,10 @@ public final class PlayerState extends PublicPlayerState {
             Route route1 = routes.get(i);
             //connecting the two stations in each route
             builder.connect(route1.station1(),route1.station2());
-            for (int j = i+1 ; j < routes.size()-i-1; j++) {
-
+            //going through all the other routes
+            for (int j = i+1 ; j < routes.size(); j++) {
                 Route route2 = routes.get(j);
-
+                //connecting stations if any routes are connected by a station
                 if(route1.station1().equals(route2.station1()))
                     builder.connect(route1.station2(),route2.station2());
                 if(route1.station1().equals(route2.station2()))
@@ -154,6 +154,4 @@ public final class PlayerState extends PublicPlayerState {
         }
         return builder.build();
     }
-     */
-
 }
