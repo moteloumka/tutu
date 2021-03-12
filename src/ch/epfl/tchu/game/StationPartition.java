@@ -60,7 +60,7 @@ public final class StationPartition implements StationConnectivity{
          * @return same instance of the builder but with the Array modified
          */
         public Builder connect(Station station1, Station station2){
-            this.buildTab[station2.id()]= representative(station1.id());
+            this.buildTab[station2.id()] = representative(station1.id());
             return this;
         }
 

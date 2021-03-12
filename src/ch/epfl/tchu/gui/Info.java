@@ -8,6 +8,7 @@ import ch.epfl.tchu.gui.StringsFr.*;
 import java.lang.Math.*;
 
 import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -26,37 +27,54 @@ public final class Info {
         switch (card){
             case BLACK:
                 answer.append(StringsFr.BLACK_CARD);
+                break;
             case WHITE:
                 answer.append(StringsFr.WHITE_CARD);
+                break;
             case RED:
                 answer.append(StringsFr.RED_CARD);
+                break;
             case ORANGE:
                 answer.append(StringsFr.ORANGE_CARD);
+                break;
             case YELLOW:
                 answer.append(StringsFr.YELLOW_CARD);
+                break;
             case VIOLET:
                 answer.append(StringsFr.VIOLET_CARD);
+                break;
             case GREEN:
                 answer.append(StringsFr.GREEN_CARD);
+                break;
             case BLUE:
                 answer.append(StringsFr.BLUE_CARD);
+                break;
             case LOCOMOTIVE:
                 answer.append(StringsFr.LOCOMOTIVE_CARD);
+                break;
         }
-        return answer + StringsFr.plural(Math.abs(count));
+        return answer.toString() + StringsFr.plural(Math.abs(count));
     }
 
     private static String cardNumerator(SortedBag<Card> cards){
         StringBuilder totCards = new StringBuilder();
-        for (int i = 0; i < cards.size();++i) {
+        Set<Card> setCards = cards.toSet();
+        int i = 0;
+        for (Card card : setCards) {
 
-            int n = cards.countOf(cards.get(i));
-            totCards.append(n).append(" ").append(StringsFr.CARDS).append(" ").append(cards.get(i)).append(Math.abs(n));
-            if(cards.size()-i > 2){
+            int n = cards.countOf(card);
+            totCards.append(n)
+                    .append(" ")
+                    .append(StringsFr.CARDS)
+                    .append(" ")
+                    .append(Info.cardName(card,n));
+
+            if(setCards.size()-i > 2){
                 totCards.append(", ");
-            } else if (cards.size()-i  == 2){
+            } else if (setCards.size()-i  == 2){
                 totCards.append(StringsFr.AND_SEPARATOR);
             }
+            i++;
         }
         return totCards.toString();
     }
