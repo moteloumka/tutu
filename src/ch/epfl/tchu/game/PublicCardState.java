@@ -50,6 +50,6 @@ public class PublicCardState {
         return discardsSize;
     }
 
-    public boolean isDeckEmpty(){return discardsSize == 0;}
+    public boolean isDeckEmpty(){return deckSize == 0;}
 
 }

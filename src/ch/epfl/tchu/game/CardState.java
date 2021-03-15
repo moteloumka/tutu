@@ -18,13 +18,13 @@ public final class CardState extends PublicCardState{
     private final SortedBag<Card> outOfGameCards;
 
     private CardState(List<Card> faceUpCards, Deck<Card> faceDownCards, SortedBag<Card> outOfGameCards) {
-        super(faceUpCards, faceUpCards.size(), outOfGameCards.size());
+        super(faceUpCards, faceDownCards.size(), outOfGameCards.size());
         this.faceDownCards = faceDownCards;
         this.outOfGameCards = outOfGameCards;
     }
 
     public static CardState of(Deck<Card> deck){
-        Preconditions.checkArgument(deck.size()<Constants.FACE_UP_CARDS_COUNT,
+        Preconditions.checkArgument(deck.size() >= Constants.FACE_UP_CARDS_COUNT,
                 "not enough cards in the deck ( < "+Constants.FACE_UP_CARDS_COUNT+" )");
 
         List<Card> faceUpCards = deck.topCards(Constants.FACE_UP_CARDS_COUNT).toList();
@@ -64,7 +64,7 @@ public final class CardState extends PublicCardState{
         Preconditions.checkArgument(this.isDeckEmpty(),
                 "deck has to be empty to mix");
 
-        return new CardState(this.faceUpCards(),Deck.of(outOfGameCards,rng),SortedBag.of());
+        return new CardState(this.faceUpCards(),Deck.of(this.outOfGameCards,rng),SortedBag.of());
     }
 
     public CardState withMoreDiscardedCards(SortedBag<Card> additionalDiscards){

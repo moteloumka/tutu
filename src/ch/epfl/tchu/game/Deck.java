@@ -3,6 +3,7 @@ package ch.epfl.tchu.game;
 import ch.epfl.tchu.Preconditions;
 import ch.epfl.tchu.SortedBag;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -33,7 +34,7 @@ public final class Deck<C extends Comparable<C> > {
      * @return new instance of a deck of cards
      */
     public static <C extends Comparable<C>> Deck<C> of(SortedBag<C> cards, Random rng){
-        List<C> deck = cards.toList();
+        List<C> deck = new ArrayList<>(cards.toList());
         Collections.shuffle(deck,rng);
         return new Deck<>(deck);
     }
@@ -80,7 +81,7 @@ public final class Deck<C extends Comparable<C> > {
     public SortedBag<C> topCards(int count){
         Preconditions.checkArgument(count  <= this.size() && count  >=  0);
         SortedBag.Builder<C> builder = new SortedBag.Builder<>();
-        for (int i= 1; i<count;++i){
+        for (int i= 0; i<count;++i){
             builder.add(this.deck.get(i));
         }
         return builder.build();
@@ -91,7 +92,7 @@ public final class Deck<C extends Comparable<C> > {
      * @return new deck without the first "count" on top of the old one
      */
     public Deck<C> withoutTopCards(int count){
-        return new Deck<>( this.deck.subList( count,this.size() ) );
+        return new Deck<>( List.copyOf(this.deck.subList( count,this.size())) );
     }
 
 

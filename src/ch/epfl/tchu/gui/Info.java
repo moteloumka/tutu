@@ -7,6 +7,7 @@ import ch.epfl.tchu.game.Trail;
 import static ch.epfl.tchu.gui.StringsFr.*;
 import java.lang.Math.*;
 
+import java.nio.file.Files;
 import java.util.List;
 import java.util.Set;
 
@@ -78,13 +79,13 @@ public final class Info {
     }
 
     private static String trail2Stations(Trail trail){
-        return String.format("%s %s %s",trail.station1().toString(),EN_DASH_SEPARATOR, trail.station2().toString());
+        return String.format("%s%s%s",trail.station1().toString(),EN_DASH_SEPARATOR, trail.station2().toString());
     }
 
 
 
     public static String draw(List<String> playerNames, int points){
-        return String.format(DRAW,String.join(", ", playerNames),points);
+        return String.format(DRAW,String.join(AND_SEPARATOR, playerNames),points);
     }
 
     public String willPlayFirst(){return String.format(WILL_PLAY_FIRST,this.playerName);}
@@ -96,7 +97,7 @@ public final class Info {
     public String canPlay(){return String.format(CAN_PLAY,this.playerName);}
 
     public String drewTickets(int count){
-        return String.format(DREW_TICKETS, this.playerName, count, Math.abs(count));
+        return String.format(DREW_TICKETS, this.playerName, count, plural(Math.abs(count)));
     }
 
     public String drewBlindCard(){
@@ -119,8 +120,9 @@ public final class Info {
         StringBuilder builder = new StringBuilder();
         builder.append(String.format(ADDITIONAL_CARDS_ARE,cardNumerator(drawnCards)));
 
-        if(drawnCards.isEmpty()){
+        if(additionalCost == 0){
             builder.append(NO_ADDITIONAL_COST);
+            return builder.toString();
         }else{
             builder.append(String.format(SOME_ADDITIONAL_COST,
             additionalCost , plural(Math.abs(additionalCost))));
