@@ -179,7 +179,7 @@ class PlayerStateTest {
 
       PlayerState pps = new PlayerState(tickets, cards, routes);
 
-      assertEquals(false, pps.canClaimRoute(routeFull.get(0)));
+      assertFalse(pps.canClaimRoute(routeFull.get(0)));
   }
 
 
@@ -196,7 +196,7 @@ class PlayerStateTest {
         PlayerState pps = PlayerState.initial(cards);
         pps.withAddedTickets(tickets);
 
-        assertEquals(true, pps.canClaimRoute(routeFull.get(0)));
+      assertTrue(pps.canClaimRoute(routeFull.get(0)));
   }
 
 
