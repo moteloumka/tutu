@@ -2,6 +2,8 @@ package ch.epfl.tchu.game;
 
 import ch.epfl.tchu.Preconditions;
 
+import java.util.Arrays;
+
 
 /**
  * @author Nikolay (314355)
@@ -46,7 +48,7 @@ public final class StationPartition implements StationConnectivity{
             Preconditions.checkArgument(stationCount>=0);
             this.buildTab = new int[stationCount];
             for(int i=0; i<stationCount; ++i){
-                //each Station represents it self in the beginning
+                //each Station represents itself in the beginning
                 this.buildTab[i] = i;
             }
         }
@@ -55,8 +57,8 @@ public final class StationPartition implements StationConnectivity{
         /**
          * connects two stations by changing the index of the second one in the reference Array
          * by the number referenced by the other station
-         * @param station1 the one, who's reference will be taken into account
-         * @param station2 the one, who's reference will be changed
+         * @param station1 the one, whose reference will be taken into account
+         * @param station2 the one, whose reference will be changed
          * @return same instance of the builder but with the Array modified
          */
         public Builder connect(Station station1, Station station2){
@@ -74,6 +76,7 @@ public final class StationPartition implements StationConnectivity{
                 //making sure that different partitions
                 //will all have the same representative
                 this.buildTab[i] = representative(i);
+                System.out.print(buildTab[i] + "  ");
             }
             return new StationPartition(this.buildTab);
         }
@@ -82,7 +85,7 @@ public final class StationPartition implements StationConnectivity{
         /**
          * method that finds the "real" reference of a station
          * @param rep the station id
-         * @return it's reference int he Array
+         * @return its reference in the Array
          */
         private int representative(int rep){
             int answer;

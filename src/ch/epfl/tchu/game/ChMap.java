@@ -88,49 +88,49 @@ public final class ChMap {
 
     // Routes
     private static final List<Route> ALL_ROUTES = List.of(
-            new Route("AT1_STG_1", AT1, STG, 4, Level.UNDERGROUND, null),
-            new Route("AT2_VAD_1", AT2, VAD, 1, Level.UNDERGROUND, Color.RED),
-            new Route("BAD_BAL_1", BAD, BAL, 3, Level.UNDERGROUND, Color.RED),
-            new Route("BAD_OLT_1", BAD, OLT, 2, Level.OVERGROUND, Color.VIOLET),
-            new Route("BAD_ZUR_1", BAD, ZUR, 1, Level.OVERGROUND, Color.YELLOW),
-            new Route("BAL_DE1_1", BAL, DE1, 1, Level.UNDERGROUND, Color.BLUE),
-            new Route("BAL_DEL_1", BAL, DEL, 2, Level.UNDERGROUND, Color.YELLOW),
-            new Route("BAL_OLT_1", BAL, OLT, 2, Level.UNDERGROUND, Color.ORANGE),
-            new Route("BEL_LOC_1", BEL, LOC, 1, Level.UNDERGROUND, Color.BLACK),
-            new Route("BEL_LUG_1", BEL, LUG, 1, Level.UNDERGROUND, Color.RED),
-            new Route("BEL_LUG_2", BEL, LUG, 1, Level.UNDERGROUND, Color.YELLOW),
-            new Route("BEL_WAS_1", BEL, WAS, 4, Level.UNDERGROUND, null),
-            new Route("BEL_WAS_2", BEL, WAS, 4, Level.UNDERGROUND, null),
-            new Route("BER_FRI_1", BER, FRI, 1, Level.OVERGROUND, Color.ORANGE),
-            new Route("BER_FRI_2", BER, FRI, 1, Level.OVERGROUND, Color.YELLOW),
-            new Route("BER_INT_1", BER, INT, 3, Level.OVERGROUND, Color.BLUE),
-            new Route("BER_LUC_1", BER, LUC, 4, Level.OVERGROUND, null),
-            new Route("BER_LUC_2", BER, LUC, 4, Level.OVERGROUND, null),
-            new Route("BER_NEU_1", BER, NEU, 2, Level.OVERGROUND, Color.RED),
-            new Route("BER_SOL_1", BER, SOL, 2, Level.OVERGROUND, Color.BLACK),
-            new Route("BRI_INT_1", BRI, INT, 2, Level.UNDERGROUND, Color.WHITE),
-            new Route("BRI_IT5_1", BRI, IT5, 3, Level.UNDERGROUND, Color.GREEN),
-            new Route("BRI_LOC_1", BRI, LOC, 6, Level.UNDERGROUND, null),
-            new Route("BRI_SIO_1", BRI, SIO, 3, Level.UNDERGROUND, Color.BLACK),
-            new Route("BRI_WAS_1", BRI, WAS, 4, Level.UNDERGROUND, Color.RED),
-            new Route("BRU_COI_1", BRU, COI, 5, Level.UNDERGROUND, null),
-            new Route("BRU_DAV_1", BRU, DAV, 4, Level.UNDERGROUND, Color.BLUE),
-            new Route("BRU_IT2_1", BRU, IT2, 2, Level.UNDERGROUND, Color.GREEN),
-            new Route("COI_DAV_1", COI, DAV, 2, Level.UNDERGROUND, Color.VIOLET),
-            new Route("COI_SAR_1", COI, SAR, 1, Level.UNDERGROUND, Color.WHITE),
-            new Route("COI_WAS_1", COI, WAS, 5, Level.UNDERGROUND, null),
-            new Route("DAV_AT3_1", DAV, AT3, 3, Level.UNDERGROUND, null),
-            new Route("DAV_IT1_1", DAV, IT1, 3, Level.UNDERGROUND, null),
-            new Route("DAV_SAR_1", DAV, SAR, 3, Level.UNDERGROUND, Color.BLACK),
-            new Route("DE2_SCE_1", DE2, SCE, 1, Level.OVERGROUND, Color.YELLOW),
-            new Route("DE3_KRE_1", DE3, KRE, 1, Level.OVERGROUND, Color.ORANGE),
-            new Route("DE4_KRE_1", DE4, KRE, 1, Level.OVERGROUND, Color.WHITE),
-            new Route("DE5_STG_1", DE5, STG, 2, Level.OVERGROUND, null),
-            new Route("DEL_FR4_1", DEL, FR4, 2, Level.UNDERGROUND, Color.BLACK),
-            new Route("DEL_LCF_1", DEL, LCF, 3, Level.UNDERGROUND, Color.WHITE),
-            new Route("DEL_SOL_1", DEL, SOL, 1, Level.UNDERGROUND, Color.VIOLET),
-            new Route("FR1_MAR_1", FR1, MAR, 2, Level.UNDERGROUND, null),
-            new Route("FR2_GEN_1", FR2, GEN, 1, Level.OVERGROUND, Color.YELLOW),
+            new Route("AT1_STG_1", AT1, STG, 4, Level.UNDERGROUND, null),   //0
+            new Route("AT2_VAD_1", AT2, VAD, 1, Level.UNDERGROUND, Color.RED),    //1
+            new Route("BAD_BAL_1", BAD, BAL, 3, Level.UNDERGROUND, Color.RED),    //2
+            new Route("BAD_OLT_1", BAD, OLT, 2, Level.OVERGROUND, Color.VIOLET),  //3
+            new Route("BAD_ZUR_1", BAD, ZUR, 1, Level.OVERGROUND, Color.YELLOW),  //4
+            new Route("BAL_DE1_1", BAL, DE1, 1, Level.UNDERGROUND, Color.BLUE),   //5
+            new Route("BAL_DEL_1", BAL, DEL, 2, Level.UNDERGROUND, Color.YELLOW), //6
+            new Route("BAL_OLT_1", BAL, OLT, 2, Level.UNDERGROUND, Color.ORANGE), //7
+            new Route("BEL_LOC_1", BEL, LOC, 1, Level.UNDERGROUND, Color.BLACK),  //8
+            new Route("BEL_LUG_1", BEL, LUG, 1, Level.UNDERGROUND, Color.RED),    //9
+            new Route("BEL_LUG_2", BEL, LUG, 1, Level.UNDERGROUND, Color.YELLOW), //10
+            new Route("BEL_WAS_1", BEL, WAS, 4, Level.UNDERGROUND, null),   //11
+            new Route("BEL_WAS_2", BEL, WAS, 4, Level.UNDERGROUND, null),   //12
+            new Route("BER_FRI_1", BER, FRI, 1, Level.OVERGROUND, Color.ORANGE),  //13
+            new Route("BER_FRI_2", BER, FRI, 1, Level.OVERGROUND, Color.YELLOW),  //14
+            new Route("BER_INT_1", BER, INT, 3, Level.OVERGROUND, Color.BLUE),    //15
+            new Route("BER_LUC_1", BER, LUC, 4, Level.OVERGROUND, null),    //16
+            new Route("BER_LUC_2", BER, LUC, 4, Level.OVERGROUND, null),    //17
+            new Route("BER_NEU_1", BER, NEU, 2, Level.OVERGROUND, Color.RED),     //18
+            new Route("BER_SOL_1", BER, SOL, 2, Level.OVERGROUND, Color.BLACK),   //19
+            new Route("BRI_INT_1", BRI, INT, 2, Level.UNDERGROUND, Color.WHITE),  //20
+            new Route("BRI_IT5_1", BRI, IT5, 3, Level.UNDERGROUND, Color.GREEN),  //21
+            new Route("BRI_LOC_1", BRI, LOC, 6, Level.UNDERGROUND, null),   //22
+            new Route("BRI_SIO_1", BRI, SIO, 3, Level.UNDERGROUND, Color.BLACK),  //23
+            new Route("BRI_WAS_1", BRI, WAS, 4, Level.UNDERGROUND, Color.RED),    //24
+            new Route("BRU_COI_1", BRU, COI, 5, Level.UNDERGROUND, null),   //25
+            new Route("BRU_DAV_1", BRU, DAV, 4, Level.UNDERGROUND, Color.BLUE),   //26
+            new Route("BRU_IT2_1", BRU, IT2, 2, Level.UNDERGROUND, Color.GREEN),  //27
+            new Route("COI_DAV_1", COI, DAV, 2, Level.UNDERGROUND, Color.VIOLET), //28
+            new Route("COI_SAR_1", COI, SAR, 1, Level.UNDERGROUND, Color.WHITE),  //29
+            new Route("COI_WAS_1", COI, WAS, 5, Level.UNDERGROUND, null),   //30
+            new Route("DAV_AT3_1", DAV, AT3, 3, Level.UNDERGROUND, null),   //31
+            new Route("DAV_IT1_1", DAV, IT1, 3, Level.UNDERGROUND, null),   //32
+            new Route("DAV_SAR_1", DAV, SAR, 3, Level.UNDERGROUND, Color.BLACK),  //33
+            new Route("DE2_SCE_1", DE2, SCE, 1, Level.OVERGROUND, Color.YELLOW),  //34
+            new Route("DE3_KRE_1", DE3, KRE, 1, Level.OVERGROUND, Color.ORANGE),  //35
+            new Route("DE4_KRE_1", DE4, KRE, 1, Level.OVERGROUND, Color.WHITE),   //36
+            new Route("DE5_STG_1", DE5, STG, 2, Level.OVERGROUND, null),    //37
+            new Route("DEL_FR4_1", DEL, FR4, 2, Level.UNDERGROUND, Color.BLACK),  //38
+            new Route("DEL_LCF_1", DEL, LCF, 3, Level.UNDERGROUND, Color.WHITE),  //39
+            new Route("DEL_SOL_1", DEL, SOL, 1, Level.UNDERGROUND, Color.VIOLET), //40
+            new Route("FR1_MAR_1", FR1, MAR, 2, Level.UNDERGROUND, null),   //41
+            new Route("FR2_GEN_1", FR2, GEN, 1, Level.OVERGROUND, Color.YELLOW),  //42
             new Route("FR3_LCF_1", FR3, LCF, 2, Level.UNDERGROUND, Color.GREEN),
             new Route("FRI_LAU_1", FRI, LAU, 3, Level.OVERGROUND, Color.RED),
             new Route("FRI_LAU_2", FRI, LAU, 3, Level.OVERGROUND, Color.VIOLET),
