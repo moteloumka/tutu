@@ -13,26 +13,60 @@ public final class PlayerState extends PublicPlayerState {
     private final SortedBag<Ticket> tickets;
     private final SortedBag<Card> cards;
 
+    /**
+     * public constructor for the state of a player
+     * @param tickets the tickets the player has
+     * @param cards the cards the player currently has
+     * @param routes the routes owned by the player
+     */
     public PlayerState(SortedBag<Ticket> tickets, SortedBag<Card> cards, List<Route> routes){
         super(tickets.size(), cards.size(),routes);
         this.tickets = tickets;
         this.cards = cards;
     }
 
+    /**
+     * used for the beginning of a game
+     * @param initialCards the cards the player starts with
+     * @return an instance of playerstate with no ticket, 4 cards and no route owned by the player
+     */
     public static PlayerState initial(SortedBag<Card> initialCards){
         Preconditions.checkArgument(initialCards.size()==4,
                 "nb initial cards has to be 4");
-        return new PlayerState(null,initialCards,null);
+        SortedBag.Builder<Ticket> ticketBuilder = new SortedBag.Builder<>();
+        SortedBag<Ticket> tickets = ticketBuilder.build();
+
+        List<Route> routes = List.of();
+
+        return new PlayerState(tickets,initialCards,routes);
     }
 
+    /**
+     *
+     * @return the tickets of the player
+     */
     public SortedBag<Ticket> tickets() {return tickets; }
 
+    /**
+     *
+     * @return the cards of the player
+     */
     public SortedBag<Card> cards() {return cards; }
 
+    /**
+     *
+     * @param newTickets a sorted bag containing the tickets we want to add to the player
+     * @return a new instance of the playerState with the tickets added
+     */
     public PlayerState withAddedTickets(SortedBag<Ticket> newTickets){
         return new PlayerState(this.tickets.union(newTickets),this.cards,this.routes());
     }
 
+    /**
+     *
+     * @param card card we want to add to the player
+     * @return a new instance of the playerState with the cards added
+     */
     public PlayerState withAddedCard(Card card){
         SortedBag.Builder<Card> newCardsB = new SortedBag.Builder<>();
         newCardsB.add(card);
@@ -40,10 +74,20 @@ public final class PlayerState extends PublicPlayerState {
         return new PlayerState(this.tickets,this.cards.union(newCards),this.routes());
     }
 
+    /**
+     *
+     * @param additionalCards sorted Bag of cards we want to add to the player
+     * @return a new instance of the playerState with the cards added
+     */
     public PlayerState withAddedCards(SortedBag<Card> additionalCards){
         return new PlayerState(this.tickets,this.cards.union(additionalCards),this.routes());
     }
 
+    /**
+     *
+     * @param route the route that we want to claim
+     * @return true if we can claim the route, false otherwise
+     */
     public boolean canClaimRoute(Route route){
         if(this.carCount()<route.length())
             return false;
@@ -54,6 +98,11 @@ public final class PlayerState extends PublicPlayerState {
         return false;
     }
 
+    /**
+     *
+     * @param route the route we want to claim
+     * @return the list of sorted bag of possible cards we can use to claim the route
+     */
     public List<SortedBag<Card>> possibleClaimCards(Route route){
         Preconditions.checkArgument(route.length()<=this.carCount(),
                 "not enough wagons to get the route");
@@ -62,11 +111,12 @@ public final class PlayerState extends PublicPlayerState {
 
     /**
      *
-     * @param additionalCardsCount
-     * @param initialCards
-     * @param drawnCards
-     * @return
+     * @param additionalCardsCount the number of additional cards the player has to use to claim the tunnel
+     * @param initialCards cards the player uses to claim the tunnel
+     * @param drawnCards cards drawn from the deck
+     * @return the list of sorted bag of possible cards we can use to claim the tunnel
      */
+
     public List<SortedBag<Card>> possibleAdditionalCards
             (int additionalCardsCount, SortedBag<Card> initialCards, SortedBag<Card> drawnCards){
 
@@ -104,13 +154,22 @@ public final class PlayerState extends PublicPlayerState {
         return options;
     }
 
+    /**
+     *
+     * @param route the route the player claims
+     * @param claimCards the cards the player uses to claim the route with
+     * @return a new state of the player with the route minus the cards he used
+     */
     public PlayerState withClaimedRoute(Route route, SortedBag<Card> claimCards){
         List<Route> newRoutes = this.routes();
         newRoutes.add(route);
         return new PlayerState(this.tickets,this.cards.difference(claimCards),newRoutes);
     }
 
-    //do not forget  to activate
+    /**
+     *
+     * @return the points the player gains or loses whether or not he connects stations from a ticket
+     */
     public int ticketPoints(){
         int ans = 0;
         StationPartition partition = partitionConstructor();
@@ -120,8 +179,16 @@ public final class PlayerState extends PublicPlayerState {
         return ans;
     }
 
+    /**
+     *
+     * @return the points gained from tickets and from the routes the player has claimed
+     */
     public int finalPoints(){return ticketPoints()+ super.claimPoints(); }
 
+    /**
+     * used only for ticketPoints()
+     * @return a StationPartition that tells us the network of stations the player has
+     */
     private StationPartition partitionConstructor(){
         int max = -1;
         List<Route> routes = List.copyOf(this.routes());

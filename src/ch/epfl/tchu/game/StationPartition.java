@@ -76,7 +76,6 @@ public final class StationPartition implements StationConnectivity{
                 //making sure that different partitions
                 //will all have the same representative
                 this.buildTab[i] = representative(i);
-                System.out.print(buildTab[i] + "  ");
             }
             return new StationPartition(this.buildTab);
         }

@@ -14,6 +14,12 @@ public class PublicPlayerState {
     private final int carCount;
     private final int claimPoints;
 
+    /**
+     * what every other player can see
+     * @param ticketCount the number of tickets the player has
+     * @param cardCount the number of cards the player has
+     * @param routes the routes the player has claimed
+     */
     public PublicPlayerState(int ticketCount, int cardCount, List<Route> routes){
         this.ticketCount = ticketCount;
         this.cardCount = cardCount;
@@ -28,10 +34,34 @@ public class PublicPlayerState {
         this.claimPoints = pc;
     }
 
+    /**
+     *
+     * @return the number of tickets of the player
+     */
     public int ticketCount(){return this.ticketCount;}
+
+    /**
+     *
+     * @return the number of cards from the player
+     */
     public int cardCount(){return this.cardCount;}
+
+    /**
+     *
+     * @return a list of the routes that the player has
+     */
     public List<Route> routes() {return List.copyOf(routes);}
+
+    /**
+     *
+     * @return the numbers of cars left of the player
+     */
     public int carCount() {return carCount;}
+
+    /***
+     *
+     * @return the points the player has gained from its routes
+     */
     public int claimPoints() {return claimPoints;}
 
 }

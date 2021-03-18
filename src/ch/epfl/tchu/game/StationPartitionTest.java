@@ -1,6 +1,7 @@
 package ch.epfl.tchu.game;
 
 import ch.epfl.tchu.Preconditions;
+import ch.epfl.tchu.SortedBag;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -37,6 +38,14 @@ class StationPartitionTest {
 
     @Test
     void connected() {
+        List<Station> stations = List.copyOf(stationFull);
+        StationPartition.Builder builder = new StationPartition.Builder(stations.size());
+
+        builder.connect(getRoute("BAL_OLT_1").station1(), getRoute("BAL_DE1_1").station2());
+
+        StationPartition partition = builder.build();
+
+        assertEquals(false, partition.connected(getRoute("BAL_OLT_1").station1(), getRoute("BAL_OLT_1").station2()));
 
     }
 }
