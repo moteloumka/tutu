@@ -13,6 +13,10 @@ public enum PlayerId {
     public final static List<PlayerId> ALL =List.of(PlayerId.values());
     public final static int COUNT = ALL.size();
 
+    /**
+     *
+     * @return the PlayerId of the player who wasn't just playing
+     */
     public PlayerId next(){
         if(this == PLAYER_1)
             return PLAYER_2;

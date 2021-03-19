@@ -87,11 +87,9 @@ public final class StationPartition implements StationConnectivity{
          * @return its reference in the Array
          */
         private int representative(int rep){
-            int answer;
-            do{
-               answer = this.buildTab[rep];
-            }while (answer!=this.buildTab[answer]);
-            return answer;
+            if (this.buildTab[rep] == rep)
+                return rep;
+            return representative(this.buildTab[rep]);
         }
     }
 }
