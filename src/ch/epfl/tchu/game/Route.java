@@ -155,7 +155,9 @@ public final class Route {
                 }
             }
             list.add(SortedBag.of(this.length,Card.LOCOMOTIVE));
+
         }else{
+
             if (this.color == null){
                 for( Color  color: Color.values()){
                     SortedBag.Builder<Card> builder = new SortedBag.Builder<>();
@@ -170,10 +172,7 @@ public final class Route {
                 list.add(card);
             }
         }
-
-        //adds the line of locomotives in the end (is done in both situations and avoids a new for iteration)
-
-        return list;
+        return List.copyOf(list);
     }
 
     /**

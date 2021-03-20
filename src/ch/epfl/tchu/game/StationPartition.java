@@ -89,7 +89,7 @@ public final class StationPartition implements StationConnectivity{
         private int representative(int rep){
             if (this.buildTab[rep] == rep)
                 return rep;
-            return representative(this.buildTab[rep]);
+            return representative(this.buildTab[rep] );
         }
     }
 }

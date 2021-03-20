@@ -22,9 +22,7 @@ public final class Deck<C extends Comparable<C> > {
      * private constructor called by the static method of
      * @param deck the deck that will be the deck...
      */
-    private Deck (List<C> deck){
-        this.deck = deck;
-    }
+    private Deck (List<C> deck){ this.deck = List.copyOf(deck);}
 
     /**
      * creates a deck  by shuffling the provided cards

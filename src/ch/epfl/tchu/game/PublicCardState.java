@@ -27,8 +27,8 @@ public class PublicCardState {
                 "discard card size can't be < 0");
 
         //this secures the "immuabilité" (is this necessary?)
-        this.faceUpCards = List.copyOf(faceUpCards);
-        this.deckSize = deckSize;
+        this.faceUpCards  = List.copyOf(faceUpCards);
+        this.deckSize     = deckSize;
         this.discardsSize = discardsSize;
     }
 

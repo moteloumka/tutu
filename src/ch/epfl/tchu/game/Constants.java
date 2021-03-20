@@ -104,4 +104,9 @@ public final class Constants {
      * Nombre de points bonus obtenus par le(s) joueur(s) disposant du plus long chemin.
      */
     public static final int LONGEST_TRAIL_BONUS_POINTS = 10;
+
+    /**
+     * constant added by us, this seems useful
+     */
+    public static final int MIN_WAGONS_TO_ENDGAME = 2;
 }

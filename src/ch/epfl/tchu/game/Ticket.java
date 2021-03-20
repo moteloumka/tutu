@@ -24,7 +24,7 @@ public final class Ticket implements Comparable<Ticket> {
             if (!(trips.get(0).from().name().equals(t.from().name()))) {
                 throw new IllegalArgumentException();
             }
-    this.trips = trips;
+    this.trips = List.copyOf(trips);
     this.text = computeText();
        }
     }

@@ -33,8 +33,16 @@ public final class Trail {
         this.length = length;
         this.station1 = station1;
         this.station2 = station2;
-        this.stations = stations;
-        this.routes = routes;
+
+        if(stations == null)
+            this.stations = null;
+        else
+            this.stations = List.copyOf(stations);
+
+        if (routes == null)
+            this.routes = null;
+        else
+            this.routes = List.copyOf(routes);
     }
 
     /**
