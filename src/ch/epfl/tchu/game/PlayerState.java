@@ -191,14 +191,13 @@ public final class PlayerState extends PublicPlayerState {
      */
     private StationPartition partitionConstructor(){
         int max = -1;
-        List<Route> routes = List.copyOf(this.routes());
+        List<Route> routes = this.routes();
         for (Route route : routes){
             if(route.station1().id() > max)
                 max = route.station1().id();
             if(route.station2().id() > max)
                 max = route.station2().id();
         }
-
         StationPartition.Builder builder = new StationPartition.Builder(max+1);
 
         for (int i = 0; i < routes.size() ; i++) {

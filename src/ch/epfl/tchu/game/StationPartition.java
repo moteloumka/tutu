@@ -2,7 +2,9 @@ package ch.epfl.tchu.game;
 
 import ch.epfl.tchu.Preconditions;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -11,14 +13,14 @@ import java.util.Arrays;
  */
 public final class StationPartition implements StationConnectivity{
 
-    private final int[] references;
+    private final List<Integer> references;
 
     /**
      * Private constructor that should only be called from the builder
      * @param ref reference Array of ints
      */
-    private StationPartition(int[] ref){
-        this.references = ref ;
+    private StationPartition(List<Integer> ref){
+        this.references = List.copyOf(ref);
     }
 
     /**
@@ -30,9 +32,9 @@ public final class StationPartition implements StationConnectivity{
      */
     @Override
     public boolean connected(Station s1, Station s2) {
-        if(s1.id() >= references.length || s2.id() >= references.length)
+        if(s1.id() >= references.size() || s2.id() >= references.size())
             return s1.equals(s2);
-        return references[s1.id()] == references[s2.id()];
+        return references.get(s1.id()).equals(references.get(s2.id()));
     }
 
     public final static class Builder{
@@ -53,7 +55,6 @@ public final class StationPartition implements StationConnectivity{
             }
         }
 
-
         /**
          * connects two stations by changing the index of the second one in the reference Array
          * by the number referenced by the other station
@@ -65,22 +66,19 @@ public final class StationPartition implements StationConnectivity{
             this.buildTab[station2.id()] = representative(station1.id());
             return this;
         }
-
-
         /**
          * creates a new instance of StationPartition, passing the Array buildTab as the reference tab
          * @return new instance of StationPartition
          */
         public StationPartition build(){
+            List<Integer> ref = new ArrayList<>();
             for(int i=0;i<this.buildTab.length;++i){
                 //making sure that different partitions
                 //will all have the same representative
-                this.buildTab[i] = representative(i);
+                ref.add(representative(i));
             }
-            return new StationPartition(this.buildTab);
+            return new StationPartition(ref);
         }
-
-
         /**
          * method that finds the "real" reference of a station
          * @param rep the station id
@@ -89,7 +87,7 @@ public final class StationPartition implements StationConnectivity{
         private int representative(int rep){
             if (this.buildTab[rep] == rep)
                 return rep;
-            return representative(this.buildTab[rep] );
+            return representative(this.buildTab[rep]);
         }
     }
 }

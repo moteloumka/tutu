@@ -48,7 +48,7 @@ public class PublicPlayerState {
 
     /**
      *
-     * @return a list of the routes that the player has
+     * @return a list (immutable) of the routes that the player has
      */
     public List<Route> routes() {return List.copyOf(routes);}
 

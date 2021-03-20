@@ -70,7 +70,7 @@ public class PublicGameState {
     /**
      * @return the instance of enum PlayerId of the player who is currently playing
      */
-    PlayerId currentPlayerId(){return this.currentPlayerId;};
+    public PlayerId currentPlayerId(){return this.currentPlayerId;};
 
     /**
      * @param playerId the player

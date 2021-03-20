@@ -89,7 +89,7 @@ public final class GameState extends PublicGameState {
      * @param rng instance of Random used to shuffle the cards/tickets
      * @return instance of GameState in it's initial state
      */
-    static GameState initial(SortedBag<Ticket> tickets, Random rng){
+    public static GameState initial(SortedBag<Ticket> tickets, Random rng){
         //creating  a new deck of  tickets with the ones passed as param
         Deck<Ticket> ticketDeck = Deck.of(tickets, rng);
         //creating a new deck with all the cards in it
@@ -287,7 +287,7 @@ public final class GameState extends PublicGameState {
      * indicates if it's time for the last turn
      * @return true if this player has less or equal to (2) wagons left
      */
-    boolean lastTurnBegins(){
+    public boolean lastTurnBegins(){
         return  (this.playerStates.get(this.currentPlayerId())
                 .ticketPoints()<=Constants.MIN_WAGONS_TO_ENDGAME);
     }
