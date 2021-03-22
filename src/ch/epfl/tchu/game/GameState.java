@@ -197,6 +197,8 @@ public final class GameState extends PublicGameState {
      */
     public GameState withInitiallyChosenTickets(PlayerId playerId, SortedBag<Ticket> chosenTickets){
         PlayerState oPs = this.playerStates.get(playerId);
+        Preconditions.checkArgument(oPs.tickets().size()==0,
+                "the player shouldn't have tickets at the beginning");
         PlayerState nPs = new PlayerState(chosenTickets,oPs.cards(),oPs.routes());
         Map<PlayerId,PlayerState> newPsMap = newPlayerStates(nPs);
 
@@ -351,8 +353,10 @@ public final class GameState extends PublicGameState {
         SortedBag<Card> p2Cards = deck.withoutTopCards(c).topCards(c);
         //creating the player states for the two players
         //SortedBag.of() used to show that no tickets are taken by these players yet
-        PlayerState ps1 = new PlayerState(SortedBag.of(), p1Cards,null);
-        PlayerState ps2 = new PlayerState(SortedBag.of(), p2Cards,null);
+        List<Route> routeList1 = List.of();
+        List<Route> routeList2 = List.of();
+        PlayerState ps1 = new PlayerState(SortedBag.of(), p1Cards,routeList1);
+        PlayerState ps2 = new PlayerState(SortedBag.of(), p2Cards,routeList2);
         //creating the map
         EnumMap<PlayerId,PlayerState> enumMap = new EnumMap<>(PlayerId.class);
         enumMap.put(PlayerId.PLAYER_1,ps1);
