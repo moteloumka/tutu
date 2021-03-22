@@ -154,19 +154,15 @@ public final class PlayerState extends PublicPlayerState {
 
         if (!daBag.isEmpty()){
             //Set<SortedBag<Card>> ssb = daBag.subsetsOfSize(3);
-            if (locoCards != 0){
-                Set<SortedBag<Card>> ssb  = daBag.subsetsOfSize(additionalCardsCount);
-                List<SortedBag<Card>> options = new ArrayList<>(ssb);
-                options.sort(
-                        Comparator.comparingInt(cs -> cs.countOf(Card.LOCOMOTIVE)));
-                return options;
+            Set<SortedBag<Card>> ssb  = daBag.subsetsOfSize(additionalCardsCount);
+            List<SortedBag<Card>> options = new ArrayList<>(ssb);
+            options.sort(
+                    Comparator.comparingInt(cs -> cs.countOf(Card.LOCOMOTIVE)));
+            return options;
             }
-            if (locoCards == initialCards.size())
-                return List.of(SortedBag.of(additionalCardsCount,Card.LOCOMOTIVE));
-
-        }
         return null;
-    }
+        }
+
 
     /**
      *
