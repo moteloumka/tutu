@@ -114,7 +114,7 @@ public final class GameState extends PublicGameState {
 
     /**
      * gives the full player state (not just public info)
-     * @param playerId
+     * @param playerId the player
      * @return full player's state
      */
     public PlayerState playerState(PlayerId playerId){
@@ -123,7 +123,7 @@ public final class GameState extends PublicGameState {
 
     /**
      * gives full player state on the current player
-     * @return
+     * @return PlayerState of current player
      */
     public PlayerState currentPlayerState(){
         return this.playerStates.get(super.currentPlayerId());
@@ -321,7 +321,7 @@ public final class GameState extends PublicGameState {
 
     /**
      * this is more of a little joke, really :)
-     * @param count
+     * @param count a number, u know
      */
     private void check(int count){
         Preconditions.checkArgument(count>0

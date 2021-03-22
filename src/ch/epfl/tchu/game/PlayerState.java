@@ -4,6 +4,7 @@ import ch.epfl.tchu.Preconditions;
 import ch.epfl.tchu.SortedBag;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Nikolay (314355)
@@ -106,7 +107,11 @@ public final class PlayerState extends PublicPlayerState {
     public List<SortedBag<Card>> possibleClaimCards(Route route){
         Preconditions.checkArgument(route.length()<=this.carCount(),
                 "not enough wagons to get the route");
-        return route.possibleClaimCards();
+        return route
+                .possibleClaimCards()
+                .stream()
+                .filter(this.cards::contains)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -122,7 +127,7 @@ public final class PlayerState extends PublicPlayerState {
 
         Preconditions.checkArgument(additionalCardsCount<=3 && additionalCardsCount >= 1,
                 "the number of additional cards has to be 1, 2 or 3");
-        Preconditions.checkArgument(!initialCards.isEmpty() && initialCards.toSet().size() > 3,
+        Preconditions.checkArgument(!initialCards.isEmpty() && initialCards.toSet().size() <= 2,
                 "initial cards can't have more than 2 diff type of cards");
         Preconditions.checkArgument(drawnCards.size()==3,
                 "there  has to be exactly 3 drawn cards");
@@ -134,24 +139,28 @@ public final class PlayerState extends PublicPlayerState {
         }
 
         SortedBag.Builder<Card> builder = new SortedBag.Builder<>();
-
-        int locoCards = this.cards.countOf(Card.LOCOMOTIVE) - initialCards.countOf(Card.LOCOMOTIVE);
+        //
+        //
+        int locoCards = this.cards.countOf(Card.LOCOMOTIVE)- initialCards.countOf(Card.LOCOMOTIVE) ;
         if (locoCards > 0)
             builder.add(locoCards,Card.LOCOMOTIVE);
         if(!cardsTab.isEmpty()){
-            int coloredCards = this.cards.countOf(cardsTab.get(0)) - cardsTab.size();
+            int coloredCards = this.cards.countOf(cardsTab.get(0))- cardsTab.size();
             if (coloredCards > 0)
                 builder.add(coloredCards,cardsTab.get(0));
         }
 
         SortedBag<Card> daBag = builder.build();
 
-        Set<SortedBag<Card>> ssb  = daBag.subsetsOfSize(additionalCardsCount);
-        List<SortedBag<Card>> options = new ArrayList<>(ssb);
-        options.sort(
-                Comparator.comparingInt(cs -> cs.countOf(Card.LOCOMOTIVE)));
-
-        return options;
+        if (!daBag.isEmpty()){
+            //Set<SortedBag<Card>> ssb = daBag.subsetsOfSize(3);
+            Set<SortedBag<Card>> ssb  = daBag.subsetsOfSize(additionalCardsCount);
+            List<SortedBag<Card>> options = new ArrayList<>(ssb);
+            options.sort(
+                    Comparator.comparingInt(cs -> cs.countOf(Card.LOCOMOTIVE)));
+            return options;
+        }
+        return null;
     }
 
     /**
@@ -161,7 +170,7 @@ public final class PlayerState extends PublicPlayerState {
      * @return a new state of the player with the route minus the cards he used
      */
     public PlayerState withClaimedRoute(Route route, SortedBag<Card> claimCards){
-        List<Route> newRoutes = this.routes();
+        List<Route> newRoutes = new ArrayList<>(this.routes());
         newRoutes.add(route);
         return new PlayerState(this.tickets,this.cards.difference(claimCards),newRoutes);
     }

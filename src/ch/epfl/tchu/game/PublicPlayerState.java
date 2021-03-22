@@ -1,5 +1,7 @@
 package ch.epfl.tchu.game;
 
+import ch.epfl.tchu.Preconditions;
+
 import java.util.List;
 
 /**
@@ -21,6 +23,7 @@ public class PublicPlayerState {
      * @param routes the routes the player has claimed
      */
     public PublicPlayerState(int ticketCount, int cardCount, List<Route> routes){
+        Preconditions.checkArgument(ticketCount>=0 && cardCount >= 0);
         this.ticketCount = ticketCount;
         this.cardCount = cardCount;
         this.routes = List.copyOf(routes);
