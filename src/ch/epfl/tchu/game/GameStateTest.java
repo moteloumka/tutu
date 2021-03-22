@@ -54,7 +54,7 @@ class GameStateTest {
         SortedBag<Ticket> tickets2 = ticketBuilder.build();
 
         GameState gameState1 = GameState.initial(tickets1, new Random());
-        gameState1.withChosenAdditionalTickets(tickets1,tickets2);
+        gameState1.withChosenAdditionalTickets(tickets2,tickets1);
 
         System.out.println(tickets1.size());
         System.out.println(gameState1.currentPlayerState().tickets().size());

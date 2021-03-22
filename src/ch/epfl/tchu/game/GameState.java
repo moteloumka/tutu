@@ -197,7 +197,7 @@ public final class GameState extends PublicGameState {
      */
     public GameState withInitiallyChosenTickets(PlayerId playerId, SortedBag<Ticket> chosenTickets){
         PlayerState oPs = this.playerStates.get(playerId);
-        Preconditions.checkArgument(oPs.tickets().size()==0,
+        Preconditions.checkArgument(oPs.tickets().isEmpty(),
                 "the player shouldn't have tickets at the beginning");
         PlayerState nPs = new PlayerState(chosenTickets,oPs.cards(),oPs.routes());
         Map<PlayerId,PlayerState> newPsMap = newPlayerStates(nPs);
@@ -216,6 +216,7 @@ public final class GameState extends PublicGameState {
      */
     public GameState withChosenAdditionalTickets(SortedBag<Ticket> drawnTickets,
                                                  SortedBag<Ticket> chosenTickets){
+
         Preconditions.checkArgument(this.canDrawTickets());
         Preconditions.checkArgument(drawnTickets.contains(chosenTickets),
                 "drawnTickets doesn't contain chosenTickets");
