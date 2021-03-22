@@ -54,13 +54,13 @@ class GameStateTest {
         SortedBag<Ticket> tickets2 = ticketBuilder.build();
 
         GameState gameState1 = GameState.initial(tickets1, new Random());
-        gameState1.withChosenAdditionalTickets(tickets2,tickets1);
+        GameState gameState2 = gameState1.withChosenAdditionalTickets(tickets2,tickets1);
 
         System.out.println(tickets1.size());
-        System.out.println(gameState1.currentPlayerState().tickets().size());
+        System.out.println(gameState2.currentPlayerState().tickets().size());
 
         assertThrows(IllegalArgumentException.class, () -> {
-            gameState1.withInitiallyChosenTickets(gameState1.currentPlayerId(), tickets1);
+            gameState2.withInitiallyChosenTickets(gameState2.currentPlayerId(), tickets1);
         });
     }
 }
