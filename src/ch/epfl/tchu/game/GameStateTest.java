@@ -39,7 +39,28 @@ class GameStateTest {
         System.out.println(gameState1.topCard().color());
         System.out.println(gameState2.topCard().color());
 
+        //test doesn't work 1 out of 8 times when they randomly are the same color
         assertTrue(gameState1.topCard().equals(gameState1.topCard()));
         assertTrue(!gameState1.topCard().equals(gameState2.topCard()));
+    }
+
+    @Test
+    void withInitiallyChosenTicketsDoesNotWorkWithNonEmptyTicketList() {
+        SortedBag.Builder<Ticket> ticketBuilder = new SortedBag.Builder<>();
+        ticketBuilder.add(ticketList.get(0));
+        SortedBag<Ticket> tickets1 = ticketBuilder.build();
+
+        ticketBuilder.add(ticketList.get(1));
+        SortedBag<Ticket> tickets2 = ticketBuilder.build();
+
+        GameState gameState1 = GameState.initial(tickets1, new Random());
+        gameState1.withChosenAdditionalTickets(tickets1,tickets2);
+
+        System.out.println(tickets1.size());
+        System.out.println(gameState1.currentPlayerState().tickets().size());
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            gameState1.withInitiallyChosenTickets(gameState1.currentPlayerId(), tickets1);
+        });
     }
 }
