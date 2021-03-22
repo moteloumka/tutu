@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 /**
  * @author Nikolay (314355)
@@ -91,12 +90,12 @@ public final class Deck<C extends Comparable<C> > {
      * @return new deck without the first "count" on top of the old one
      */
     public Deck<C> withoutTopCards(int count){
+        Preconditions.checkArgument(this.deck.size()>=count);
+
         List<C> newCards = new ArrayList<>();
         for (int i= count;i<this.deck.size();++i){
             newCards.add(this.deck.get(i));
         }
         return new Deck<>(newCards);
     }
-
-
 }
