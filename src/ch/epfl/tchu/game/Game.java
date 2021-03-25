@@ -34,7 +34,8 @@ public final class Game {
                 gameState.currentPlayerId()));
 
         //communicating to each player the name of the first one
-        players.forEach((k,v) -> v.receiveInfo(infoOnFirstPlayer.willPlayFirst()));
+        //players.forEach((k,v) -> v.receiveInfo(infoOnFirstPlayer.willPlayFirst()));
+        tell(infoOnFirstPlayer.willPlayFirst(),players);
 
         //distributing (5) tickets to each player
         for(Map.Entry<PlayerId,Player> m : players.entrySet()){
@@ -168,7 +169,7 @@ public final class Game {
     }
 
 
-    private void tell(String sting, Map<PlayerId,Player> players){
-        players.forEach((k,v) -> v.receiveInfo(sting));
+    private void tell(String string, Map<PlayerId,Player> players){
+        players.forEach((k,v) -> v.receiveInfo(string));
     }
 }
