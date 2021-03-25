@@ -199,6 +199,11 @@ public final class GameState extends PublicGameState {
         PlayerState oPs = this.playerStates.get(playerId);
         Preconditions.checkArgument(oPs.tickets().isEmpty(),
                 "the player shouldn't have tickets at the beginning");
+        Preconditions.checkArgument(Constants.INITIAL_TICKETS_COUNT
+                - chosenTickets.size()
+                < Constants.DISCARDABLE_TICKETS_COUNT
+        ,"cant discard more than (2) tickets");
+
         PlayerState nPs = new PlayerState(chosenTickets,oPs.cards(),oPs.routes());
         Map<PlayerId,PlayerState> newPsMap = newPlayerStates(nPs);
 

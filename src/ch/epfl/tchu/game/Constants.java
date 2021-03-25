@@ -109,4 +109,9 @@ public final class Constants {
      * constant added by us, this seems useful
      */
     public static final int MIN_WAGONS_TO_ENDGAME = 2;
+
+    /**
+     * constant added by us, this seems useful
+     */
+    public static final int CARDS_DRAWN_PER_TOUR = 2;
 }

@@ -90,7 +90,7 @@ public final class Trail {
             currentTrails.add(trailR);
             currentTrails.add(makeTrailOpposite(r));
             bidirRoutes.add(r);
-            bidirRoutes.add(r.makeRouteOpposite(r));
+            bidirRoutes.add(Route.makeRouteOpposite(r));
         }
 
         List<Trail> csPrime = new ArrayList<>();

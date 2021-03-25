@@ -115,8 +115,8 @@ public final class Route {
         return station == station1 ? this.station2 : this.station1;
     }
 
-    public Route makeRouteOpposite (Route route){
-        return new Route(this.id, this.station2, this.station1, this.length, this.level, this.color);
+    public static Route makeRouteOpposite (Route route){
+        return new Route(route.id, route.station2, route.station1, route.length, route.level, route.color);
     }
 
     /**
