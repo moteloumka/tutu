@@ -160,8 +160,9 @@ public final class Game {
                     }
                     break;
             }
-
-        }while (!gameState.lastTurnBegins());
+            if(gameState.lastPlayer() == null || gameState.lastPlayer() != currentPlayerId)
+                gameState.forNextTurn();
+        }while ( gameState.currentPlayerId() != gameState.lastPlayer() );
 
         
 
