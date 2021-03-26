@@ -230,4 +230,5 @@ public final class Trail {
         if (this.length==0 && trail.length==0) return true;
         return this.routes.toString().equals(trail.routes.toString());
     }
+
 }

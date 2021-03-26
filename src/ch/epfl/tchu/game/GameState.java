@@ -297,7 +297,8 @@ public final class GameState extends PublicGameState {
      */
     public boolean lastTurnBegins(){
         return  (this.playerStates.get(this.currentPlayerId())
-                .ticketPoints()<=Constants.MIN_WAGONS_TO_ENDGAME);
+                .ticketPoints()<=Constants.MIN_WAGONS_TO_ENDGAME
+                && this.lastPlayer() == null);
     }
 
     /**
