@@ -30,6 +30,7 @@ public class PublicGameState {
                 "there are supposed to be 2 playerId - PublicPlayerState given at construction");
         Preconditions.checkArgument(cardState.deckSize() >= 0,
                 "faced down cards cant be of negative quantity");
+        Preconditions.checkArgument(ticketsCount >= 0);
         this.ticketsCount    = ticketsCount;
         this.cardState       = Objects.requireNonNull(cardState);
         this.currentPlayerId = Objects.requireNonNull(currentPlayerId);
@@ -45,10 +46,10 @@ public class PublicGameState {
     }
 
     /**
-     * @return true if ticket deck isn't empty
+     * @return true if there's at least one ticket available
      */
     public boolean canDrawTickets(){
-        return !this.cardState.isDeckEmpty();
+        return this.ticketsCount > 0;
     }
 
     /**
@@ -91,9 +92,8 @@ public class PublicGameState {
      * @return all the routes owned by both players together
      */
     public List<Route> claimedRoutes(){
-        List<Route> routes = new ArrayList<>(this.playerState.get(this.currentPlayerId).routes());
-        if (this.lastPlayer != null)
-            routes.addAll(this.playerState.get(this.lastPlayer).routes());
+        List<Route> routes = new ArrayList<>();
+        this.playerState.forEach( (k,v) -> routes.addAll(v.routes()) );
         return List.copyOf(routes);
     }
 

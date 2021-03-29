@@ -201,11 +201,11 @@ public final class GameState extends PublicGameState {
                 "the player shouldn't have tickets at the beginning");
         Preconditions.checkArgument(Constants.INITIAL_TICKETS_COUNT
                 - chosenTickets.size()
-                < Constants.DISCARDABLE_TICKETS_COUNT
+                <= Constants.DISCARDABLE_TICKETS_COUNT
         ,"cant discard more than (2) tickets");
 
         PlayerState nPs = new PlayerState(chosenTickets,oPs.cards(),oPs.routes());
-        Map<PlayerId,PlayerState> newPsMap = newPlayerStates(nPs);
+        Map<PlayerId,PlayerState> newPsMap = newPlayerStates(nPs, playerId);
 
         return new GameState(this.cardState, this.ticketDeck, newPsMap,this);
     }
@@ -281,8 +281,6 @@ public final class GameState extends PublicGameState {
      * @return new GameState that keeps track of these changes
      */
     public GameState withClaimedRoute(Route route, SortedBag<Card> cards){
-        Preconditions.checkArgument(this.canDrawCards(),
-                "can't draw cards");
         CardState newCardState = this.cardState.withMoreDiscardedCards(cards);
         PlayerState nPs = this.currentPlayerState().withClaimedRoute(route,cards);
         Map<PlayerId,PlayerState> newPsMap = newPlayerStates(nPs);
@@ -297,7 +295,7 @@ public final class GameState extends PublicGameState {
      */
     public boolean lastTurnBegins(){
         return  (this.playerStates.get(this.currentPlayerId())
-                .ticketPoints() <= Constants.MIN_WAGONS_TO_ENDGAME
+                .carCount() <= Constants.MIN_WAGONS_TO_ENDGAME
                 && this.lastPlayer() == null);
     }
 
@@ -334,15 +332,14 @@ public final class GameState extends PublicGameState {
      */
     private void check(int count){
         Preconditions.checkArgument(count>0
-                && count<this.ticketDeck.size(),
+                && count <= this.ticketDeck.size(),
                 " nauchis' pisat' normal'no");
     }
 
 
     private static PlayerId whoGoesFirst(Random rng){
         int turn = rng.nextInt(PlayerId.COUNT);
-        //ok, we only have 2 players so i'm not going to complicate this
-        return turn == 0 ? PlayerId.PLAYER_1 : PlayerId.PLAYER_2;
+        return PlayerId.ALL.get(turn);
     }
 
     /**
@@ -354,27 +351,52 @@ public final class GameState extends PublicGameState {
      */
     private static EnumMap<PlayerId,PlayerState> newPlayerStates(Deck<Card> deck){
         int c = Constants.INITIAL_CARDS_COUNT;
-        //first (4) cards go into the first pile
-        SortedBag<Card> p1Cards = deck.topCards(c);
-        //taking off (4) cards from the top of the deck, repeating last manipulation
-        SortedBag<Card> p2Cards = deck.withoutTopCards(c).topCards(c);
-        //creating the player states for the two players
-        //SortedBag.of() used to show that no tickets are taken by these players yet
-        List<Route> routeList1 = List.of();
-        List<Route> routeList2 = List.of();
-        PlayerState ps1 = new PlayerState(SortedBag.of(), p1Cards,routeList1);
-        PlayerState ps2 = new PlayerState(SortedBag.of(), p2Cards,routeList2);
         //creating the map
         EnumMap<PlayerId,PlayerState> enumMap = new EnumMap<>(PlayerId.class);
-        enumMap.put(PlayerId.PLAYER_1,ps1);
-        enumMap.put(PlayerId.PLAYER_2,ps2);
+        for (PlayerId p : PlayerId.values()){
+            //first (4) cards go into the pile
+            SortedBag<Card> cardsToGive = deck.topCards(c);
+            //creating the player states for the player p
+            PlayerState ps = new PlayerState(SortedBag.of(),cardsToGive,List.of());
+            //adding the pair into the map
+            enumMap.put(p,ps);
+            //taking off (4) cards from the top of the deck, repeating last manipulation
+            deck = deck.withoutTopCards(c);
+        }
         return enumMap;
     }
+
+    /**
+     * creates a new modified EnumMap of players -> Player States
+     * the one player state being modified is the current player's
+     * @param nPs new player state of the CURRENT PLAYER
+     * @return
+     */
     private EnumMap<PlayerId,PlayerState> newPlayerStates(PlayerState nPs){
-        PlayerId p = this.currentPlayerId();
+        PlayerId playerId = this.currentPlayerId();
         EnumMap<PlayerId,PlayerState> newPsMap = new EnumMap<>(PlayerId.class);
-        newPsMap.put(p,nPs);
-        newPsMap.put(p.next(), this.playerState(p.next()));
+        for (PlayerId p : PlayerId.values()){
+            if(p == playerId)
+                newPsMap.put(p,nPs);
+            else
+                newPsMap.put(p,this.playerStates.get(p));
+        }
+        return newPsMap;
+    }
+    /**
+     * creates a new modified EnumMap of players -> Player States
+     * the one player state being modified is the "playerId" passed as param
+     * @param nPs new player state of the payerId player
+     * @return
+     */
+    private EnumMap<PlayerId,PlayerState> newPlayerStates(PlayerState nPs, PlayerId playerId){
+        EnumMap<PlayerId,PlayerState> newPsMap = new EnumMap<>(PlayerId.class);
+        for (PlayerId p : PlayerId.values()){
+            if(p == playerId)
+                newPsMap.put(p,nPs);
+            else
+                newPsMap.put(p,this.playerStates.get(p));
+        }
         return newPsMap;
     }
 }
