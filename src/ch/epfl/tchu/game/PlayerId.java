@@ -18,6 +18,8 @@ public enum PlayerId {
      * @return the PlayerId of the player who wasn't just playing
      */
     public PlayerId next(){
-        return this == PLAYER_1 ? PLAYER_2 : PLAYER_1;
+        if( this.ordinal() == (COUNT-1) )
+            return ALL.get(0);
+        return ALL.get(this.ordinal() + 1);
     }
 }
