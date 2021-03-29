@@ -195,6 +195,56 @@ public final class Game {
         }while ( gameState.currentPlayerId() != gameState.lastPlayer() );
 
 
+        /**
+        Map<PlayerId,Trail> longestTrails = new EnumMap<>(PlayerId.class);
+
+        for(Map.Entry<PlayerId,Player> m : players.entrySet()){
+            PlayerId p = m.getKey();
+            longestTrails.put(p,Trail.longest(gameState.playerState(p).routes()));
+        }
+
+        int maxTrail = longestTrails.values().stream().mapToInt(Trail::length).max().orElseThrow();
+        List<String> winners = new ArrayList<>();
+
+        EnumMap<PlayerId,Integer> pointsMap = new EnumMap<>(PlayerId.class);
+
+        //adding point values to each player
+        //receiving info on longest trail bonus for each player that has the longest trail
+        //and adding bonus points if necessary
+        for (Map.Entry<PlayerId,Trail> m: longestTrails.entrySet()){
+
+            PlayerId p = m.getKey();
+            String name = playerNames.get(p);
+            Info info = new Info(name);
+            int pts = gameState.playerState(p).finalPoints();
+
+            pointsMap.put(p,pts);
+
+            if (longestTrails.get(p).length() == maxTrail){
+                tell(info.getsLongestTrailBonus(longestTrails.get(p)), players);
+                pointsMap.replace(p,pts,pts + Constants.LONGEST_TRAIL_BONUS_POINTS);
+            }
+        }
+
+        int maxPts = pointsMap.values().stream().mapToInt(v -> v).max().orElseThrow();
+        int minPts = pointsMap.values().stream().mapToInt(v -> v).min().orElseThrow();
+
+        //adding the names of the players with the highest score into one array list
+        for (Map.Entry<PlayerId,Integer> m: pointsMap.entrySet()){
+            if (m.getValue() == maxPts)
+                winners.add(playerNames.get(m.getKey()));
+        }
+        if (winners.size()==1){
+            Info info = new Info(winners.get(0));
+            //announcing the winner
+            tell(info.won(maxPts, minPts), players);
+        }
+        else
+            //announcing the draw
+            tell(Info.draw(winners,maxPts),players);
+
+         */
+
         //here comes the endgame , thanos reference
         //we count points the points and announce winner and loser
 
@@ -206,7 +256,9 @@ public final class Game {
         //also puts the keys in pointMap
         int maxLength = 0;
         for(Map.Entry<PlayerId,Player> m : players.entrySet()) {
-            int playerLongestLength = Trail.longest(gameState.playerState(m.getKey()).routes()).length();
+            int playerLongestLength = Trail
+                    .longest(gameState.playerState(m.getKey()).routes())
+                    .length();
             if (playerLongestLength > maxLength){
                 maxLength = playerLongestLength;
             }
@@ -223,16 +275,16 @@ public final class Game {
                 tell(info.getsLongestTrailBonus(longestTrail), players);
                 //adding the bonus points to the players who got the bonus
                 pointMap.replace(m.getKey(),
-                        pointMap.get(m.getKey())+Constants.LONGEST_TRAIL_BONUS_POINTS);
+                        pointMap.get(m.getKey()) + Constants.LONGEST_TRAIL_BONUS_POINTS);
             }
         }
 
         int maxPoints = Collections.max(pointMap.values());
         int minPoints = Collections.min(pointMap.values());
-        List<PlayerId> potentialWinners = List.of();
+        List<PlayerId> potentialWinners = new ArrayList<>();
 
         for(Map.Entry<PlayerId,Player> m : players.entrySet()) {
-            if (pointMap.get(m.getKey())==maxPoints){
+            if (pointMap.get(m.getKey()) == maxPoints){
                 potentialWinners.add(m.getKey());}
         }
 
@@ -245,13 +297,6 @@ public final class Game {
             //announcing the draw
             Info.draw(new ArrayList<>(playerNames.values()), maxPoints);
         }
-
-
-
-
-
-
-
     }
 
 
