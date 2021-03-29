@@ -4,9 +4,9 @@ import ch.epfl.tchu.Preconditions;
 import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.gui.Info;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import javax.swing.text.html.parser.Entity;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Nikolay (314355)
@@ -26,9 +26,10 @@ public final class Game {
         //initialization of the whole game
 
         //initializing the game state
-        GameState gameState = GameState.initial(tickets, rng);
+        GameState gameState = GameState .initial(tickets, rng);
         //giving players names (maybe should call before game initialization)
         players.forEach((k,v) -> v.initPlayers(k,playerNames));
+
 
         Info infoOnFirstPlayer = new Info(playerNames.get(
                 gameState.currentPlayerId()));
@@ -44,12 +45,16 @@ public final class Game {
             //renewing the game state each time the tickets are distributed
             gameState = gameState.withoutTopTickets(Constants.INITIAL_TICKETS_COUNT);
         }
+        //updating gui so players know which ticket to pick
+        //given their initially distributed cards
+        update(gameState, players);
         //each player chooses his tickets
         for(Map.Entry<PlayerId,Player> m : players.entrySet()){
             gameState = gameState.withInitiallyChosenTickets(
                              m.getKey()
                             ,m.getValue().chooseInitialTickets());
         }
+
 
         //the number of tickets chosen by each player is communicated to all the players
         for(Map.Entry<PlayerId,Player> m : players.entrySet()){
@@ -75,6 +80,8 @@ public final class Game {
 
             tell(info.canPlay(),players);
 
+
+
             switch (turnKind){
 
                 case DRAW_TICKETS:
@@ -95,6 +102,7 @@ public final class Game {
 
                     //we repeat the same  process of drawing cards (2) times
                     for (int i = 0; i<Constants.CARDS_DRAWN_PER_TOUR;++i){
+
                         int slot = currentPlayer.drawSlot();
                         //good idea to check this every time  we draw a card
                         gameState = gameState.withCardsDeckRecreatedIfNeeded(rng);
@@ -108,7 +116,7 @@ public final class Game {
                                     ,players);
                             gameState = gameState.withDrawnFaceUpCard(slot);
                         }
-
+                        update(gameState, players);
                     }
                     break;
 
@@ -123,7 +131,8 @@ public final class Game {
 
                         if(routeToClaim.level()== Route.Level.UNDERGROUND){
 
-                            SortedBag.Builder<Card> builder  = new SortedBag.Builder<>();
+                            tell(info.attemptsTunnelClaim(routeToClaim, initialCards), players);
+                            SortedBag.Builder<Card> builder = new SortedBag.Builder<>();
                             //getting the (3) first cards
                             for (int i = 0; i<Constants.ADDITIONAL_TUNNEL_CARDS;++i){
                                 gameState = gameState.withCardsDeckRecreatedIfNeeded(rng);
@@ -133,6 +142,7 @@ public final class Game {
                             SortedBag<Card> drawnCards = builder.build();
                             //finding out how  many additional cards we need
                             int addCardCount = routeToClaim.additionalClaimCardsCount(initialCards,drawnCards);
+                            tell(info.drewAdditionalCards(drawnCards, addCardCount), players);
                             if (addCardCount!=0){
                                 //constructing  a list of combinations of additional cards the player can give
                                 List<SortedBag<Card>> options = gameState.currentPlayerState()
@@ -152,24 +162,106 @@ public final class Game {
                                     SortedBag<Card> finAddCards = currentPlayer
                                             .chooseAdditionalCards(options)
                                             .union(initialCards);
-                                    gameState = gameState.withClaimedRoute(routeToClaim,finAddCards);
+                                    //when the player doesn't want to/can't claim route. This is mega sus
+                                    if (initialCards.equals(finAddCards)) { tell(info.didNotClaimRoute(routeToClaim), players); }
+                                    else {
+                                        tell(info.claimedRoute(routeToClaim, finAddCards), players);
+                                        gameState = gameState.withClaimedRoute(routeToClaim, finAddCards);
+                                    }
+                                }
+                                else {
+                                    tell(info.didNotClaimRoute(routeToClaim), players);
                                 }
                             }
-                        } else
-                            gameState = gameState.withClaimedRoute(routeToClaim,initialCards);
+                        } else {
+                            tell(info.claimedRoute(routeToClaim, initialCards), players);
+                            gameState = gameState.withClaimedRoute(routeToClaim, initialCards);
+                        }
                     }
                     break;
             }
-            if(gameState.lastPlayer() == null || gameState.lastPlayer() != currentPlayerId)
+
+            //announces the last turn begins
+            if (gameState.lastPlayer() == null && gameState.lastTurnBegins()){
+                tell(info.lastTurnBegins(gameState.currentPlayerState().carCount()), players);
+            }
+
+            if(gameState.lastPlayer() == null || gameState.lastPlayer() != currentPlayerId) {
+                //updating the gui so that player knows what turn to have knowing the state of the
+                //game at the end of the turn
+                update(gameState, players);
                 gameState.forNextTurn();
+            }
         }while ( gameState.currentPlayerId() != gameState.lastPlayer() );
 
-        
+
+        //here comes the endgame , thanos reference
+        //we count points the points and announce winner and loser
+
+        //updating the gui one last time
+        update(gameState, players);
+
+        EnumMap<PlayerId, Integer> pointMap = new EnumMap<>(PlayerId.class);
+        //finding out what is the length of longest trail (can happen for more than 1 player)
+        //also puts the keys in pointMap
+        int maxLength = 0;
+        for(Map.Entry<PlayerId,Player> m : players.entrySet()) {
+            int playerLongestLength = Trail.longest(gameState.playerState(m.getKey()).routes()).length();
+            if (playerLongestLength > maxLength){
+                maxLength = playerLongestLength;
+            }
+            pointMap.put(m.getKey(), gameState.playerState(m.getKey()).finalPoints());
+        }
+
+        //receiving info on longest trail bonus for each player that has the longest trail
+        //and adding bonus points if necessary
+        for(Map.Entry<PlayerId,Player> m : players.entrySet()) {
+            Trail longestTrail = Trail.longest(gameState.playerState(m.getKey()).routes());
+            if (longestTrail.length() == maxLength){
+                Info info = new Info(playerNames.get(m.getKey()));
+                //announcing to everyone who got the bonus
+                tell(info.getsLongestTrailBonus(longestTrail), players);
+                //adding the bonus points to the players who got the bonus
+                pointMap.replace(m.getKey(),
+                        pointMap.get(m.getKey())+Constants.LONGEST_TRAIL_BONUS_POINTS);
+            }
+        }
+
+        int maxPoints = Collections.max(pointMap.values());
+        int minPoints = Collections.min(pointMap.values());
+        List<PlayerId> potentialWinners = List.of();
+
+        for(Map.Entry<PlayerId,Player> m : players.entrySet()) {
+            if (pointMap.get(m.getKey())==maxPoints){
+                potentialWinners.add(m.getKey());}
+        }
+
+        if (potentialWinners.size()==1) {
+            Info info = new Info(playerNames.get(potentialWinners.get(0)));
+            //announcing the winner
+            tell(info.won(maxPoints, minPoints), players);
+        }
+        else {
+            //announcing the draw
+            Info.draw(new ArrayList<>(playerNames.values()), maxPoints);
+        }
+
+
+
+
+
+
 
     }
 
 
+
+
     private void tell(String string, Map<PlayerId,Player> players){
         players.forEach((k,v) -> v.receiveInfo(string));
+    }
+
+    private void update(GameState gameState, Map<PlayerId,Player> players){
+        players.forEach((k,v) -> v.updateState(gameState, gameState.playerState(k)));
     }
 }

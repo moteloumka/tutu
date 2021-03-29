@@ -170,7 +170,7 @@ public final class Info {
     }
 
     /**
-     *  states the tunnel a player claimed with which cards
+     *  states the tunnel a player want to claim with which initial cards
      * @param route the tunnel the player claimed
      * @param initialCards with which cards the player claimed the tunnel
      * @return a string stating the tunnel a player claimed with which cards
@@ -180,10 +180,10 @@ public final class Info {
     }
 
     /**
-     * states
-     * @param drawnCards
-     * @param additionalCost
-     * @return
+     * states that the player drew the 3 additional cards and that they imply the additional cost
+     * @param drawnCards the drawn cards
+     * @param additionalCost the additional cost due to the 3 drawn cards
+     * @return a string stating that the player drew the 3 additional cards and that they imply the additional cost
      */
     public String drewAdditionalCards(SortedBag<Card> drawnCards, int additionalCost){
         StringBuilder builder = new StringBuilder();
