@@ -150,7 +150,7 @@ public final class GameState extends PublicGameState {
                 " nauchis' pisat' normal'no");
         return new GameState(this.cardState,ticketDeck.withoutTopCards(count),this.playerStates,this);
     }
-    
+
     /**
      *
      * @return the top card from the deck
@@ -376,14 +376,9 @@ public final class GameState extends PublicGameState {
      */
     private EnumMap<PlayerId,PlayerState> newPlayerStates(PlayerState nPs){
         PlayerId playerId = this.currentPlayerId();
-        EnumMap<PlayerId,PlayerState> newPsMap = new EnumMap<>(PlayerId.class);
-        for (PlayerId p : PlayerId.values()){
-            if(p == playerId)
-                newPsMap.put(p,nPs);
-            else
-                newPsMap.put(p,this.playerStates.get(p));
-        }
-        return newPsMap;
+        EnumMap<PlayerId,PlayerState> newPlayerStates = new EnumMap<>(this.playerStates);
+        newPlayerStates.replace(playerId,this.playerStates.get(playerId),nPs);
+        return newPlayerStates;
     }
     /**
      * creates a new modified EnumMap of players -> Player States
@@ -392,13 +387,8 @@ public final class GameState extends PublicGameState {
      * @return
      */
     private EnumMap<PlayerId,PlayerState> newPlayerStates(PlayerState nPs, PlayerId playerId){
-        EnumMap<PlayerId,PlayerState> newPsMap = new EnumMap<>(PlayerId.class);
-        for (PlayerId p : PlayerId.values()){
-            if(p == playerId)
-                newPsMap.put(p,nPs);
-            else
-                newPsMap.put(p,this.playerStates.get(p));
-        }
-        return newPsMap;
+        EnumMap<PlayerId,PlayerState> newPlayerStates = new EnumMap<>(this.playerStates);
+        newPlayerStates.replace(playerId,this.playerStates.get(playerId),nPs);
+        return newPlayerStates;
     }
 }
