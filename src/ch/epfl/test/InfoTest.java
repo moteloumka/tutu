@@ -7,6 +7,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import javax.sound.midi.Soundbank;
 import java.io.IOException;
 import java.util.List;
 
@@ -14,6 +15,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class InfoTest {
 
+
+    private static final Info info = new Info("Gary");
+    private static final List <String> playerNames = List.of("Gary", "Bernard");
 
     @Test
     void infoCardNameWorks() {
@@ -271,5 +275,15 @@ class InfoTest {
         var actual2 = info.won(3, 2);
         var expected2 = "\nBjarne remporte la victoire avec 3 points, contre 2 points !\n";
         assertEquals(expected2, actual2);
+    }
+
+
+
+    @Test
+    void RandomTEst(){
+        System.out.println(info.won(120,2000000));
+
+
+
     }
 }

@@ -4,6 +4,7 @@ import ch.epfl.tchu.game.Color;
 import ch.epfl.tchu.game.Route;
 import ch.epfl.tchu.game.Station;
 import ch.epfl.tchu.game.Trail;
+import ch.epfl.tchu.gui.Info;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -12,8 +13,12 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
 
 class TrailTest {
+
+    private final static Info info = new Info("Gary");
+
     @Test
     void trailLongestWorksOnGivenExample() {
+
         var s1 = new Station(1, "Yverdon");
         var s2 = new Station(2, "Fribourg");
         var s3 = new Station(3, "Neuchâtel");
@@ -112,6 +117,7 @@ class TrailTest {
                 chRoutes.OLT_ZUR_1,
                 chRoutes.BAD_ZUR_1);
         var longest = Trail.longest(routes);
+        System.out.println();
         assertEquals(23, longest.length());
     }
 
