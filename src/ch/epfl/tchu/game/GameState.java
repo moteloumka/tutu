@@ -134,7 +134,9 @@ public final class GameState extends PublicGameState {
      * @return the first count tickets
      */
     public SortedBag<Ticket> topTickets(int count){
-        check(count);
+        Preconditions.checkArgument(count>=0
+                        && count <= this.ticketDeck.size(),
+                " nauchis' pisat' normal'no");
         return this.ticketDeck.topCards(count);
     }
 
@@ -143,10 +145,12 @@ public final class GameState extends PublicGameState {
      * @return same game state but without the top tickets (new instance though)
      */
     public GameState withoutTopTickets(int count){
-        check(count);
+        Preconditions.checkArgument(count>=0
+                        && count <= this.ticketDeck.size(),
+                " nauchis' pisat' normal'no");
         return new GameState(this.cardState,ticketDeck.withoutTopCards(count),this.playerStates,this);
     }
-
+    
     /**
      *
      * @return the top card from the deck
@@ -331,9 +335,7 @@ public final class GameState extends PublicGameState {
      * @param count a number, u know
      */
     private void check(int count){
-        Preconditions.checkArgument(count>0
-                && count <= this.ticketDeck.size(),
-                " nauchis' pisat' normal'no");
+
     }
 
 

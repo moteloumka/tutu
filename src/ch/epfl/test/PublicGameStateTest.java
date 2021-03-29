@@ -1,6 +1,7 @@
-package ch.epfl.tchu.game;
+package ch.epfl.test;
 
 import ch.epfl.tchu.SortedBag;
+import ch.epfl.tchu.game.*;
 import ch.epfl.test.TestRandomizer;
 import org.junit.jupiter.api.Test;
 
