@@ -114,4 +114,9 @@ public final class Constants {
      * constant added by us, this seems useful
      */
     public static final int CARDS_DRAWN_PER_TOUR = 2;
+
+    /**
+     *
+     */
+    public static final int PLAYERS_COUNT = 2;
 }

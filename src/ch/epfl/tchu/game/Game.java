@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
  */
 public final class Game {
     private Game(){}
-    public void play(Map<PlayerId, Player> players
+    public static void play(Map<PlayerId, Player> players
             , Map<PlayerId, String> playerNames
             , SortedBag<Ticket> tickets, Random rng){
 
@@ -122,62 +122,84 @@ public final class Game {
 
                 case CLAIM_ROUTE:
 
-                    //find out what we're trying to claim
-                    Route routeToClaim = currentPlayer.claimedRoute();
-                    //find out with which cards the player is willing to claim the route
-                    SortedBag<Card> initialCards = currentPlayer.initialClaimCards();
-                    //checks if claiming the route is possible
-                    if (gameState.currentPlayerState().canClaimRoute(routeToClaim)){
+                    Route routeToClaim;
+                    SortedBag<Card> initialCards;
+                    boolean canClaimRoute;
 
-                        if(routeToClaim.level()== Route.Level.UNDERGROUND){
+                    do {
+                        //find out what we're trying to claim
+                        routeToClaim = currentPlayer.claimedRoute();
+                        //find out with which cards the player is willing to claim the route
+                        initialCards = currentPlayer.initialClaimCards();
+                        //checks if claiming the route is possible
+                        canClaimRoute = gameState.currentPlayerState().canClaimRoute(routeToClaim);
+                        System.out.println("do1");
+                    }while (!canClaimRoute);
 
-                            tell(info.attemptsTunnelClaim(routeToClaim, initialCards), players);
-                            SortedBag.Builder<Card> builder = new SortedBag.Builder<>();
-                            //getting the (3) first cards
-                            for (int i = 0; i<Constants.ADDITIONAL_TUNNEL_CARDS;++i){
-                                gameState = gameState.withCardsDeckRecreatedIfNeeded(rng);
-                                builder.add(gameState.topCard());
-                                gameState = gameState.withoutTopCard();
-                            }
-                            SortedBag<Card> drawnCards = builder.build();
-                            //finding out how  many additional cards we need
-                            int addCardCount = routeToClaim.additionalClaimCardsCount(initialCards,drawnCards);
-                            tell(info.drewAdditionalCards(drawnCards, addCardCount), players);
-                            if (addCardCount!=0){
-                                //constructing  a list of combinations of additional cards the player can give
-                                List<SortedBag<Card>> options = gameState.currentPlayerState()
-                                        .possibleAdditionalCards(addCardCount
-                                                ,initialCards
-                                                ,drawnCards);
-                                /**
-                                 * not sure if we need to do this, there may be a method somewhere
-                                 */
-                                boolean canGetTunnel = false;
-                                for (SortedBag<Card> cards: options){
-                                    if (gameState.currentPlayerState().cards().contains(cards))
-                                        canGetTunnel = true;
-                                }
-                                if (canGetTunnel){
-                                    //this is also quite sus ngl
-                                    SortedBag<Card> finAddCards = currentPlayer
-                                            .chooseAdditionalCards(options)
-                                            .union(initialCards);
-                                    //when the player doesn't want to/can't claim route. This is mega sus
-                                    if (initialCards.equals(finAddCards)) { tell(info.didNotClaimRoute(routeToClaim), players); }
-                                    else {
-                                        tell(info.claimedRoute(routeToClaim, finAddCards), players);
-                                        gameState = gameState.withClaimedRoute(routeToClaim, finAddCards);
-                                    }
-                                }
-                                else {
+
+                    if(routeToClaim.level()== Route.Level.UNDERGROUND){
+                        SortedBag<Card> interCards = SortedBag
+                                .of(gameState.currentPlayerState().cards().difference(initialCards));
+
+                        tell(info.attemptsTunnelClaim(routeToClaim, initialCards), players);
+                        SortedBag.Builder<Card> builder = new SortedBag.Builder<>();
+                        //getting the (3) first cards
+                        for (int i = 0; i < Constants.ADDITIONAL_TUNNEL_CARDS; ++i){
+                            gameState = gameState.withCardsDeckRecreatedIfNeeded(rng);
+                            builder.add(gameState.topCard());
+                            gameState = gameState.withoutTopCard();
+                        }
+                        SortedBag<Card> drawnCards = builder.build();
+                        //informing the game where to put the cards
+                        gameState = gameState.withMoreDiscardedCards(drawnCards);
+                        int addCardCount = routeToClaim.additionalClaimCardsCount(initialCards,drawnCards);
+                        tell(info.drewAdditionalCards(drawnCards, addCardCount), players);
+
+                        if (addCardCount!=0){
+                            //constructing  a list of combinations of additional cards the player can give
+                            List<SortedBag<Card>> options = gameState.currentPlayerState()
+                                    .possibleAdditionalCards(addCardCount
+                                            ,initialCards
+                                            ,drawnCards);
+                            //checking if the player posses at least one possible combination
+                            if (options.stream().anyMatch(interCards::contains)){
+
+                                SortedBag<Card> finalInitialCards = initialCards;
+                                List<SortedBag<Card>> possibleOutcomes = options.stream()
+                                        .map(sb -> sb.union(finalInitialCards))
+                                        .collect(Collectors.toList()) ;
+
+                                SortedBag<Card> addCards;
+                                do {
+                                    //asking the player to add cards
+                                    addCards = currentPlayer
+                                            .chooseAdditionalCards(options);
+                                    //checking so that the combination chosen is actually valid
+                                }while (!interCards.contains(addCards));
+
+                                SortedBag<Card> finalClaimCards = initialCards.union(addCards);
+                                //when the player doesn't want to/can't claim route
+                                if (finalClaimCards.equals(initialCards))
                                     tell(info.didNotClaimRoute(routeToClaim), players);
+                                //player had the additional cards and decided to get the tunnel
+                                else {
+                                    tell(info.claimedRoute(routeToClaim,finalClaimCards), players);
+                                    gameState = gameState.withClaimedRoute(routeToClaim, finalClaimCards);
                                 }
-                            }
+                                //if road = tunnel, add cards were required and the player didn't posses them
+                            } else {
+                                tell(info.didNotClaimRoute(routeToClaim), players);
+                                }
+                            //if the road is a tunnel but no additional cards were required
+                            }else{
+                            tell(info.claimedRoute(routeToClaim, initialCards), players);
+                            gameState = gameState.withClaimedRoute(routeToClaim, initialCards);
+                        }
+                        //if the road isn't a tunnel
                         } else {
                             tell(info.claimedRoute(routeToClaim, initialCards), players);
                             gameState = gameState.withClaimedRoute(routeToClaim, initialCards);
                         }
-                    }
                     break;
             }
 
@@ -190,12 +212,17 @@ public final class Game {
                 //updating the gui so that player knows what turn to have knowing the state of the
                 //game at the end of the turn
                 update(gameState, players);
-                gameState.forNextTurn();
+                gameState = gameState.forNextTurn();
             }
         }while ( gameState.currentPlayerId() != gameState.lastPlayer() );
 
+        //here comes the endgame , thanos reference
+        //we count points the points and announce winner and loser
 
-        /**
+        //updating the gui one last time
+
+        update(gameState, players);
+
         Map<PlayerId,Trail> longestTrails = new EnumMap<>(PlayerId.class);
 
         for(Map.Entry<PlayerId,Player> m : players.entrySet()){
@@ -243,14 +270,7 @@ public final class Game {
             //announcing the draw
             tell(Info.draw(winners,maxPts),players);
 
-         */
-
-        //here comes the endgame , thanos reference
-        //we count points the points and announce winner and loser
-
-        //updating the gui one last time
-        update(gameState, players);
-
+        /**
         EnumMap<PlayerId, Integer> pointMap = new EnumMap<>(PlayerId.class);
         //finding out what is the length of longest trail (can happen for more than 1 player)
         //also puts the keys in pointMap
@@ -288,6 +308,7 @@ public final class Game {
                 potentialWinners.add(m.getKey());}
         }
 
+
         if (potentialWinners.size()==1) {
             Info info = new Info(playerNames.get(potentialWinners.get(0)));
             //announcing the winner
@@ -297,16 +318,18 @@ public final class Game {
             //announcing the draw
             Info.draw(new ArrayList<>(playerNames.values()), maxPoints);
         }
+         */
     }
 
 
 
 
-    private void tell(String string, Map<PlayerId,Player> players){
+
+    private static void tell(String string, Map<PlayerId,Player> players){
         players.forEach((k,v) -> v.receiveInfo(string));
     }
 
-    private void update(GameState gameState, Map<PlayerId,Player> players){
+    private static void update(GameState gameState, Map<PlayerId,Player> players){
         players.forEach((k,v) -> v.updateState(gameState, gameState.playerState(k)));
     }
 }

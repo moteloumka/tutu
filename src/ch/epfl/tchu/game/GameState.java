@@ -186,6 +186,10 @@ public final class GameState extends PublicGameState {
      * @return same game state but with card deck recreated from discarded cards (new instance though)
      */
     public GameState withCardsDeckRecreatedIfNeeded(Random rng){
+        if(this.cardState.garbageIsEmpty() && this.cardState.isDeckEmpty())
+            System.out.println(this.playerStates.get(PlayerId.PLAYER_1).cards().size()+" "
+            +this.playerStates.get(PlayerId.PLAYER_2).cards().size());
+
         CardState cardStateVar = this.cardState;
         if(this.cardState.isDeckEmpty())
             cardStateVar = this.cardState.withDeckRecreatedFromDiscards(rng);
@@ -329,15 +333,6 @@ public final class GameState extends PublicGameState {
         //psm.forEach((k,v) -> pubMap.put(k, (PublicPlayerState) v));
         return pubMap;
     }
-
-    /**
-     * this is more of a little joke, really :)
-     * @param count a number, u know
-     */
-    private void check(int count){
-
-    }
-
 
     private static PlayerId whoGoesFirst(Random rng){
         int turn = rng.nextInt(PlayerId.COUNT);

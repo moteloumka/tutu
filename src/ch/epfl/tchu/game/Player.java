@@ -35,6 +35,8 @@ public interface Player {
 
     /**
      * called every time the game state changes
+     * to inform the player of the new public game state
+     * and his own new state
      * @param newState the new state of  the game
      * @param ownState the new state of  the player
      */

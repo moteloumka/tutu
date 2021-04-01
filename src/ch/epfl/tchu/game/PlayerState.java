@@ -227,7 +227,6 @@ public final class PlayerState extends PublicPlayerState {
                     builder.connect(route1.station1(),route2.station1());
             }
         }
-        System.out.println(builder);
         return builder.build();
     }
 }

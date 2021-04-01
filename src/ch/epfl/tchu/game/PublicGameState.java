@@ -12,7 +12,6 @@ public class PublicGameState {
     private final int ticketsCount;
     private final PublicCardState cardState;
     private final PlayerId currentPlayerId;
-    //from what i understand, this guy
     //only appears when it's time to end the game
     private final PlayerId lastPlayer;
     private final Map<PlayerId, PublicPlayerState> playerState;
@@ -26,8 +25,8 @@ public class PublicGameState {
      */
     public PublicGameState(int ticketsCount, PublicCardState cardState, PlayerId currentPlayerId,
                            Map<PlayerId, PublicPlayerState> playerState , PlayerId lastPlayer) {
-        Preconditions.checkArgument(playerState.size() == 2,
-                "there are supposed to be 2 playerId - PublicPlayerState given at construction");
+        Preconditions.checkArgument(playerState.size() == Constants.PLAYERS_COUNT,
+                "there are supposed to be exactly "+Constants.PLAYERS_COUNT+ " playerId - PublicPlayerState given at construction");
         Preconditions.checkArgument(cardState.deckSize() >= 0,
                 "faced down cards cant be of negative quantity");
         Preconditions.checkArgument(ticketsCount >= 0);
