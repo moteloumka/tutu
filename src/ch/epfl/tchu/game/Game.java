@@ -61,12 +61,13 @@ public final class Game {
 
             Info info = new Info(playerNames
                     .get(m.getKey()));
-            m.getValue()
-                    .receiveInfo(info.keptTickets(
-                            gameState
-                                    .playerState(m.getKey())
-                                    .ticketCount()
-            ));
+//            m.getValue()
+//                    .receiveInfo(info.keptTickets(
+//                            gameState
+//                                    .playerState(m.getKey())
+//                                    .ticketCount()
+//            ));
+            tell(info.keptTickets(gameState.playerState(m.getKey()).ticketCount()),players);
         }
 
         //the game is played here
@@ -168,20 +169,19 @@ public final class Game {
                             //checking if the player posses at least one possible combination
                             if (options.stream().anyMatch(interCards::contains)){
 
-                                SortedBag<Card> finalInitialCards = initialCards;
-                                List<SortedBag<Card>> possibleOutcomes = options.stream()
-                                        .map(sb -> sb.union(finalInitialCards))
-                                        .collect(Collectors.toList()) ;
-
                                 SortedBag<Card> addCards;
                                 do {
                                     //asking the player to add cards
                                     addCards = currentPlayer
                                             .chooseAdditionalCards(options);
-                                    //checking so that the combination chosen is actually valid
-                                }while (!interCards.contains(addCards));
+                                    //checking so that the combination chosen is actually valid or is null
+                                }while (addCards!=null
+                                        && !interCards.contains(addCards)
+                                        && options.contains(addCards));
 
-                                SortedBag<Card> finalClaimCards = initialCards.union(addCards);
+                                SortedBag<Card> finalClaimCards = initialCards;
+                                if (addCards != null)
+                                    finalClaimCards = finalClaimCards.union(addCards);
                                 //when the player doesn't want to/can't claim route
                                 if (finalClaimCards.equals(initialCards))
                                     tell(info.didNotClaimRoute(routeToClaim), players);

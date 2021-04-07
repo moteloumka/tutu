@@ -91,11 +91,6 @@ public final class Deck<C extends Comparable<C> > {
      */
     public Deck<C> withoutTopCards(int count){
         Preconditions.checkArgument(this.deck.size()>=count);
-
-        List<C> newCards = new ArrayList<>();
-        for (int i= count;i<this.deck.size();++i){
-            newCards.add(this.deck.get(i));
-        }
-        return new Deck<>(newCards);
+        return new Deck<C>(this.deck.subList(count,this.deck.size()));
     }
 }
