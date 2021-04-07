@@ -100,7 +100,7 @@ class GameTest {
         public TurnKind nextTurn() {
             ++turnCounter;
             System.out.println("turn : " + turnCounter);
-            System.out.println("car count : " + this.ownState.carCount());
+            System.out.println(this.name + " car count : " + this.ownState.carCount());
             System.out.println(this.name + " cards : " + this.ownState.cards());
             if (turnCounter > TURN_LIMIT)
                 throw new Error("Trop de tours joués !");
@@ -109,7 +109,7 @@ class GameTest {
             List<Route> claimableRoutes = allRoutes.stream()
                     .filter(r -> r.length() > 2)
                     .filter(r -> ownState.canClaimRoute(r))
-                    .filter(r -> r.level()== Route.Level.OVERGROUND)
+                    .filter(r -> r.level()== Route.Level.UNDERGROUND)
                     .collect(Collectors.toList());
 
             List<Route> shortRoutes = allRoutes.stream()
@@ -121,7 +121,13 @@ class GameTest {
                 System.out.println(this.name+" drew cards");
                 return TurnKind.DRAW_CARDS;
 
-            } else {
+            }
+
+            else if (turnCounter%10 == 0){ //i know this condition sucks but i just had to try smth
+                return TurnKind.DRAW_TICKETS;
+            }
+
+            else {
 
                 int routeIndex;
                 Route route;
@@ -145,15 +151,16 @@ class GameTest {
         public SortedBag<Ticket> chooseTickets(SortedBag<Ticket> options) {
             this.ticketsToChoseFrom = options;
             this.tickets = this.tickets.union(SortedBag.of(options.get(0)));
-            return tickets;
+            return SortedBag.of(options.get(0));
         }
 
         @Override
         public int drawSlot() {
             if(rng.nextBoolean())
-                return -1;
-            else
-                return rng.nextInt(5);
+               return -1;
+           else
+               return rng.nextInt(5);
+
         }
 
         @Override

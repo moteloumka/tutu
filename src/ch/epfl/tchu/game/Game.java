@@ -59,14 +59,8 @@ public final class Game {
         //the number of tickets chosen by each player is communicated to all the players
         for(Map.Entry<PlayerId,Player> m : players.entrySet()){
 
-            Info info = new Info(playerNames
-                    .get(m.getKey()));
-//            m.getValue()
-//                    .receiveInfo(info.keptTickets(
-//                            gameState
-//                                    .playerState(m.getKey())
-//                                    .ticketCount()
-//            ));
+            Info info = new Info(playerNames.get(m.getKey()));
+
             tell(info.keptTickets(gameState.playerState(m.getKey()).ticketCount()),players);
         }
 
