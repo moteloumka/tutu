@@ -58,17 +58,22 @@ public final class Game {
 
         //the number of tickets chosen by each player is communicated to all the players
         for(Map.Entry<PlayerId,Player> m : players.entrySet()){
+
             Info info = new Info(playerNames
                     .get(m.getKey()));
             m.getValue()
                     .receiveInfo(info.keptTickets(
-                    m.getValue().chooseInitialTickets().size()
+                            gameState
+                                    .playerState(m.getKey())
+                                    .ticketCount()
             ));
         }
 
         //the game is played here
         //gets out of the cycle only if lastTurnBegins() of GameState returns true
         //(in the end of one's turn)
+
+        System.out.println("------- GAME BEGINS --------- \n\n");
 
         do {
 
@@ -133,7 +138,6 @@ public final class Game {
                         initialCards = currentPlayer.initialClaimCards();
                         //checks if claiming the route is possible
                         canClaimRoute = gameState.currentPlayerState().canClaimRoute(routeToClaim);
-                        System.out.println("do1");
                     }while (!canClaimRoute);
 
 

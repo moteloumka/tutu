@@ -1,6 +1,7 @@
 package ch.epfl.tchu.game;
 
 import ch.epfl.tchu.SortedBag;
+import jdk.swing.interop.SwingInterOpUtils;
 import org.junit.jupiter.api.Test;
 
 import java.util.EnumMap;
@@ -19,10 +20,10 @@ class GameTest {
     Map<PlayerId, Player> players = new EnumMap<PlayerId, Player>(PlayerId.class);
     Map<PlayerId, String> playerNames = new EnumMap<PlayerId, String>(PlayerId.class);
     SortedBag<Ticket> allTickets = SortedBag.of(ChMap.tickets());
-    List<Route> allRoutes = ChMap.routes();
+    List<Route> CHRoutes = ChMap.routes();
     Random rng = new Random();
-    Player player1 = new TestPlayer(1,this.allRoutes,"player1");
-    Player player2 = new TestPlayer(1,this.allRoutes,"player2");
+    TestPlayer player1 = new TestPlayer(1,this.CHRoutes,"AmongUs");
+    TestPlayer player2 = new TestPlayer(1,this.CHRoutes,"Imposter");
     //Player player3 = new TestPlayer(1,this.allRoutes,"player3");
 
     @Test
@@ -30,8 +31,8 @@ class GameTest {
         players.put(PlayerId.PLAYER_1,player1);
         players.put(PlayerId.PLAYER_2,player2);
         //players.put(PlayerId.PLAYER_3,player3);
-        playerNames.put(PlayerId.PLAYER_1,"player1");
-        playerNames.put(PlayerId.PLAYER_2,"player2");
+        playerNames.put(PlayerId.PLAYER_1, player1.getName());
+        playerNames.put(PlayerId.PLAYER_2, player2.getName());
         //playerNames.put(PlayerId.PLAYER_3,"player3");
         Game.play(players,playerNames,allTickets,rng);
     }
@@ -39,7 +40,7 @@ class GameTest {
     private static final class TestPlayer implements Player {
         private static final int TURN_LIMIT = 1000;
 
-        private String name;
+        private final String name;
 
         private final Random rng;
         // Toutes les routes de la carte
@@ -65,15 +66,14 @@ class GameTest {
 
         @Override
         public void initPlayers(PlayerId ownId, Map<PlayerId, String> playerNames) {
-            System.out.println(ownId);
-            System.out.println(playerNames);
+            System.out.println("Initializing " + ownId);
+            System.out.println(playerNames + "\n");
         }
 
         @Override
         public void receiveInfo(String info) {
-            System.out.println(this.name+" receives info :");
+            System.out.println("---- INFO TO " + this.name.toUpperCase() + " ----");
             System.out.println(info);
-            System.out.println(turnCounter);
         }
 
         @Override
@@ -86,24 +86,28 @@ class GameTest {
         @Override
         public void setInitialTicketChoice(SortedBag<Ticket> tickets) {
             this.ticketsToChoseFrom = tickets;
+            System.out.println("setting initial tickets for " + this.name);
         }
 
         @Override
         public SortedBag<Ticket> chooseInitialTickets() {
             this.tickets = SortedBag.of(this.ticketsToChoseFrom.toList().subList(0,3));
+            System.out.println(this.name + " chose from initial tickets");
             return tickets;
         }
 
         @Override
         public TurnKind nextTurn() {
-            System.out.println(this.ownState.carCount());
-            turnCounter += 1;
+            ++turnCounter;
+            System.out.println("turn : " + turnCounter);
+            System.out.println("car count : " + this.ownState.carCount());
+            System.out.println(this.name + " cards : " + this.ownState.cards());
             if (turnCounter > TURN_LIMIT)
                 throw new Error("Trop de tours joués !");
 
             //finds the routs the player can claim
             List<Route> claimableRoutes = allRoutes.stream()
-                    .filter(r -> r.length() > 1)
+                    .filter(r -> r.length() > 2)
                     .filter(r -> ownState.canClaimRoute(r))
                     .filter(r -> r.level()== Route.Level.OVERGROUND)
                     .collect(Collectors.toList());
@@ -171,6 +175,10 @@ class GameTest {
                             .collect(Collectors.toList());
 
             return possibleReturn.isEmpty() ? SortedBag.of() : possibleReturn.get(0);
+        }
+
+        public String getName () {
+            return this.name;
         }
     }
 
