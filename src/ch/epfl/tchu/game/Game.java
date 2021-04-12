@@ -70,6 +70,8 @@ public final class Game {
 
         System.out.println("------- GAME BEGINS --------- \n\n");
 
+        boolean hasPlayedLastTurn = false;
+
         do {
 
             PlayerId currentPlayerId = gameState.currentPlayerId();
@@ -78,11 +80,14 @@ public final class Game {
             Player.TurnKind turnKind = currentPlayer.nextTurn();
             Info info = new Info(playerNames.get(currentPlayerId));
 
+            if (gameState.lastPlayer() == currentPlayerId)
+                hasPlayedLastTurn = true;
+
             tell(info.canPlay(),players);
 
 
 
-            switch (turnKind){
+                switch (turnKind){
 
                 case DRAW_TICKETS:
 
@@ -212,7 +217,9 @@ public final class Game {
                 update(gameState, players);
                 gameState = gameState.forNextTurn();
             }
-        }while ( gameState.currentPlayerId() != gameState.lastPlayer() );
+
+        }while ( gameState.currentPlayerId() != gameState.lastPlayer()
+                || (gameState.currentPlayerId() == gameState.lastPlayer() && !hasPlayedLastTurn) );
 
         //here comes the endgame , thanos reference
         //we count points the points and announce winner and loser
@@ -318,10 +325,6 @@ public final class Game {
         }
          */
     }
-
-
-
-
 
     private static void tell(String string, Map<PlayerId,Player> players){
         players.forEach((k,v) -> v.receiveInfo(string));
