@@ -16,7 +16,9 @@ public interface Player {
      * the player choses one in the beginning of each turn
      */
     public enum TurnKind{
-        DRAW_TICKETS,DRAW_CARDS,CLAIM_ROUTE}
+        DRAW_TICKETS,DRAW_CARDS,CLAIM_ROUTE;
+        public static List<TurnKind> ALL = List.of(TurnKind.values());
+    }
 
     /**
      * called in the beginning of the game to communicate to

@@ -18,7 +18,9 @@ public enum PlayerId {
      * @return the PlayerId of the player who wasn't just playing
      */
     public PlayerId next(){
+        //a bit more complicated than
        //return this == PLAYER_1 ? PLAYER_2 : PLAYER_1;
+        //but this way we can play with more than 2 players
         if(this.ordinal() == COUNT - 1)
             return ALL.get(0);
         return ALL.get(this.ordinal()+1);

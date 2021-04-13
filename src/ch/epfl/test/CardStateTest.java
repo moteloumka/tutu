@@ -15,6 +15,7 @@ public final class CardStateTest {
     private static final List<Card> ALL_CARDS = List.of(Card.values());
     private static final int FACE_UP_CARDS_COUNT = 5;
 
+
     @Test
     void cardStateOfFailsIfDeckIsTooSmall() {
         for (int i = 0; i < FACE_UP_CARDS_COUNT; i++) {
