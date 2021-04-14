@@ -33,7 +33,8 @@ public interface Serde <T> {
         return Serde.of(ser,deSer);
     }
 
-    static <T> Serde<List<T>> listOf(Serde<T> serde, String str){
+    static <T> Serde<List<T>> listOf(Serde<T> serde, char separation){
+        String str = String.valueOf(separation);
         return new Serde<List<T>>() {
             @Override
             public String serialize(List<T> list) {
@@ -53,7 +54,8 @@ public interface Serde <T> {
         };
     }
 
-    static <T extends Comparable<T>> Serde<SortedBag<T>> bagOf(Serde<T> serde, String str){
+    static <T extends Comparable<T>> Serde<SortedBag<T>> bagOf(Serde<T> serde, char separation){
+        String str = String.valueOf(separation);
         return new Serde<SortedBag<T>>() {
             @Override
             public String serialize(SortedBag<T> bag) {

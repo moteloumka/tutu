@@ -3,50 +3,170 @@ package ch.epfl.tchu.net;
 import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.game.*;
 
-import java.util.List;
+import java.util.*;
+import java.util.regex.Pattern;
 
 public final class Serdes {
    private Serdes(){};
 
-    private final static String basicSeparator = ",";
-    private final static String betterSeparator = ";";
-    private final static String ogSeparator = ":";
+    private final static char basicSeparator = ',';
+    private final static char betterSeparator = ';';
+    private final static char ogSeparator = ':';
 
-   //à finir les deux premiers!!
-   public static Serde<Integer> INTEGER;
-   public static Serde<String> STRING;
-   public static Serde<PlayerId> PLAYER_ID =
+   public final static Serde<Integer> INTEGER =
+           new Serde<Integer>() {
+              @Override
+              public String serialize(Integer obj) {
+                 return String.valueOf(obj);
+              }
+
+              @Override
+              public Integer deserialize(String cipher) {
+                 return Integer.valueOf(cipher);
+              }
+           };
+   /**
+    * DIS B THE LAST THING LEFT
+    */
+   public final static Serde<String> STRING =
+           new Serde<String>() {
+              @Override
+              public String serialize(String obj) {
+                 return null;
+              }
+
+              @Override
+              public String deserialize(String cipher) {
+                 return null;
+              }
+           };
+
+   public final static Serde<PlayerId> PLAYER_ID =
            Serde.oneOf(PlayerId.ALL);
-   public static Serde<Player.TurnKind> TURN_KIND =
+   public final static Serde<Player.TurnKind> TURN_KIND =
            Serde.oneOf(Player.TurnKind.ALL);
-   public static Serde<Card> CARD =
+   public final static Serde<Card> CARD =
            Serde.oneOf(Card.ALL);
-   public static Serde<Route> ROUTE =
+   public final static Serde<Route> ROUTE =
            Serde.oneOf(ChMap.routes());
-   public static Serde<Ticket> TICKET =
+   public final static Serde<Ticket> TICKET =
            Serde.oneOf(ChMap.tickets());
    //-----------Lists-------------------
 
-   public static Serde<List<String>> LIST_STRINGS =
+   public final static Serde<List<String>> LIST_STRINGS =
            Serde.listOf(STRING, basicSeparator);
-   public static Serde<List<Card>> LIST_CARDS =
+   public final static Serde<List<Card>> LIST_CARDS =
            Serde.listOf(CARD, basicSeparator);
-   public static Serde<List<Route>> LIST_ROUTES =
+   public final static Serde<List<Route>> LIST_ROUTES =
            Serde.listOf(ROUTE, basicSeparator);
-   public static Serde<SortedBag<Card>> BAG_CARDS =
+   public final static Serde<SortedBag<Card>> BAG_CARDS =
            Serde.bagOf(CARD, basicSeparator);
-   public static Serde<SortedBag<Ticket>> BAG_TICKETS =
+   public final static Serde<SortedBag<Ticket>> BAG_TICKETS =
            Serde.bagOf(TICKET, basicSeparator);
-   public static Serde<List<SortedBag<Card>>> LIST_BAGS_TICKETS =
+   public final static Serde<List<SortedBag<Card>>> LIST_BAGS_TICKETS =
            Serde.listOf(BAG_CARDS, betterSeparator);
 
    //--------COMPOSED STUFF--------------
 
     //this stuff isn't finished (not at all)
 
-   public static Serde<PublicCardState> PUB_CARD_STATE;
-   public static Serde<PublicPlayerState> PUB_PLAYER_CARD_STATE;
-   public static Serde<PlayerState> PLAYER_STATE;
-   public static Serde<PublicGameState> PUB_GAME_STATE;
+   public final static Serde<PublicCardState> PUB_CARD_STATE =
+           new Serde<PublicCardState>() {
+              @Override
+              public String serialize(PublicCardState obj) {
+                 List<String> strings = List.of(LIST_CARDS.serialize(obj.faceUpCards())
+                         , INTEGER.serialize(obj.deckSize())
+                         , INTEGER.serialize(obj.discardsSize()));
+                 return String.join(String.valueOf(betterSeparator),strings);
+              }
+
+              @Override
+              public PublicCardState deserialize(String cipher) {
+                 String[] strings = strTab(betterSeparator,cipher);
+                 List<Card> cards = LIST_CARDS.deserialize(strings[0]);
+                 int deckSize = INTEGER.deserialize(strings[1]);
+                 int discardSize = INTEGER.deserialize(strings[2]);
+                 return new PublicCardState(cards,deckSize,discardSize);
+              }
+           };
+
+   public final static Serde<PublicPlayerState> PUB_PLAYER_STATE =
+           new Serde<PublicPlayerState>() {
+              @Override
+              public String serialize(PublicPlayerState obj) {
+                 List<String> strings = List.of(INTEGER.serialize(obj.ticketCount())
+                         ,INTEGER.serialize(obj.cardCount())
+                         ,LIST_ROUTES.serialize(obj.routes()));
+                 return String.join(String.valueOf(betterSeparator),strings);
+              }
+
+              @Override
+              public PublicPlayerState deserialize(String cipher) {
+                 String[] strings = strTab(betterSeparator,cipher);
+                 int ticketCount = INTEGER.deserialize(strings[0]);
+                 int cardCount   = INTEGER.deserialize(strings[1]);
+                 List<Route> routes = LIST_ROUTES.deserialize(strings[2]);
+                 return new PublicPlayerState(ticketCount,cardCount,routes);
+              }
+           };
+   public final static Serde<PlayerState> PLAYER_STATE =
+           new Serde<PlayerState>() {
+              @Override
+              public String serialize(PlayerState obj) {
+                 List<String> strings = List.of(BAG_TICKETS.serialize(obj.tickets())
+                         ,BAG_CARDS.serialize(obj.cards())
+                         ,LIST_ROUTES.serialize(obj.routes()));
+                 return String.join(String.valueOf(betterSeparator),strings);
+              }
+
+              @Override
+              public PlayerState deserialize(String cipher) {
+                 String[] strings = strTab(betterSeparator,cipher);
+                 SortedBag<Ticket> tickets = BAG_TICKETS.deserialize(strings[0]);
+                 SortedBag<Card> cards = BAG_CARDS.deserialize(strings[1]);
+                 List<Route> routes = LIST_ROUTES.deserialize(strings[2]);
+                 return new PlayerState(tickets,cards,routes);
+              }
+           };
+
+   public final static Serde<PublicGameState> PUB_GAME_STATE =
+           new Serde<PublicGameState>() {
+              @Override
+              public String serialize(PublicGameState obj) {
+                 List<String> strings = List.of( INTEGER.serialize(obj.ticketsCount())
+                         ,PUB_CARD_STATE.serialize(obj.cardState())
+                         ,PLAYER_ID.serialize(obj.currentPlayerId())
+                         ,PUB_PLAYER_STATE.serialize(obj.playerState(PlayerId.PLAYER_1))
+                         ,PUB_PLAYER_STATE.serialize(obj.playerState(PlayerId.PLAYER_2))
+                         ,PLAYER_ID.serialize(obj.lastPlayer()) );
+                 return String.join(String.valueOf(ogSeparator),strings);
+              }
+
+              @Override
+              public PublicGameState deserialize(String cipher) {
+                 String[] strings = strTab(ogSeparator,cipher);
+                 int ticketsCount = INTEGER.deserialize(strings[0]);
+                 PublicCardState pubCardState = PUB_CARD_STATE.deserialize(strings[1]);
+                 PlayerId currentPlayer = PLAYER_ID.deserialize(strings[2]);
+
+                 PublicPlayerState pubPlayer1 = PUB_PLAYER_STATE.deserialize(strings[3]);
+                 PublicPlayerState pubPlayer2 = PUB_PLAYER_STATE.deserialize(strings[4]);
+                 Map<PlayerId,PublicPlayerState> playerStateMap = new EnumMap<>(PlayerId.class);
+                 playerStateMap.put(PlayerId.PLAYER_1,pubPlayer1);
+                 playerStateMap.put(PlayerId.PLAYER_2,pubPlayer2);
+
+                 PlayerId lastPlayer = PLAYER_ID.deserialize(strings[5]);
+                 return new PublicGameState(ticketsCount
+                         ,pubCardState
+                         ,currentPlayer
+                         ,playerStateMap
+                         ,lastPlayer);
+              }
+           };
+
+   private static String[] strTab(char sep,String str){
+     return str.split(Pattern.quote(String.valueOf(sep)),-1);
+   }
 }
+
 
