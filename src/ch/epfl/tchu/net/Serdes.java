@@ -9,9 +9,9 @@ import java.util.regex.Pattern;
 public final class Serdes {
    private Serdes(){};
 
-    private final static char basicSeparator = ',';
-    private final static char betterSeparator = ';';
-    private final static char ogSeparator = ':';
+    public final static char basicSeparator = ',';
+    public final static char betterSeparator = ';';
+    public final static char ogSeparator = ':';
 
    public final static Serde<Integer> INTEGER =
            new Serde<Integer>() {
@@ -68,8 +68,9 @@ public final class Serdes {
 
    //--------COMPOSED STUFF--------------
 
-    //this stuff isn't finished (not at all)
-
+    //java sux so we gotta define all this manually instead of creating a cheeky method(((
+    //every time we're defining a unique way to encode/decode an object
+    
    public final static Serde<PublicCardState> PUB_CARD_STATE =
            new Serde<PublicCardState>() {
               @Override

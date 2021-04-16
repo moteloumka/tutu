@@ -10,8 +10,8 @@ import java.util.stream.Collectors;
 
 public interface Serde <T> {
 
-    abstract String serialize( T obj);
-    abstract T deserialize(String cipher);
+    String serialize( T obj);
+    T deserialize(String cipher);
 
     static <T> Serde<T> of(Function<T, String> ser, Function<String, T> deSer){
         return new Serde<T>() {
