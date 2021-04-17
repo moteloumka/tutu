@@ -54,6 +54,13 @@ class SerdesTest {
     }
 
     @Test
+    void emptyStringEncodesAndDecodesCorrectly(){
+        Serde<String> stringSerde = Serdes.STRING;
+        String emptyString = "";
+        assertEquals(emptyString, stringSerde.deserialize(stringSerde.serialize(emptyString)));
+    }
+
+    @Test
     void playerIdEncodesCorrectly(){
         Serde<PlayerId> playerId = Serdes.PLAYER_ID;
         for(PlayerId id : PlayerId.ALL){
