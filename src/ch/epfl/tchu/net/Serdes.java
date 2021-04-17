@@ -3,6 +3,7 @@ package ch.epfl.tchu.net;
 import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.game.*;
 
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -32,12 +33,14 @@ public final class Serdes {
            new Serde<String>() {
               @Override
               public String serialize(String obj) {
-                 return null;
+                 return Base64.getEncoder().encodeToString(obj.getBytes(StandardCharsets.UTF_8));
               }
 
               @Override
               public String deserialize(String cipher) {
-                 return null;
+                  return new String(Base64.getDecoder()
+                          .decode(cipher.getBytes(StandardCharsets.UTF_8)),
+                          StandardCharsets.UTF_8);
               }
            };
 

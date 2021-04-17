@@ -4,7 +4,9 @@ import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.game.*;
 import org.junit.jupiter.api.Test;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -25,6 +27,30 @@ class SerdesTest {
         for(Integer i=0; i<1000;++i){
             assertEquals(i,intSerde.deserialize(String.valueOf(i)));
         }
+    }
+
+    @Test
+    void stringEncodesCorrectly(){
+        Serde<String> stringSerde = Serdes.STRING;
+        String test = "imposter do be lookin sus";
+        String cipher = Base64.getEncoder().encodeToString(test.getBytes(StandardCharsets.UTF_8));
+        assertEquals( cipher, stringSerde.serialize(test));
+    }
+
+    @Test
+    void stringDecodesCorrectly(){
+        Serde<String> stringSerde = Serdes.STRING;
+        List <String> cipherList = List.of("aW1wb3N0ZXI=", "aXM=", "c3Vz");
+        assertEquals("imposter", stringSerde.deserialize(cipherList.get(0)));
+        assertEquals("is", stringSerde.deserialize(cipherList.get(1)));
+        assertEquals("sus", stringSerde.deserialize(cipherList.get(2)));
+    }
+
+    @Test
+    void stringEncodesAndDecodesCorrectly(){
+        Serde<String> stringSerde = Serdes.STRING;
+        String test = "amog us amog us amog us amog us";
+        assertEquals(test , stringSerde.deserialize(stringSerde.serialize(test)));
     }
 
     @Test
@@ -123,4 +149,5 @@ class SerdesTest {
             assertEquals(sbCards.get(i),newSbCards.get(i));
         }
     }
+
 }
