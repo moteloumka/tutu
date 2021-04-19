@@ -1,7 +1,9 @@
-package ch.epfl.tchu.net;
+package ch.epfl.test;
 
 import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.game.*;
+import ch.epfl.tchu.net.Serde;
+import ch.epfl.tchu.net.Serdes;
 import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;

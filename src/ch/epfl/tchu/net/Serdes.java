@@ -26,9 +26,7 @@ public final class Serdes {
                  return Integer.valueOf(cipher);
               }
            };
-   /**
-    * DIS B THE LAST THING LEFT
-    */
+
    public final static Serde<String> STRING =
            new Serde<String>() {
               @Override
