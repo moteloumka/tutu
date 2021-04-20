@@ -66,7 +66,7 @@ public interface Player {
     TurnKind nextTurn();
 
     /**
-     * called during the game when a player decides to sort his supplementary cards
+     * called during the game when a player decides to sort his supplementary tickets
      * - communicates possible tickets
      * - gets the  answer: which ones the player keeps
      * @param options possible tickets

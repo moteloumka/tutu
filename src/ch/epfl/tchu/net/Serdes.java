@@ -64,7 +64,7 @@ public final class Serdes {
            Serde.bagOf(CARD, basicSeparator);
    public final static Serde<SortedBag<Ticket>> BAG_TICKETS =
            Serde.bagOf(TICKET, basicSeparator);
-   public final static Serde<List<SortedBag<Card>>> LIST_BAGS_TICKETS =
+   public final static Serde<List<SortedBag<Card>>> LIST_BAGS_CARDS =
            Serde.listOf(BAG_CARDS, betterSeparator);
 
    //--------COMPOSED STUFF--------------

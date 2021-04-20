@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import static java.nio.charset.StandardCharsets.US_ASCII;
 
 public final class RemotePlayerProxy implements Player {
+    public final static char SPACE_CHAR = ' ';
     private final Socket socket;
     public RemotePlayerProxy( Socket socket){
         this.socket = socket;
@@ -28,8 +29,9 @@ public final class RemotePlayerProxy implements Player {
 
     @Override
     public void receiveInfo(String info) {
-
-
+        List<String> strings = List.of(MessageId.RECEIVE_INFO.name()
+        ,Serdes.STRING.serialize(info));
+        send(strings);
     }
 
     @Override
@@ -43,51 +45,62 @@ public final class RemotePlayerProxy implements Player {
 
     @Override
     public void setInitialTicketChoice(SortedBag<Ticket> tickets) {
-
-
+        List<String> strings = List.of(MessageId.SET_INITIAL_TICKETS.name()
+        ,Serdes.BAG_TICKETS.serialize(tickets));
+        send(strings);
     }
 
     @Override
     public SortedBag<Ticket> chooseInitialTickets() {
-        return null;
+        send(List.of(MessageId.CHOOSE_INITIAL_TICKETS.name()));
+        return Serdes.BAG_TICKETS.deserialize(receive());
     }
 
     @Override
     public TurnKind nextTurn() {
-        return null;
+        send(List.of(MessageId.NEXT_TURN.name()));
+        return Serdes.TURN_KIND.deserialize(receive());
     }
 
     @Override
     public SortedBag<Ticket> chooseTickets(SortedBag<Ticket> options) {
-        return null;
+        send(List.of(MessageId.CHOOSE_TICKETS.name()
+        ,Serdes.BAG_TICKETS.serialize(options)));
+        return Serdes.BAG_TICKETS.deserialize(receive());
     }
 
     @Override
     public int drawSlot() {
-        return 0;
+        send(List.of(MessageId.DRAW_SLOT.name()));
+        return Serdes.INTEGER.deserialize(receive());
     }
 
     @Override
     public Route claimedRoute() {
-        return null;
+        send(List.of(MessageId.CLAIMED_ROUTE.name()));
+        return Serdes.ROUTE.deserialize(receive());
     }
 
     @Override
     public SortedBag<Card> initialClaimCards() {
-        return null;
+        send(List.of(MessageId.INITIAL_CLAIM_CARDS.name()));
+        return Serdes.BAG_CARDS.deserialize(receive());
     }
 
     @Override
     public SortedBag<Card> chooseAdditionalCards(List<SortedBag<Card>> options) {
-        return null;
+        send(List.of(MessageId.CHOOSE_ADDITIONAL_CARDS.name()
+        ,Serdes.LIST_BAGS_CARDS.serialize(options)));
+        return Serdes.BAG_CARDS.deserialize(receive());
     }
 
+    //method used to send via socket
     private void send(List<String> strings) {
         try (BufferedWriter w =
                      new BufferedWriter(
                              new OutputStreamWriter(socket.getOutputStream(),
                                      US_ASCII))) {
-            String str = String.join(" ",strings);
+            String str = String.join(String.valueOf(SPACE_CHAR),strings);
             w.write(str + '\n');
             //w.write('\n');
             w.flush();
@@ -95,6 +108,7 @@ public final class RemotePlayerProxy implements Player {
             throw new UncheckedIOException(e);
         }
     }
+    //method used to receive via socket
     private String receive(){
         try (BufferedReader r =
                      new BufferedReader(
