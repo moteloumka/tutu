@@ -46,7 +46,7 @@ public final class TestClient {
 
         @Override
         public SortedBag<Ticket> chooseInitialTickets() {
-            return null;
+            return SortedBag.of(ChMap.tickets().get(0));
         }
 
         @Override
@@ -78,7 +78,5 @@ public final class TestClient {
         public SortedBag<Card> chooseAdditionalCards(List<SortedBag<Card>> options) {
             return null;
         }
-
-        // … autres méthodes de Player
     }
 }

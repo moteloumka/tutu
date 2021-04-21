@@ -96,10 +96,11 @@ public final class RemotePlayerProxy implements Player {
 
     //method used to send via socket
     private void send(List<String> strings) {
-        try (BufferedWriter w =
-                     new BufferedWriter(
-                             new OutputStreamWriter(socket.getOutputStream(),
-                                     US_ASCII))) {
+        try {
+            BufferedWriter w =
+                    new BufferedWriter(
+                            new OutputStreamWriter(socket.getOutputStream(),
+                                    US_ASCII));
             String str = String.join(String.valueOf(SPACE_CHAR),strings);
             w.write(str);
             w.write('\n');

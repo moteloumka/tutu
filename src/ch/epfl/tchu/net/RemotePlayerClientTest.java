@@ -22,7 +22,8 @@ class RemotePlayerClientTest {
             var playerNames = Map.of(PLAYER_1, "Ada",
                     PLAYER_2, "Charles");
             playerProxy.initPlayers(PLAYER_1, playerNames);
-            //playerProxy.receiveInfo("this thing is working");
+            playerProxy.receiveInfo("this thing is working");
+            System.out.println(playerProxy.chooseInitialTickets());
         }
         System.out.println("Server done!");
     }
