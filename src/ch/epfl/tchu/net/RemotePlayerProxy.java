@@ -101,8 +101,8 @@ public final class RemotePlayerProxy implements Player {
                              new OutputStreamWriter(socket.getOutputStream(),
                                      US_ASCII))) {
             String str = String.join(String.valueOf(SPACE_CHAR),strings);
-            w.write(str + '\n');
-            //w.write('\n');
+            w.write(str);
+            w.write('\n');
             w.flush();
         } catch (IOException e) {
             throw new UncheckedIOException(e);
