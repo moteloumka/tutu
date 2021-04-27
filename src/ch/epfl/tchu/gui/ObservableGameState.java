@@ -192,6 +192,10 @@ public final class ObservableGameState {
         return canGetRoadList.stream().map(o->(ReadOnlyBooleanProperty)o).collect(Collectors.toList());
     }
 
+    public ReadOnlyBooleanProperty claimable(Route route){
+        return getCanGetRoadList().get(ChMap.routes().indexOf(route));
+    }
+
     //same methods, new wrapping
 
     public boolean canDrawCards(){
