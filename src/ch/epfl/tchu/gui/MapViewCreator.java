@@ -5,21 +5,16 @@ import ch.epfl.tchu.game.*;
 import ch.epfl.tchu.game.Card;
 import ch.epfl.tchu.gui.ActionHandlers.ChooseCardsHandler;
 import ch.epfl.tchu.gui.ActionHandlers.ClaimRouteHandler;
-
-import javafx.beans.InvalidationListener;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.ObservableArray;
-import javafx.collections.ObservableList;
 import javafx.scene.Group;
-import javafx.scene.layout.Pane;
-
 import javafx.scene.image.ImageView;
-import javafx.scene.image.Image;
+import javafx.scene.layout.Pane;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
+
 
 
 import java.util.List;
