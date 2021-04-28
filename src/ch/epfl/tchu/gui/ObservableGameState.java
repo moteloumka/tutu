@@ -17,8 +17,11 @@ public final class ObservableGameState {
     //PublicGameState proprieties
     private final IntegerProperty cardDeckCapacity = new SimpleIntegerProperty(0);
     private final IntegerProperty ticketDeckCapacity = new SimpleIntegerProperty(0);
-    private final List<ObjectProperty<Card>> visibleCards;
-    private final List<ObjectProperty<PlayerId>> routesOwners;
+    private final List<ObjectProperty<Card>> visibleCards = new ArrayList<>
+            (Collections.nCopies
+                    (Constants.FACE_UP_CARDS_COUNT,new SimpleObjectProperty<>(null)));
+    //I decided to go with a map, better for manipulations
+    private final Map<Route,ObjectProperty<PlayerId>> routesOwners = new HashMap<>();
 
     //PublicPlayerState proprieties (of each player)
     private final Map<PlayerId,IntegerProperty> ticketsInHandCount = new EnumMap<>(PlayerId.class);
@@ -30,9 +33,7 @@ public final class ObservableGameState {
     private final List<ObjectProperty<Ticket>> ticketsInHand =
             new ArrayList<>(List.of(new SimpleObjectProperty<>(null)));
     private final Map<Card,IntegerProperty> numberOfCardInHand = new EnumMap<>(Card.class);
-    private final List<BooleanProperty> canGetRoadList =
-            new ArrayList<>(Collections.nCopies(ChMap.routes().size(),new SimpleBooleanProperty(false)));
-
+    private final Map<Route,BooleanProperty> canGetRoadMap = new HashMap<>();
 
 
 
@@ -43,24 +44,18 @@ public final class ObservableGameState {
         //this.pubGameState = new PublicGameState(0,newPubCardState,PlayerId.PLAYER_1, Map.of(),null);
         this.playerState = new PlayerState(SortedBag.of(),SortedBag.of(),List.of());
         this.pubGameState = null;
-//        this.playerState = null;
+//      this.playerState = null;
 
-        this.visibleCards =
-                new ArrayList<>
-                        (Collections.nCopies
-                                (Constants.FACE_UP_CARDS_COUNT,new SimpleObjectProperty<>(null))) ;
-        this.routesOwners =
-                new ArrayList<>
-                        (Collections.nCopies
-                                (ChMap.routes().size(), new SimpleObjectProperty<>(null)));
-
+        for (Route route: ChMap.routes()){
+            routesOwners.put(route,new SimpleObjectProperty<>(null));
+            canGetRoadMap.put(route,new SimpleBooleanProperty(false));
+        }
 
         for (PlayerId pId : PlayerId.ALL){
             ticketsInHandCount.put(pId, new SimpleIntegerProperty(0));
             cardsInHandCount.put(pId, new SimpleIntegerProperty(0));
             wagonCount.put(pId, new SimpleIntegerProperty(0));
             constructionPoints.put(pId, new SimpleIntegerProperty(0));
-
         }
 
         for (Card card: Card.ALL)
@@ -92,29 +87,33 @@ public final class ObservableGameState {
             cardsInHandCount.get(pID).set(pubPS.cardCount());
             wagonCount.get(pID).set(pubPS.carCount());
             constructionPoints.get(pID).set(pubPS.claimPoints());
-            for (Route route : routes) {
+
+            for (Route route : routes)
                 if (pubPS.routes().contains(route))
-                    routesOwners.get(routes.indexOf(route)).set(pID);
-            }
+                    routesOwners.get(route).set(pID);
+
             //we dont throw away tickets until the end of the game -> we can only add them (?)
             for (Ticket ticket : playerState.tickets()) {
                 if (ticketsInHand.stream().map(ObservableObjectValue::get).noneMatch(t -> t == ticket))
                     ticketsInHand.add(new SimpleObjectProperty<>(ticket));
             }
-
             for (Card card : Card.ALL)
                 numberOfCardInHand.get(card).set(playerState.cards().countOf(card));
-            /**
-             * there's a problem here
-             */
-            //one thing to add -> route double -> voisine doesn't belong to anyone/.todo
-            //whatever this means
-            for (Route route: routes){
-                canGetRoadList.get(routes.indexOf(route))
-                        .set(pubGS.currentPlayerId()==this.playerId
-                                && routesOwners.get(routes.indexOf(route))==null
-                                && playerState.canClaimRoute(route));
-            }
+        }
+        for (Route route : routes){
+            boolean neighborIsOwned = false;
+            for (Route rte : routes)
+                if ( routesOwners.get(rte) != null
+                        && rte.station1()==route.station1()
+                        && rte.station2()==route.station2()
+                        && rte != route)
+                    neighborIsOwned = true;
+
+            canGetRoadMap.get(route).set(
+                    pubGS.currentPlayerId() == this.playerId
+                            && routesOwners.get(route) == null
+                            && neighborIsOwned
+                            && playerState.canClaimRoute(route));
         }
     }
 
@@ -147,8 +146,10 @@ public final class ObservableGameState {
      * null if the route isn't owned
      * @return list of values corresponding to the owner of routes
      */
-    public List<ReadOnlyObjectProperty<PlayerId>> getRoutesOwners() {
-        return routesOwners.stream().map(o->(ReadOnlyObjectProperty<PlayerId>)o).collect(Collectors.toList());
+    public Map< Route ,ReadOnlyObjectProperty<PlayerId>> getRoutesOwners() {
+        Map<Route,ReadOnlyObjectProperty<PlayerId>> javaCouldMakeThisEasier = new HashMap<>();
+        routesOwners.forEach(javaCouldMakeThisEasier::put);
+        return javaCouldMakeThisEasier;
     }
 
     /**
@@ -190,12 +191,14 @@ public final class ObservableGameState {
 
     }
 
-    public List<ReadOnlyBooleanProperty> getCanGetRoadList() {
-        return canGetRoadList.stream().map(o->(ReadOnlyBooleanProperty)o).collect(Collectors.toList());
+    public Map<Route,ReadOnlyBooleanProperty> getCanGetRoadMap() {
+        Map<Route,ReadOnlyBooleanProperty> oracleGottaGetTheirShitTogether = new HashMap<>();
+        canGetRoadMap.forEach(oracleGottaGetTheirShitTogether::put);
+        return oracleGottaGetTheirShitTogether;
     }
 
     public ReadOnlyBooleanProperty claimable(Route route){
-        return getCanGetRoadList().get(ChMap.routes().indexOf(route));
+        return canGetRoadMap.get(route);
     }
 
     //same methods, new wrapping

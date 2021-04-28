@@ -95,7 +95,7 @@ abstract class DecksViewCreator {
         cardView.setId("card-pane");
 
         /**
-         *  disabledProperty TO BE ADDED
+         *  disabledProperty TO BE ADDED!!
          */
         Button ticketDeckButt = new Button();
         ticketDeckButt.getStyleClass().add("gauged");

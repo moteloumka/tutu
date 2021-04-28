@@ -9,16 +9,19 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 
 
-
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 class MapViewCreator {
@@ -77,41 +80,28 @@ class MapViewCreator {
                 caseOnMap.getChildren().addAll(voie,wagon);
                 routeGroup.getChildren().add(caseOnMap);
             }
-            //adding the route with everything connected to the highest parent -> the Pane
-            carte.getChildren().add(routeGroup);
-        }
-        for (ReadOnlyObjectProperty<PlayerId> op : obsGS.getRoutesOwners()){
-            op.addListener(new ChangeListener<PlayerId>() {
-                @Override
-                public void changed(ObservableValue<? extends PlayerId> observable, PlayerId oldValue, PlayerId newValue) {
-                    //+1 bc fond is added first, obsOG, as this method keep the order of the routes
-                    //as they are received from ChMap.routes()
-                    //maybe gonna change everything to maps idk
-                    int index = 1+obsGS.getRoutesOwners().indexOf(op);
-                    carte.getChildren()
-                            .get(index)
-                            .getStyleClass()
-                            .add(newValue.name());
-                }
+            //adding a listener on who owns the route
+            obsGS.getRoutesOwners().get(route).addListener((observable, oldValue, newValue) -> {
+                    routeGroup.getStyleClass().add(newValue.name());
             });
-        }
-        //doesn't look too good, perhaps maps are the way to go
-        List<Route> routes = ChMap.routes();
-        for(int i=1;i<carte.getChildren().size();++i){
-            Route route = routes.get(i-1);
-            carte.getChildren().get(i).disableProperty().bind(
+            //making sure the player can't click on a road when they can't get possession of it
+            routeGroup.disableProperty().bind(
                     claimRouteH.isNull().or(obsGS.claimable(route).not()));
-
-            if(obsGS.possibleClaimCards(route)!=(null)){
-                if(obsGS.possibleClaimCards(route).size()==1)
-                    System.out.println("aaaa");
-                if (obsGS.possibleClaimCards(route).size()>1){
+            //launches the protocol of getting a new road
+            routeGroup.setOnMouseClicked( event -> {
+                List<SortedBag<Card>> possibleClaimCards = obsGS.possibleClaimCards(route);
+                //if the player has only one combination of possible cards, there's no need to elaborate
+                if (possibleClaimCards.size() == 1)
+                    claimRouteH.get().onClaimRoute(route, possibleClaimCards.get(0));
+                //bunch of handlers show the possibilities on screen and handle the choice made by the player
+                else {
                     ChooseCardsHandler chooseCardsH =
                             chosenCards -> claimRouteH.get().onClaimRoute(route, chosenCards);
-                    cardChooser.chooseCards(obsGS.possibleClaimCards(route), chooseCardsH);
+                    cardChooser.chooseCards(possibleClaimCards, chooseCardsH);
                 }
-            }
-
+            });
+            //adding the route with everything connected to the highest parent -> the Pane
+            carte.getChildren().add(routeGroup);
         }
         return carte;
     }
