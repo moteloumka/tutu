@@ -39,9 +39,11 @@ public final class ObservableGameState {
     public ObservableGameState(PlayerId playerId){
         this.playerId = playerId;
         //not sure if the next 3 lines are really needed
-        PublicCardState newPubCardState = new PublicCardState(List.of(),0,0);
-        this.pubGameState = new PublicGameState(0,newPubCardState,null, Map.of(),null);
+        //PublicCardState newPubCardState = new PublicCardState(List.of(Card.BLUE,Card.BLUE,Card.BLUE,Card.BLUE,Card.LOCOMOTIVE),0,0);
+        //this.pubGameState = new PublicGameState(0,newPubCardState,PlayerId.PLAYER_1, Map.of(),null);
         this.playerState = new PlayerState(SortedBag.of(),SortedBag.of(),List.of());
+        this.pubGameState = null;
+//        this.playerState = null;
 
         this.visibleCards =
                 new ArrayList<>

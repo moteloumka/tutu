@@ -10,6 +10,7 @@ import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Circle;
@@ -41,10 +42,11 @@ class MapViewCreator {
      * @param obsGS
      * @param claimRouteH
      * @param cardChooser
+     * @return
      */
-    public void createMapView(ObservableGameState obsGS
+    public static Pane createMapView(ObservableGameState obsGS
             , ObjectProperty<ClaimRouteHandler> claimRouteH
-            , CardChooser cardChooser ){
+            , CardChooser cardChooser){
         Pane carte = new Pane();
         carte.getStylesheets().addAll("/res/styles/map.css","/res/styles/colors.css");
         ImageView imageView = new ImageView();
@@ -100,13 +102,17 @@ class MapViewCreator {
             carte.getChildren().get(i).disableProperty().bind(
                     claimRouteH.isNull().or(obsGS.claimable(route).not()));
 
-//            if(obsGS.possibleClaimCards(route).size()==1)
-//                System.out.println("aaaa");
-//            ChooseCardsHandler chooseCardsH;
-//            if (obsGS.possibleClaimCards(route).size()>1)
-//                 chooseCardsH =
-//                        chosenCards -> claimRouteH.onClaimRoute(route, chosenCards);
-//            cardChooser.chooseCards(obsGS.possibleClaimCards(route), chooseCardsH);
+            if(obsGS.possibleClaimCards(route)!=(null)){
+                if(obsGS.possibleClaimCards(route).size()==1)
+                    System.out.println("aaaa");
+                if (obsGS.possibleClaimCards(route).size()>1){
+                    ChooseCardsHandler chooseCardsH =
+                            chosenCards -> claimRouteH.get().onClaimRoute(route, chosenCards);
+                    cardChooser.chooseCards(obsGS.possibleClaimCards(route), chooseCardsH);
+                }
+            }
+
         }
+        return carte;
     }
 }
