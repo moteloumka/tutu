@@ -51,7 +51,7 @@ class MapViewCreator {
             , ObjectProperty<ClaimRouteHandler> claimRouteH
             , CardChooser cardChooser){
         Pane carte = new Pane();
-        carte.getStylesheets().addAll("/res/styles/map.css","/res/styles/colors.css");
+        carte.getStylesheets().addAll("/styles/map.css","/styles/colors.css");
         ImageView imageView = new ImageView();
         //Image image = new Image("/res/images/map.png");
         //imageView.setImage(image);

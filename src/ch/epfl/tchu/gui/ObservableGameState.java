@@ -39,11 +39,13 @@ public final class ObservableGameState {
 
     public ObservableGameState(PlayerId playerId){
         this.playerId = playerId;
-        //not sure if the next 3 lines are really needed
-        //PublicCardState newPubCardState = new PublicCardState(List.of(Card.BLUE,Card.BLUE,Card.BLUE,Card.BLUE,Card.LOCOMOTIVE),0,0);
-        //this.pubGameState = new PublicGameState(0,newPubCardState,PlayerId.PLAYER_1, Map.of(),null);
         this.playerState = new PlayerState(SortedBag.of(),SortedBag.of(),List.of());
-        this.pubGameState = null;
+        //not sure if the next 3 lines are really needed
+        PublicPlayerState publicPlayerState2 = new PublicPlayerState(0,0,List.of());
+        PublicCardState newPubCardState = new PublicCardState(List.of(Card.RED,Card.RED,Card.RED,Card.RED,Card.RED),0,0);
+        Map<PlayerId,PublicPlayerState> stateMap = Map.of(playerId,this.playerState, playerId.next(),publicPlayerState2);
+        this.pubGameState = new PublicGameState(0,newPubCardState,PlayerId.PLAYER_1, stateMap,null);
+        //this.pubGameState = null;
 //      this.playerState = null;
 
         for (Route route: ChMap.routes()){
@@ -213,4 +215,9 @@ public final class ObservableGameState {
         return playerState.possibleClaimCards(route);
     }
 
+    /**
+     * test methode -> delete later
+     * @return
+     */
+    public PublicGameState gameState(){return this.pubGameState;}
 }

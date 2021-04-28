@@ -89,9 +89,9 @@ abstract class DecksViewCreator {
      */
     public static VBox createCardsView(ObservableGameState obsGS
             ,ReadOnlyObjectProperty<DrawTicketsHandler> drawTicketH
-            ,ReadOnlyObjectProperty<DrawCardHandler> drawCardH){
+            ,ReadOnlyObjectProperty<DrawCardHandler> drawCardH) {
         VBox cardView = new VBox();
-        cardView.getStylesheets().addAll("decks.css","colors.css");
+        cardView.getStylesheets().addAll("decks.css", "colors.css");
         cardView.setId("card-pane");
 
         /**
@@ -107,12 +107,12 @@ abstract class DecksViewCreator {
         //calling the drawCard handler when button is pressed
         cardDeckButt.setOnAction(e -> drawCardH.get().onDrawCard(Constants.DECK_SLOT));
 
-        Group cards   = new Group();
+        Group cards = new Group();
         Group tickets = new Group();
-        Rectangle cardBack   = new Rectangle(BUTTON_SCALE_WIDTH,BUTTON_SCALE_HEIGHT);
-        Rectangle ticketBack = new Rectangle(BUTTON_SCALE_WIDTH,BUTTON_SCALE_HEIGHT);
-        Rectangle cardFore   = new Rectangle(BUTTON_SCALE_WIDTH,BUTTON_SCALE_HEIGHT);
-        Rectangle ticketFore = new Rectangle(BUTTON_SCALE_WIDTH,BUTTON_SCALE_HEIGHT);
+        Rectangle cardBack = new Rectangle(BUTTON_SCALE_WIDTH, BUTTON_SCALE_HEIGHT);
+        Rectangle ticketBack = new Rectangle(BUTTON_SCALE_WIDTH, BUTTON_SCALE_HEIGHT);
+        Rectangle cardFore = new Rectangle(BUTTON_SCALE_WIDTH, BUTTON_SCALE_HEIGHT);
+        Rectangle ticketFore = new Rectangle(BUTTON_SCALE_WIDTH, BUTTON_SCALE_HEIGHT);
 
         //drawing percentage of decks fullness
         cardFore.widthProperty().bind(
@@ -120,13 +120,15 @@ abstract class DecksViewCreator {
         ticketFore.widthProperty().bind(
                 obsGS.ticketDeckCapacityProperty().multiply(50).divide(100));
 
-        cards.getChildren().addAll(cardBack,cardFore);
-        tickets.getChildren().addAll(ticketBack,ticketFore);
+        cards.getChildren().addAll(cardBack, cardFore);
+        tickets.getChildren().addAll(ticketBack, ticketFore);
         //finalising the buttons
         cardDeckButt.setGraphic(cards);
         ticketDeckButt.setGraphic(tickets);
 
-        for (ReadOnlyObjectProperty<Card> cp : obsGS.getVisibleCards()){
+        for (ReadOnlyObjectProperty<Card> cp : obsGS.getVisibleCards()) {
+            if (obsGS.gameState() == null)
+                System.out.println("what did u expect");
             StackPane general = new StackPane();
             general.getStyleClass().add("card");
             if (cp.get() != Card.LOCOMOTIVE)
@@ -134,28 +136,24 @@ abstract class DecksViewCreator {
             else
                 general.getStyleClass().add("NEUTRAL");
 
-            Rectangle contour = new Rectangle(CARD_CONTOUR_WIDTH,CARD_CONTOUR_HEIGHT);
+            Rectangle contour = new Rectangle(CARD_CONTOUR_WIDTH, CARD_CONTOUR_HEIGHT);
             contour.getStyleClass().add("outside");
-            Rectangle interior = new Rectangle(CARD_FILLED_WIDTH,CARD_FILLED_HEIGHT);
-            interior.getStyleClass().addAll("filled","inside");
-            Rectangle image = new Rectangle(CARD_IMAGE_WIDTH,CARD_IMAGE_HEIGHT);
+            Rectangle interior = new Rectangle(CARD_FILLED_WIDTH, CARD_FILLED_HEIGHT);
+            interior.getStyleClass().addAll("filled", "inside");
+            Rectangle image = new Rectangle(CARD_IMAGE_WIDTH, CARD_IMAGE_HEIGHT);
             image.getStyleClass().add("train-image");
 
-            general.getChildren().addAll(contour,interior,image);
+            general.getChildren().addAll(contour, interior, image);
             cardView.getChildren().add(general);
             //adding a listener on the color of the card by changing the color class if something changes
-            cp.addListener(new ChangeListener<Card>() {
-                @Override
-                public void changed(ObservableValue<? extends Card> observable, Card oldValue, Card newValue) {
-                    String oldColor = oldValue != Card.LOCOMOTIVE ? oldValue.color().name() : NULL_COLOR_CSS_CLASS;
-                    general.getStyleClass().remove(oldColor);
-                    String newColor = newValue != Card.LOCOMOTIVE ? newValue.color().name() : NULL_COLOR_CSS_CLASS;
-                    general.getStyleClass().add(newColor);
-                }
+            cp.addListener((observable, oldValue, newValue) -> {
+                String oldColor = oldValue != Card.LOCOMOTIVE ? oldValue.color().name() : NULL_COLOR_CSS_CLASS;
+                general.getStyleClass().remove(oldColor);
+                String newColor = newValue != Card.LOCOMOTIVE ? newValue.color().name() : NULL_COLOR_CSS_CLASS;
+                general.getStyleClass().add(newColor);
             });
         }
-        cardView.getChildren().addAll(ticketDeckButt,cardDeckButt);
+        cardView.getChildren().addAll(ticketDeckButt, cardDeckButt);
         return cardView;
     }
-
 }
