@@ -33,19 +33,28 @@ class MapViewCreator {
     private final static int RELATIVE_X_POSITION_1 = 12;
     private final static int RELATIVE_X_POSITION_2 = 24;
 
+
     @FunctionalInterface
     interface CardChooser {
+        /**
+         * when a player hase to chose one set of cards from a few possible options
+         * @param options the possible options
+         * @param handler instance of ActionHandlers.ChooseCardsHandler
+         *                functional interface that will handle the decision made by the player
+         */
         void chooseCards(List<SortedBag<Card>> options,
                          ChooseCardsHandler handler);
     }
 
     /**
-     * I'm not exactly sure about the way I define paths here,
-     * that's something we gotta check
-     * @param obsGS
-     * @param claimRouteH
-     * @param cardChooser
-     * @return
+     * creates a new instance of Pane which will have the map image a background,
+     * contain all the routes in the game as rectangles
+     * (with PlayerId specific color and 2 circles if route is owned by the PlayerId)
+     * @param obsGS the instance of ObservableGameState that will communicate any changes
+     *              to the visual representation of the map
+     * @param claimRouteH handler called upon when a player claims a route
+     * @param cardChooser handler called upon when a player chooses a card
+     * @return new instance of Pane as described above
      */
     public static Pane createMapView(ObservableGameState obsGS
             , ObjectProperty<ClaimRouteHandler> claimRouteH
@@ -53,14 +62,21 @@ class MapViewCreator {
         Pane carte = new Pane();
         carte.getStylesheets().addAll("/styles/map.css","/styles/colors.css");
         ImageView imageView = new ImageView();
-        //Image image = new Image("/res/images/map.png");
-        //imageView.setImage(image);
         carte.getChildren().add(imageView);
         //creating each road
         for (Route route: ChMap.routes()){
             Group routeGroup = new Group();
             routeGroup.setId(route.id());
-            routeGroup.getStyleClass().addAll("route","UNDERGROUND","NEUTRAL");
+            routeGroup.getStyleClass().addAll("route");
+
+            if (route.level() == Route.Level.UNDERGROUND )
+                routeGroup.getStyleClass().addAll("UNDERGROUND");
+
+            if (route.color() != null)
+                routeGroup.getStyleClass().add(route.color().name());
+            else
+                routeGroup.getStyleClass().add("NEUTRAL");
+
             //creating each piece of a road (case)
             for (int i=1; i<= route.length();++i){
                 Group caseOnMap = new Group();
@@ -81,9 +97,8 @@ class MapViewCreator {
                 routeGroup.getChildren().add(caseOnMap);
             }
             //adding a listener on who owns the route
-            obsGS.getRoutesOwners().get(route).addListener((observable, oldValue, newValue) -> {
-                    routeGroup.getStyleClass().add(newValue.name());
-            });
+            obsGS.getRoutesOwners().get(route).addListener((observable, oldValue, newValue) ->
+                    routeGroup.getStyleClass().add(newValue.name()));
             //making sure the player can't click on a road when they can't get possession of it
             routeGroup.disableProperty().bind(
                     claimRouteH.isNull().or(obsGS.claimable(route).not()));

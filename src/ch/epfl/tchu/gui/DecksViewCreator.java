@@ -31,17 +31,21 @@ abstract class DecksViewCreator {
     private final static int CARD_FILLED_HEIGHT = 70;
     private final static int CARD_IMAGE_WIDTH = 40;
     private final static int CARD_IMAGE_HEIGHT = 70;
+
     private final static int BUTTON_SCALE_WIDTH = 50;
     private final static int BUTTON_SCALE_HEIGHT = 5;
+
     private final static String NULL_COLOR_CSS_CLASS = "NEUTRAL";
     /**
-     * return the hand view
-     * @param obsGS
-     * @return
+     * creates the hand view,
+     * will be placed horizontally in the bottom of the screen, contains (from left to right) :
+     * info box, players cards ordered by ordinal (from BLACK to LOCOMOTIVE)
+     * @param obsGS the instance of ObservableGameState that will be used for updating any new information
+     * @return an instance of HBox s described above
      */
     public static HBox createHandView(ObservableGameState obsGS){
         HBox handView = new HBox();
-        handView.getStylesheets().addAll("decks.css","colors.css");
+        handView.getStylesheets().addAll("/styles/decks.css","/styles/colors.css");
         ListView<Ticket> billets = new ListView<>();
         billets.setId("tickets");
         HBox hand = new HBox();
@@ -81,28 +85,30 @@ abstract class DecksViewCreator {
     };
 
     /**
-     * returns the view on the card deck
-     * @param obsGS
-     * @param drawTicketH
-     * @param drawCardH
-     * @return
+     * creates new horizontal view on the right
+     * which contains (from top to bottom) :
+     * ticket deck, 5 visible cards (slot 0 to slot 4), card deck
+     * @param obsGS the instance of ObservableGameState that will be used for updating any new information
+     * @param drawTicketH this handler will be called upon when the player draws tickets
+     * @param drawCardH this handler will be called upon when the player draws cards
+     * @return new instance of VBox as described above
      */
     public static VBox createCardsView(ObservableGameState obsGS
             ,ReadOnlyObjectProperty<DrawTicketsHandler> drawTicketH
             ,ReadOnlyObjectProperty<DrawCardHandler> drawCardH) {
         VBox cardView = new VBox();
-        cardView.getStylesheets().addAll("decks.css", "colors.css");
+        cardView.getStylesheets().addAll("styles/decks.css", "styles/colors.css");
         cardView.setId("card-pane");
 
         /**
          *  disabledProperty TO BE ADDED!!
          */
-        Button ticketDeckButt = new Button();
+        Button ticketDeckButt = new Button(StringsFr.TICKETS);
         ticketDeckButt.getStyleClass().add("gauged");
         //calling the drawTicket handler when button is pressed
         ticketDeckButt.setOnAction(e -> drawTicketH.get().onDrawTickets());
 
-        Button cardDeckButt = new Button();
+        Button cardDeckButt = new Button(StringsFr.CARDS);
         cardDeckButt.getStyleClass().add("gauged");
         //calling the drawCard handler when button is pressed
         cardDeckButt.setOnAction(e -> drawCardH.get().onDrawCard(Constants.DECK_SLOT));
@@ -113,6 +119,12 @@ abstract class DecksViewCreator {
         Rectangle ticketBack = new Rectangle(BUTTON_SCALE_WIDTH, BUTTON_SCALE_HEIGHT);
         Rectangle cardFore = new Rectangle(BUTTON_SCALE_WIDTH, BUTTON_SCALE_HEIGHT);
         Rectangle ticketFore = new Rectangle(BUTTON_SCALE_WIDTH, BUTTON_SCALE_HEIGHT);
+
+        //attaching styles that will make the % bar visible
+        cardBack.getStyleClass().add("background");
+        ticketBack.getStyleClass().add("background");
+        cardFore.getStyleClass().add("foreground");
+        ticketFore.getStyleClass().add("foreground");
 
         //drawing percentage of decks fullness
         cardFore.widthProperty().bind(
@@ -126,15 +138,18 @@ abstract class DecksViewCreator {
         cardDeckButt.setGraphic(cards);
         ticketDeckButt.setGraphic(tickets);
 
+        cardView.getChildren().add(ticketDeckButt);
+
         for (ReadOnlyObjectProperty<Card> cp : obsGS.getVisibleCards()) {
-            if (obsGS.gameState() == null)
-                System.out.println("what did u expect");
             StackPane general = new StackPane();
             general.getStyleClass().add("card");
-            if (cp.get() != Card.LOCOMOTIVE)
-                general.getStyleClass().add(cp.get().color().name());
-            else
-                general.getStyleClass().add("NEUTRAL");
+
+            if(cp.get() != null) {
+                if (cp.get() != Card.LOCOMOTIVE)
+                    general.getStyleClass().add(cp.get().color().name());
+                else
+                    general.getStyleClass().add("NEUTRAL");
+            }
 
             Rectangle contour = new Rectangle(CARD_CONTOUR_WIDTH, CARD_CONTOUR_HEIGHT);
             contour.getStyleClass().add("outside");
@@ -147,13 +162,15 @@ abstract class DecksViewCreator {
             cardView.getChildren().add(general);
             //adding a listener on the color of the card by changing the color class if something changes
             cp.addListener((observable, oldValue, newValue) -> {
-                String oldColor = oldValue != Card.LOCOMOTIVE ? oldValue.color().name() : NULL_COLOR_CSS_CLASS;
-                general.getStyleClass().remove(oldColor);
+                if (oldValue != null){
+                    String oldColor = oldValue != Card.LOCOMOTIVE ? oldValue.color().name() : NULL_COLOR_CSS_CLASS;
+                    general.getStyleClass().remove(oldColor);
+                }
                 String newColor = newValue != Card.LOCOMOTIVE ? newValue.color().name() : NULL_COLOR_CSS_CLASS;
                 general.getStyleClass().add(newColor);
             });
         }
-        cardView.getChildren().addAll(ticketDeckButt, cardDeckButt);
+        cardView.getChildren().add(cardDeckButt);
         return cardView;
     }
 }

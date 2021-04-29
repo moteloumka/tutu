@@ -39,15 +39,13 @@ public final class Stage9Test extends Application {
 
         Node mapView = MapViewCreator
                 .createMapView(gameState, claimRoute, Stage9Test::chooseCards);
-//        Node cardsView = DecksViewCreator
-//                .createCardsView(gameState, drawTickets, drawCard);
-//        Node handView = DecksViewCreator
-//                .createHandView(gameState);
-//
-//        BorderPane mainPane =
-//                new BorderPane(mapView, null, cardsView, handView, null);
+        Node cardsView = DecksViewCreator
+                .createCardsView(gameState, drawTickets, drawCard);
+        Node handView = DecksViewCreator
+                .createHandView(gameState);
+
         BorderPane mainPane =
-                new BorderPane(mapView, null, null, null, null);
+                new BorderPane(mapView, null, cardsView, handView, null);
 
         primaryStage.setScene(new Scene(mainPane));
         primaryStage.show();
