@@ -1,11 +1,16 @@
 package ch.epfl.tchu.gui;
 
+import ch.epfl.tchu.Preconditions;
 import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.game.*;
 
+import javafx.beans.Observable;
 import javafx.beans.property.*;
 import javafx.beans.value.ObservableObjectValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
+import javax.management.loading.ClassLoaderRepository;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -28,7 +33,8 @@ public final class ObservableGameState {
     private final Map<PlayerId,IntegerProperty> constructionPoints = new EnumMap<>(PlayerId.class);
 
     //PlayerState properties
-    private final List<ObjectProperty<Ticket>> ticketsInHand =
+    private final ObservableList<Ticket> ticketsInHand = FXCollections.observableArrayList();
+    private final List<ObjectProperty<Ticket>> ticketsInHandProp =
             new ArrayList<>(List.of(new SimpleObjectProperty<>(null)));
     private final Map<Card,IntegerProperty> numberOfCardInHand = new EnumMap<>(Card.class);
     private final Map<Route,BooleanProperty> canGetRoadMap = new HashMap<>();
@@ -94,13 +100,13 @@ public final class ObservableGameState {
                 if (pubPS.routes().contains(route))
                     routesOwners.get(route).set(pID);
 
-            //we dont throw away tickets until the end of the game -> we can only add them (?)
-            for (Ticket ticket : playerState.tickets()) {
-                if (ticketsInHand.stream().map(ObservableObjectValue::get).noneMatch(t -> t == ticket))
-                    ticketsInHand.add(new SimpleObjectProperty<>(ticket));
-            }
             for (Card card : Card.ALL)
                 numberOfCardInHand.get(card).set(playerState.cards().countOf(card));
+        }
+        //we dont throw away tickets until the end of the game -> we can only add them (?)
+        for (Ticket ticket : playerState.tickets()){
+            if (ticketsInHand.stream().noneMatch(t -> t.equals(ticket)))
+                ticketsInHand.add(ticket);
         }
 
         for (Route route : routes){
@@ -108,7 +114,7 @@ public final class ObservableGameState {
             //in which case, it won't be possible to get the original route in one's possession
             boolean neighborIsOwned = false;
             for (Route rte : routes)
-                if ( routesOwners.get(rte) != null
+                if ( owner(rte).get() != null
                         && rte.station1()==route.station1()
                         && rte.station2()==route.station2()
                         && rte != route)
@@ -117,9 +123,10 @@ public final class ObservableGameState {
             //updating all possible routes to claim by this player
             canGetRoadMap.get(route).set(
                     pubGS.currentPlayerId() == this.playerId
-                            && routesOwners.get(route) == null
-                            && neighborIsOwned
-                            && playerState.canClaimRoute(route));
+                            && owner(route).get() == null
+                            && !neighborIsOwned
+                            && playerState.canClaimRoute(route)
+            );
         }
     }
 
@@ -137,87 +144,70 @@ public final class ObservableGameState {
         return ticketDeckCapacity;
     }
 
+
     /**
-     * @return list of views on (properties) cards on the visible slots : number of the slot -> index in the list
+     * @return (property) card on the visible slot
+     * @param slot the slot
      */
-    public List<ReadOnlyObjectProperty<Card>> getVisibleCards() {
-        return visibleCards.stream().map(o->(ReadOnlyObjectProperty<Card>)o).collect(Collectors.toList());
+    public ReadOnlyObjectProperty<Card> getVisibleCardProperty(int slot){
+        Preconditions.checkArgument(Constants.FACE_UP_CARD_SLOTS.contains(slot)
+                ," int slot has to be contained in FACE_UP_CARD_SLOTS");
+        return visibleCards.get(slot);
     }
 
     /**
-     * @return map of routes linked -> view on (property) PlayerId that owns the road
-     * null if road isn't owned by anyone
+     * @return view on (property) PlayerId that owns the road
+     * @param route the route in question
      */
-    public Map< Route ,ReadOnlyObjectProperty<PlayerId>> getRoutesOwners() {
-        Map<Route,ReadOnlyObjectProperty<PlayerId>> javaCouldMakeThisEasier = new HashMap<>();
-        routesOwners.forEach(javaCouldMakeThisEasier::put);
-        return javaCouldMakeThisEasier;
+    public ReadOnlyObjectProperty<PlayerId> owner(Route route){
+        return routesOwners.get(route);
     }
 
     /**
-     * @return map of player IDs linked -> view on (property) number of tickets in their hand
+     * @return view on (property) number of tickets in their hand
+     * @param playerId the player in question
      */
-    public Map<PlayerId, ReadOnlyIntegerProperty> getTicketsInHandCount() {
-        Map<PlayerId,ReadOnlyIntegerProperty> answer = new EnumMap<>(PlayerId.class);
-        ticketsInHandCount.forEach(answer::put);
-        return answer;
+    public ReadOnlyIntegerProperty getTicketsInHandCount(PlayerId playerId) {
+        return ticketsInHandCount.get(playerId);
     }
 
     /**
-     * @return map PlayerId -> view on the (property) amount of cards this player has in its hands
+     * @return view on the (property) amount of cards this player has in its hands
      */
-    public Map<PlayerId, ReadOnlyIntegerProperty> getCardsInHandCount() {
-        Map<PlayerId,ReadOnlyIntegerProperty> answer = new EnumMap<>(PlayerId.class);
-        cardsInHandCount.forEach(answer::put);
-        return answer;
+    public ReadOnlyIntegerProperty getCardsInHandCount(PlayerId playerId) {
+        return cardsInHandCount.get(playerId);
     }
 
     /**
-     * @return map PlayerId -> view on the (property) amount of wagons this player has left
+     * @return view on the (property) amount of wagons this player has left
+     * @param playerId the player in question
      */
-    public Map<PlayerId, ReadOnlyIntegerProperty> getWagonCount() {
-        Map<PlayerId,ReadOnlyIntegerProperty> answer = new EnumMap<>(PlayerId.class);
-        wagonCount.forEach(answer::put);
-        return answer;
+    public ReadOnlyIntegerProperty getWagonCount(PlayerId playerId) {
+        return wagonCount.get(playerId);
     }
 
     /**
-     * @return map PlayerId -> view on  the (property) amount of points this player has got for constructing roads
+     * @return view on  the (property) amount of points this player has got for constructing roads
      * (these are the only publicly available points before the end of the game)
+     * @param playerId the plyer in question
      */
-    public Map<PlayerId, ReadOnlyIntegerProperty> getConstructionPoints() {
-        Map<PlayerId,ReadOnlyIntegerProperty> answer = new EnumMap<>(PlayerId.class);
-        constructionPoints.forEach(answer::put);
-        return answer;
+    public ReadOnlyIntegerProperty getConstructionPoints(PlayerId playerId) {
+        return constructionPoints.get(playerId);
+    }
+
+
+    public ObservableList<Ticket> getTicketsInHand(){
+        return this.ticketsInHand;
     }
 
     /**
-     * @return List of views on the (properties) tickets held in the hand
-     * of the owner of this instance of ObservableGameState (this.playerId)
+     * @param card the card
+     * @return view on the (property) amount of this card in this.playerId hand
      */
-    public List<ReadOnlyObjectProperty<Ticket>> getTicketsInHand() {
-        return ticketsInHand.stream().map(o->(ReadOnlyObjectProperty<Ticket>)o).collect(Collectors.toList());
+    public ReadOnlyIntegerProperty getNumberOfCardInHand(Card card){
+        return numberOfCardInHand.get(card);
     }
 
-    /**
-     * @return map card -> view on the (property) amount of this card in this.playerId hand
-     */
-    public Map<Card, ReadOnlyIntegerProperty> getNumberOfCardInHand() {
-        Map<Card,ReadOnlyIntegerProperty> answer = new EnumMap<>(Card.class);
-        numberOfCardInHand.forEach(answer::put);
-        return answer;
-
-    }
-
-    /**
-     * @return map route -> view on (property) boolean,
-     * indicating if this.playerId can currently get (try to get) this road
-     */
-    public Map<Route,ReadOnlyBooleanProperty> getCanGetRoadMap() {
-        Map<Route,ReadOnlyBooleanProperty> oracleGottaGetTheirShitTogether = new HashMap<>();
-        canGetRoadMap.forEach(oracleGottaGetTheirShitTogether::put);
-        return oracleGottaGetTheirShitTogether;
-    }
 
     /**
      * @param route a route

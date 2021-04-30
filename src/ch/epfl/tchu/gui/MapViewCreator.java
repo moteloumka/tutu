@@ -33,7 +33,6 @@ class MapViewCreator {
     private final static int RELATIVE_X_POSITION_1 = 12;
     private final static int RELATIVE_X_POSITION_2 = 24;
 
-
     @FunctionalInterface
     interface CardChooser {
         /**
@@ -65,44 +64,20 @@ class MapViewCreator {
         carte.getChildren().add(imageView);
         //creating each road
         for (Route route: ChMap.routes()){
-            Group routeGroup = new Group();
-            routeGroup.setId(route.id());
-            routeGroup.getStyleClass().addAll("route");
-
-            if (route.level() == Route.Level.UNDERGROUND )
-                routeGroup.getStyleClass().addAll("UNDERGROUND");
-
-            if (route.color() != null)
-                routeGroup.getStyleClass().add(route.color().name());
-            else
-                routeGroup.getStyleClass().add("NEUTRAL");
-
-            //creating each piece of a road (case)
+            //create route group and set basic params like color/level
+            Group routeGroup = setRouteParams(route);
+            //creating each piece of a road (case on map)
             for (int i=1; i<= route.length();++i){
-                Group caseOnMap = new Group();
-                caseOnMap.setId(route.id()+"_"+i);
-                //creating the voie (whatever that is)
-                Rectangle voie = new Rectangle(RECTANGLE_WIDTH,RECTANGLE_HEIGHT);
-                voie.getStyleClass().addAll("track","filled");
-                //creating the wagon
-                Group wagon = new Group();
-                wagon.getStyleClass().add("car");
-                Rectangle wagonRect = new Rectangle(RECTANGLE_WIDTH,RECTANGLE_HEIGHT);
-                wagonRect.getStyleClass().add("filled");
-                Circle wagonCircle1 = new Circle(RELATIVE_X_POSITION_1,RELATIVE_Y_POSITION,CIRCLE_RADIUS);
-                Circle wagonCircle2 = new Circle(RELATIVE_X_POSITION_2,RELATIVE_Y_POSITION,CIRCLE_RADIUS);
-                wagon.getChildren().addAll(wagonRect,wagonCircle1,wagonCircle2);
-                //connecting everything together
-                caseOnMap.getChildren().addAll(voie,wagon);
+                Group caseOnMap = caseOnMap(route,i);
                 routeGroup.getChildren().add(caseOnMap);
             }
             //adding a listener on who owns the route
-            obsGS.getRoutesOwners().get(route).addListener((observable, oldValue, newValue) ->
+            obsGS.owner(route).addListener((observable, oldValue, newValue) ->
                     routeGroup.getStyleClass().add(newValue.name()));
             //making sure the player can't click on a road when they can't get possession of it
             routeGroup.disableProperty().bind(
                     claimRouteH.isNull().or(obsGS.claimable(route).not()));
-            //launches the protocol of getting a new road
+            //launches the protocol of getting a new route
             routeGroup.setOnMouseClicked( event -> {
                 List<SortedBag<Card>> possibleClaimCards = obsGS.possibleClaimCards(route);
                 //if the player has only one combination of possible cards, there's no need to elaborate
@@ -119,5 +94,39 @@ class MapViewCreator {
             carte.getChildren().add(routeGroup);
         }
         return carte;
+    }
+
+    private static Group caseOnMap(Route route, int i){
+        Group caseOnMap = new Group();
+        caseOnMap.setId(route.id()+"_"+i);
+        //creating the voie (whatever that is)
+        Rectangle voie = new Rectangle(RECTANGLE_WIDTH,RECTANGLE_HEIGHT);
+        voie.getStyleClass().addAll("track","filled");
+        //creating the wagon
+        Group wagon = new Group();
+        wagon.getStyleClass().add("car");
+        Rectangle wagonRect = new Rectangle(RECTANGLE_WIDTH,RECTANGLE_HEIGHT);
+        wagonRect.getStyleClass().add("filled");
+        Circle wagonCircle1 = new Circle(RELATIVE_X_POSITION_1,RELATIVE_Y_POSITION,CIRCLE_RADIUS);
+        Circle wagonCircle2 = new Circle(RELATIVE_X_POSITION_2,RELATIVE_Y_POSITION,CIRCLE_RADIUS);
+        wagon.getChildren().addAll(wagonRect,wagonCircle1,wagonCircle2);
+        //connecting everything together
+        caseOnMap.getChildren().addAll(voie,wagon);
+        return caseOnMap;
+    }
+
+    private static Group setRouteParams(Route route){
+        Group routeGroup = new Group();
+        routeGroup.setId(route.id());
+        routeGroup.getStyleClass().addAll("route");
+
+        if (route.level() == Route.Level.UNDERGROUND )
+            routeGroup.getStyleClass().addAll("UNDERGROUND");
+
+        if (route.color() != null)
+            routeGroup.getStyleClass().add(route.color().name());
+        else
+            routeGroup.getStyleClass().add("NEUTRAL");
+        return routeGroup;
     }
 }

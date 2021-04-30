@@ -6,10 +6,6 @@ import ch.epfl.tchu.game.Ticket;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
@@ -20,8 +16,6 @@ import ch.epfl.tchu.gui.ActionHandlers.DrawCardHandler;
 import ch.epfl.tchu.gui.ActionHandlers.DrawTicketsHandler;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
-
-import java.awt.event.MouseEvent;
 
 
 abstract class DecksViewCreator {
@@ -46,39 +40,17 @@ abstract class DecksViewCreator {
     public static HBox createHandView(ObservableGameState obsGS){
         HBox handView = new HBox();
         handView.getStylesheets().addAll("/styles/decks.css","/styles/colors.css");
-        ListView<Ticket> billets = new ListView<>();
+        ListView<Ticket> billets = new ListView<>(obsGS.getTicketsInHand());
         billets.setId("tickets");
         HBox hand = new HBox();
         hand.setId("hand-pane");
         for (Card card: Card.ALL){
-            ReadOnlyIntegerProperty amount = obsGS.getNumberOfCardInHand().get(card);
-
-            StackPane general = new StackPane();
-            general.getStyleClass().add("card");
-            //setting visible or not depending on the int from above
-            general.visibleProperty().bind(Bindings.greaterThan(amount, 0));
-            //little question of colors -> specific case with locomotives
-            if (card.color()!=null)
-                general.getStyleClass().add(card.color().name());
-            else
-                general.getStyleClass().add("NEUTRAL");
-            //drawing the card
-            Rectangle contour = new Rectangle(CARD_CONTOUR_WIDTH,CARD_CONTOUR_HEIGHT);
-            contour.getStyleClass().add("outside");
-            Rectangle interior = new Rectangle(CARD_FILLED_WIDTH,CARD_FILLED_HEIGHT);
-            interior.getStyleClass().addAll("filled","inside");
-            Rectangle image = new Rectangle(CARD_IMAGE_WIDTH,CARD_IMAGE_HEIGHT);
-            image.getStyleClass().add("train-image");
-            //drawing the counter
-            Text counter = new Text();
-            counter.getStyleClass().add("count");
-            //seetting visibility and amount to show
-            counter.textProperty().bind(Bindings.convert(amount));
-            counter.visibleProperty().bind(Bindings.greaterThan(amount,1));
-            //adding all these nodes as the "general" children
-            general.getChildren().addAll(contour,interior,image,counter);
-            //adding the ganaeral node as a child to the hand
-            hand.getChildren().add(general);
+            //property on how many cards the player owns
+            ReadOnlyIntegerProperty amount = obsGS.getNumberOfCardInHand(card);
+            //creates the visual components, adds the style classes etc
+            StackPane cardVisual = playersCardViewCreator(card,amount);
+            //adding the cards node as a child to the hand
+            hand.getChildren().add(cardVisual);
         }
         handView.getChildren().addAll(billets,hand);
         return handView;
@@ -100,9 +72,8 @@ abstract class DecksViewCreator {
         cardView.getStylesheets().addAll("styles/decks.css", "styles/colors.css");
         cardView.setId("card-pane");
 
-        /**
-         *  disabledProperty TO BE ADDED!!
-         */
+        //the following is code creating 2 buttons
+
         Button ticketDeckButt = new Button(StringsFr.TICKETS);
         ticketDeckButt.getStyleClass().add("gauged");
         //calling the drawTicket handler when button is pressed
@@ -138,28 +109,20 @@ abstract class DecksViewCreator {
         cardDeckButt.setGraphic(cards);
         ticketDeckButt.setGraphic(tickets);
 
+        //button will be disabled if corresponding handler is null
+        ticketDeckButt.disableProperty().bind(
+                drawTicketH.isNull());
+        cardDeckButt.disableProperty().bind(
+                drawCardH.isNull());
+
+        //end of button section
+        //first button added here, last one added in the end because order matters
         cardView.getChildren().add(ticketDeckButt);
 
-        for (ReadOnlyObjectProperty<Card> cp : obsGS.getVisibleCards()) {
-            StackPane general = new StackPane();
-            general.getStyleClass().add("card");
-
-            if(cp.get() != null) {
-                if (cp.get() != Card.LOCOMOTIVE)
-                    general.getStyleClass().add(cp.get().color().name());
-                else
-                    general.getStyleClass().add("NEUTRAL");
-            }
-
-            Rectangle contour = new Rectangle(CARD_CONTOUR_WIDTH, CARD_CONTOUR_HEIGHT);
-            contour.getStyleClass().add("outside");
-            Rectangle interior = new Rectangle(CARD_FILLED_WIDTH, CARD_FILLED_HEIGHT);
-            interior.getStyleClass().addAll("filled", "inside");
-            Rectangle image = new Rectangle(CARD_IMAGE_WIDTH, CARD_IMAGE_HEIGHT);
-            image.getStyleClass().add("train-image");
-
-            general.getChildren().addAll(contour, interior, image);
-            cardView.getChildren().add(general);
+        for (int slot : Constants.FACE_UP_CARD_SLOTS){
+            ReadOnlyObjectProperty<Card> cp = obsGS.getVisibleCardProperty(slot);
+            //creating visible components,adding CSS classes etc
+            StackPane general = slotCardViewCreator(cp,drawCardH);
             //adding a listener on the color of the card by changing the color class if something changes
             cp.addListener((observable, oldValue, newValue) -> {
                 if (oldValue != null){
@@ -169,8 +132,68 @@ abstract class DecksViewCreator {
                 String newColor = newValue != Card.LOCOMOTIVE ? newValue.color().name() : NULL_COLOR_CSS_CLASS;
                 general.getStyleClass().add(newColor);
             });
+            cardView.getChildren().add(general);
         }
         cardView.getChildren().add(cardDeckButt);
         return cardView;
+    }
+
+    //these 2 methods are taken out of the ones above just to make reading easier
+    //long live OOP
+    private static StackPane slotCardViewCreator(ReadOnlyObjectProperty<Card> cp
+            ,ReadOnlyObjectProperty<ActionHandlers.DrawCardHandler> drawCardH){
+
+        StackPane general = new StackPane();
+        general.getStyleClass().add("card");
+        //making it possible to click on visible cards
+        general.setOnMouseClicked(event -> {
+            drawCardH.get().onDrawCard(cp.get().ordinal());
+        });
+
+        if(cp.get() != null) {
+            if (cp.get() != Card.LOCOMOTIVE)
+                general.getStyleClass().add(cp.get().color().name());
+            else
+                general.getStyleClass().add("NEUTRAL");
+        }
+
+        Rectangle contour = new Rectangle(CARD_CONTOUR_WIDTH, CARD_CONTOUR_HEIGHT);
+        contour.getStyleClass().add("outside");
+        Rectangle interior = new Rectangle(CARD_FILLED_WIDTH, CARD_FILLED_HEIGHT);
+        interior.getStyleClass().addAll("filled", "inside");
+        Rectangle image = new Rectangle(CARD_IMAGE_WIDTH, CARD_IMAGE_HEIGHT);
+        image.getStyleClass().add("train-image");
+
+        general.getChildren().addAll(contour, interior, image);
+
+        return general;
+    }
+
+    private static StackPane playersCardViewCreator(Card card, ReadOnlyIntegerProperty amount){
+        StackPane general = new StackPane();
+        general.getStyleClass().add("card");
+        //setting visible or not depending on the int from above
+        general.visibleProperty().bind(Bindings.greaterThan(amount, 0));
+        //little question of colors -> specific case with locomotives
+        if (card.color()!=null)
+            general.getStyleClass().add(card.color().name());
+        else
+            general.getStyleClass().add("NEUTRAL");
+        //drawing the card
+        Rectangle contour = new Rectangle(CARD_CONTOUR_WIDTH,CARD_CONTOUR_HEIGHT);
+        contour.getStyleClass().add("outside");
+        Rectangle interior = new Rectangle(CARD_FILLED_WIDTH,CARD_FILLED_HEIGHT);
+        interior.getStyleClass().addAll("filled","inside");
+        Rectangle image = new Rectangle(CARD_IMAGE_WIDTH,CARD_IMAGE_HEIGHT);
+        image.getStyleClass().add("train-image");
+        //drawing the counter
+        Text counter = new Text();
+        counter.getStyleClass().add("count");
+        //seetting visibility and amount to show
+        counter.textProperty().bind(Bindings.convert(amount));
+        counter.visibleProperty().bind(Bindings.greaterThan(amount,1));
+        //adding all these nodes as the "general" children
+        general.getChildren().addAll(contour,interior,image,counter);
+        return general;
     }
 }
