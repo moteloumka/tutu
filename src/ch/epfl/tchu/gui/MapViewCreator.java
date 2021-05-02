@@ -79,6 +79,7 @@ class MapViewCreator {
                     claimRouteH.isNull().or(obsGS.claimable(route).not()));
             //launches the protocol of getting a new route
             routeGroup.setOnMouseClicked( event -> {
+
                 List<SortedBag<Card>> possibleClaimCards = obsGS.possibleClaimCards(route);
                 //if the player has only one combination of possible cards, there's no need to elaborate
                 if (possibleClaimCards.size() == 1)

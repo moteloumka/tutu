@@ -39,6 +39,8 @@ public final class ObservableGameState {
     private final Map<Card,IntegerProperty> numberOfCardInHand = new EnumMap<>(Card.class);
     private final Map<Route,BooleanProperty> canGetRoadMap = new HashMap<>();
 
+    private final List<List<Route>> neighbors;
+
 
     /**
      * creates a new instance of ObservableGameState that has all the properties set to 0/null/false by default
@@ -53,10 +55,21 @@ public final class ObservableGameState {
         for (int ignored : Constants.FACE_UP_CARD_SLOTS)
             visibleCards.add(new SimpleObjectProperty<>(null));
 
+        List<List<Route>> neighborBuilder = new ArrayList<>();
         for (Route route: ChMap.routes()){
             routesOwners.put(route,new SimpleObjectProperty<>(null));
             canGetRoadMap.put(route,new SimpleBooleanProperty(false));
+            //creating the list of neighbor roads
+            for (Route route1 :ChMap.routes()){
+                if(route != route1
+                && route.station1() == route1.station1()
+                && route.station2() == route1.station2()
+                && neighborBuilder.stream()
+                .noneMatch(routes -> routes.contains(route) && routes.contains(route1)))
+                    neighborBuilder.add(List.of(route,route1));
+            }
         }
+        neighbors = List.copyOf(neighborBuilder);
 
         for (PlayerId pId : PlayerId.ALL){
             ticketsInHandCount.put(pId, new SimpleIntegerProperty(0));
@@ -67,6 +80,8 @@ public final class ObservableGameState {
 
         for (Card card: Card.ALL)
             numberOfCardInHand.put(card,new SimpleIntegerProperty(0));
+
+
     }
 
     /**
@@ -110,15 +125,19 @@ public final class ObservableGameState {
         }
 
         for (Route route : routes){
+
             //verification if a neighbor route exists and if it's already taken
             //in which case, it won't be possible to get the original route in one's possession
             boolean neighborIsOwned = false;
-            for (Route rte : routes)
-                if ( owner(rte).get() != null
-                        && rte.station1()==route.station1()
-                        && rte.station2()==route.station2()
-                        && rte != route)
-                    neighborIsOwned = true;
+
+            List<List<Route>> possibleOwned = neighbors.stream()
+                    .filter(rts -> rts.contains(route)).collect(Collectors.toList());
+            if (!possibleOwned.isEmpty()){
+                //there's supposed to only be one
+                List<Route> pair = possibleOwned.get(0);
+                int index = pair.indexOf(route) == 0 ? 1 : 0;
+                neighborIsOwned = owner(pair.get(index)).get() != null;
+            }
 
             //updating all possible routes to claim by this player
             canGetRoadMap.get(route).set(
