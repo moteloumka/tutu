@@ -151,6 +151,7 @@ class DecksViewCreator {
         general.setOnMouseClicked(event -> {
             drawCardH.get().onDrawCard(cp.get().ordinal());
         });
+        general.disableProperty().bind(drawCardH.isNull());
 
         if(cp.get() != null) {
             if (cp.get() != Card.LOCOMOTIVE)

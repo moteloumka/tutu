@@ -50,13 +50,16 @@ import java.util.stream.Collectors;
 
 public class GraphicalPlayer {
     private final Stage window;
-    private final String WINDOW_NAME_TEMPLATE = "tCHu — %s";
+    private final static String WINDOW_NAME_TEMPLATE = "tCHu — %s";
+    private final static int INFO_TAB_SIZE = 5;
     private final int TICKETS_MIN_CONSTANT_THINGY = 2;
     private final ObservableGameState observableGameState;
     private final ObservableList<Text> infoList = FXCollections.observableList(new ArrayList<>());
     private final ObjectProperty<ClaimRouteHandler> claimRouteH = new SimpleObjectProperty<>(null);
     private final ObjectProperty<DrawTicketsHandler> drawTicketsH = new SimpleObjectProperty<>(null);
     private final ObjectProperty<DrawCardHandler> drawCardH = new SimpleObjectProperty<>(null);
+
+    public Scene scene;
 
     public GraphicalPlayer(PlayerId playerId, Map<PlayerId,String> playerNames){
         assert isFxApplicationThread();
@@ -76,7 +79,7 @@ public class GraphicalPlayer {
         borderPane.setBottom(handView);
         borderPane.setLeft(infos);
 
-        Scene scene = new Scene(borderPane);
+        scene = new Scene(borderPane);
         window.setScene(scene);
     }
 
@@ -87,19 +90,22 @@ public class GraphicalPlayer {
 
     public void receiveInfo(String message){
         assert isFxApplicationThread();
-        if (infoList.size()>=5)
+        if (infoList.size() >= INFO_TAB_SIZE)
             infoList.remove(0);
         infoList.add(new Text(message));
     }
 
-    public void startTurn(DrawCardHandler drawCardH
-            , DrawTicketsHandler drawTicketsH
+    public void startTurn(DrawTicketsHandler drawTicketsH
+            , DrawCardHandler drawCardH
             , ClaimRouteHandler claimRouteH){
         assert isFxApplicationThread();
 
         DrawCardHandler finalDrawCardH = slot -> {
             drawCardH.onDrawCard(slot);
-            setHandlersToNull();
+            System.out.println("ticket drawn");
+            drawCard(drawCardH);
+            this.drawTicketsH.set(null);
+            this.claimRouteH.set(null);
         };
         if (observableGameState.canDrawCards())
             this.drawCardH.set(finalDrawCardH);
@@ -148,9 +154,11 @@ public class GraphicalPlayer {
      */
     public void drawCard(DrawCardHandler drawCardH){
         assert isFxApplicationThread();
+        System.out.println("in drawing methode");
 
         DrawCardHandler finalDrawCardH = slot -> {
             drawCardH.onDrawCard(slot);
+            System.out.println("drew second card");
             setHandlersToNull();
         };
         if (observableGameState.canDrawCards())
