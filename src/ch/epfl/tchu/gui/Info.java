@@ -18,6 +18,7 @@ import java.util.Set;
  */
 public final class Info {
     private final String playerName;
+    public static final char COMA_SEPARATOR = ',';
 
     /**
      * generates texts describing the state of the game by using the player's name
@@ -71,7 +72,7 @@ public final class Info {
     /**
      * used to compute attemptsTunnelClaim method
      */
-    private static String cardNumerator(SortedBag<Card> cards){
+     static String cardNumerator(SortedBag<Card> cards){
         StringBuilder totCards = new StringBuilder();
         Set<Card> setCards = cards.toSet();
         int i = 0;

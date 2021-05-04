@@ -18,7 +18,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
 
-abstract class DecksViewCreator {
+class DecksViewCreator {
     private final static int CARD_CONTOUR_WIDTH = 60;
     private final static int CARD_CONTOUR_HEIGHT = 90;
     private final static int CARD_FILLED_WIDTH = 40;
@@ -30,6 +30,8 @@ abstract class DecksViewCreator {
     private final static int BUTTON_SCALE_HEIGHT = 5;
 
     private final static String NULL_COLOR_CSS_CLASS = "NEUTRAL";
+
+    private DecksViewCreator(){}
     /**
      * creates the hand view,
      * will be placed horizontally in the bottom of the screen, contains (from left to right) :

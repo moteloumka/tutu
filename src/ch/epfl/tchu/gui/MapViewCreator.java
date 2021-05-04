@@ -33,6 +33,8 @@ class MapViewCreator {
     private final static int RELATIVE_X_POSITION_1 = 12;
     private final static int RELATIVE_X_POSITION_2 = 24;
 
+    private MapViewCreator(){}
+
     @FunctionalInterface
     interface CardChooser {
         /**
