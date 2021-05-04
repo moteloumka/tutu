@@ -84,7 +84,7 @@ public final class Info {
                     .append(Info.cardName(card,n));
 
             if(setCards.size()-i > 2){
-                totCards.append(", ");
+                totCards.append(COMA_SEPARATOR+" ");
             } else if (setCards.size()-i  == 2){
                 totCards.append(AND_SEPARATOR);
             }

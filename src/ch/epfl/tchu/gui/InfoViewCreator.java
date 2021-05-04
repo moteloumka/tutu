@@ -19,6 +19,7 @@ import static ch.epfl.tchu.gui.StringsFr.PLAYER_STATS;
 class InfoViewCreator {
     private static final int CIRCLE_RADIUS = 5;
     private InfoViewCreator(){}
+
     public static VBox createInfoView(PlayerId playerId
             , Map<PlayerId,String> playerNames
             , ObservableGameState obsGS
@@ -26,7 +27,7 @@ class InfoViewCreator {
         VBox mainColumn = new VBox();
         mainColumn.getStylesheets().addAll("styles/info.css","styles/colors.css");
         VBox playerStats = new VBox();
-        playerStats.getStyleClass().add("player-stats");
+        playerStats.setId("player-stats");
 
         TextFlow thisPlayerStats = individualPlayerStatsCreator(playerId,playerNames,obsGS);
         TextFlow otherPlayerStats= individualPlayerStatsCreator(playerId.next(),playerNames,obsGS);
@@ -35,7 +36,7 @@ class InfoViewCreator {
         Separator separator = new Separator();
 
         TextFlow messages = new TextFlow();
-        messages.getStyleClass().add("game-info");
+        messages.setId("game-info");
         Bindings.bindContent(messages.getChildren(),infos);
 
         mainColumn.getChildren().addAll(playerStats,separator,messages);
@@ -46,9 +47,9 @@ class InfoViewCreator {
             ,Map<PlayerId,String> playerNames
             ,ObservableGameState obsGS ){
         TextFlow individualStat = new TextFlow();
-        individualStat.setId(playerId.name());
+        individualStat.getStyleClass().add(playerId.name());
         Circle circle = new Circle(CIRCLE_RADIUS);
-        circle.setId("filled");
+        circle.getStyleClass().add("filled");
         Text text = new Text();
         text.textProperty().bind(Bindings.format(PLAYER_STATS
                 ,playerNames.get(playerId)

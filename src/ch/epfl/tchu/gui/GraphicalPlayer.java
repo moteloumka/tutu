@@ -53,10 +53,7 @@ public class GraphicalPlayer {
     private final String WINDOW_NAME_TEMPLATE = "tCHu — %s";
     private final int TICKETS_MIN_CONSTANT_THINGY = 2;
     private final ObservableGameState observableGameState;
-    private final Pane map;
-    private final VBox cardsView;
-    private final HBox handView;
-    private final VBox infos;
+    private final ObservableList<Text> infoList = FXCollections.observableList(new ArrayList<>());
     private final ObjectProperty<ClaimRouteHandler> claimRouteH = new SimpleObjectProperty<>(null);
     private final ObjectProperty<DrawTicketsHandler> drawTicketsH = new SimpleObjectProperty<>(null);
     private final ObjectProperty<DrawCardHandler> drawCardH = new SimpleObjectProperty<>(null);
@@ -68,12 +65,10 @@ public class GraphicalPlayer {
         this.window = new Stage();
         window.setTitle(String.format(WINDOW_NAME_TEMPLATE,playerNames.get(playerId)));
 
-
-        map = createMapView(observableGameState, claimRouteH , this::chooseClaimCards);
-        cardsView = createCardsView(observableGameState,drawTicketsH,drawCardH);
-        handView = createHandView(observableGameState);
-        //have to add observable list with infos(?)
-        infos = createInfoView(playerId,playerNames,observableGameState,null);
+        Pane map = createMapView(observableGameState, claimRouteH, this::chooseClaimCards);
+        VBox cardsView = createCardsView(observableGameState, drawTicketsH, drawCardH);
+        HBox handView = createHandView(observableGameState);
+        VBox infos = createInfoView(playerId, playerNames, observableGameState, infoList);
 
         BorderPane borderPane = new BorderPane();
         borderPane.setCenter(map);
@@ -90,12 +85,11 @@ public class GraphicalPlayer {
         observableGameState.setState(pubGS,playerState);
     }
 
-    /**
-     * à completer (commencer)
-     * @param message
-     */
     public void receiveInfo(String message){
         assert isFxApplicationThread();
+        if (infoList.size()>=5)
+            infoList.remove(0);
+        infoList.add(new Text(message));
     }
 
     public void startTurn(DrawCardHandler drawCardH
@@ -272,7 +266,7 @@ public class GraphicalPlayer {
             public SortedBag<Card> fromString(String string) {
                 SortedBag.Builder<Card> bobTheBuilder = new SortedBag.Builder<Card>();
                 String[] ciphers = string
-                        .split(Pattern.quote(String.valueOf(Info.COMA_SEPARATOR)), -1);
+                        .split(Pattern.quote(Info.COMA_SEPARATOR+" "), -1);
                 //TODO FINISH DECODING PROPERLY
                 return bobTheBuilder.build();
             }
