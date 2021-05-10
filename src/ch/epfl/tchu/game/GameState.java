@@ -252,8 +252,7 @@ public final class GameState extends PublicGameState {
      * @return new GameState that keeps track of these changes
      */
     public GameState withDrawnFaceUpCard(int slot){
-        Preconditions.checkArgument(this.canDrawCards()
-                ,"can't draw cards");
+
         PlayerState nPs = this.currentPlayerState().
                 withAddedCard(this.cardState.faceUpCard(slot));
         CardState newCardState = this.cardState.withDrawnFaceUpCard(slot);
@@ -269,8 +268,7 @@ public final class GameState extends PublicGameState {
      * @return new GameState that keeps track of these changes
      */
     public GameState withBlindlyDrawnCard(){
-        Preconditions.checkArgument(this.canDrawCards(),
-                "can't draw cards");
+
         CardState newCardState = this.cardState.withoutTopDeckCard();
         PlayerState nPs = this.currentPlayerState()
                 .withAddedCard(this.cardState.topDeckCard());

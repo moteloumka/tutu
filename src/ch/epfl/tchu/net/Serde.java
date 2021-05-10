@@ -22,7 +22,7 @@ public interface Serde <T> {
 
             @Override
             public T deserialize(String cipher) {
-                return deSer.apply(cipher);
+                return cipher.equals("") ? null : deSer.apply(cipher);
             }
         };
     }
@@ -47,9 +47,10 @@ public interface Serde <T> {
             @Override
             public List<T> deserialize(String cipher) {
                 String[] strings = cipher.split(Pattern.quote(str),-1);
-                return Arrays.stream(strings)
+                List<T> list = Arrays.stream(strings)
                         .map(serde::deserialize)
                         .collect(Collectors.toList());
+                return list.isEmpty() ? List.of() : list;
             }
         };
     }
@@ -72,7 +73,8 @@ public interface Serde <T> {
                 List<T> list = Arrays.stream(strings)
                         .map(serde::deserialize)
                         .collect(Collectors.toList());
-                return SortedBag.of(list);
+
+                return list.isEmpty() ? SortedBag.of() : SortedBag.of(list);
             }
         };
     }

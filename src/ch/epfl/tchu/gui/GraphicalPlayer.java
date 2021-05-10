@@ -12,17 +12,11 @@ import static javafx.application.Platform.isFxApplicationThread;
 import ch.epfl.tchu.gui.ActionHandlers.*;
 
 
-import ch.epfl.tchu.net.RemotePlayerProxy;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.ReadOnlyBooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
@@ -37,16 +31,13 @@ import javafx.scene.text.TextFlow;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import javafx.stage.WindowEvent;
 import javafx.util.StringConverter;
 
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Handler;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class GraphicalPlayer {
     private final Stage window;
@@ -81,6 +72,7 @@ public class GraphicalPlayer {
 
         scene = new Scene(borderPane);
         window.setScene(scene);
+        window.show();
     }
 
     public void setState(PublicGameState pubGS, PlayerState playerState){
@@ -102,7 +94,6 @@ public class GraphicalPlayer {
 
         DrawCardHandler finalDrawCardH = slot -> {
             drawCardH.onDrawCard(slot);
-            System.out.println("ticket drawn");
             drawCard(drawCardH);
             this.drawTicketsH.set(null);
             this.claimRouteH.set(null);
@@ -136,29 +127,29 @@ public class GraphicalPlayer {
         ObservableList<Ticket> obsTickets = FXCollections.observableArrayList(tickets.toList());
 
         DefaultWindowBuilder<Ticket> newWindow = new DefaultWindowBuilder<>(indication
-                ,true,obsTickets
-                ,null, tickets.size()-TICKETS_MIN_CONSTANT_THINGY, false);
+                ,true
+                , obsTickets
+                ,null, tickets.size()-2, false);
         newWindow.button.setOnAction(e->{
-            newWindow.defWindow.hide();
+            newWindow.defaultWindow.hide();
             newWindow.options.getSelectionModel().getSelectedItems();
             List<Ticket> fuckingTickets = new ArrayList<>(newWindow.options.getSelectionModel().getSelectedItems());
             SortedBag<Ticket> fuckingBag = SortedBag.of(fuckingTickets);
             chooseTicketsH.onChooseTickets(fuckingBag);
         });
-        newWindow.defWindow.setScene(newWindow.scene);
+        newWindow.defaultWindow.setScene(newWindow.scene);
+        newWindow.defaultWindow.show();
     }
 
     /**
-     * this is probably (surely) false for now
+     *
      * @param drawCardH
      */
     public void drawCard(DrawCardHandler drawCardH){
         assert isFxApplicationThread();
-        System.out.println("in drawing methode");
 
         DrawCardHandler finalDrawCardH = slot -> {
             drawCardH.onDrawCard(slot);
-            System.out.println("drew second card");
             setHandlersToNull();
         };
         if (observableGameState.canDrawCards())
@@ -180,11 +171,12 @@ public class GraphicalPlayer {
                 ,observableOptions
                 ,converter ,0,false);
         newWindow.button.setOnAction(e->{
-            newWindow.defWindow.hide();
+            newWindow.defaultWindow.hide();
             SortedBag<Card> choice = newWindow.options.getSelectionModel().getSelectedItem();
             chooseCardsH.onChooseCards(choice);
         });
-        newWindow.defWindow.setScene(newWindow.scene);
+        newWindow.defaultWindow.setScene(newWindow.scene);
+        newWindow.defaultWindow.show();
     }
 
     public void chooseAdditionalCards(List<SortedBag<Card>> options, ChooseCardsHandler chooseCardsH){
@@ -196,14 +188,21 @@ public class GraphicalPlayer {
         DefaultWindowBuilder<SortedBag<Card>> newWindow = new DefaultWindowBuilder<>("sup"
                 ,false
                 ,observableOptions
-                ,converter ,0,false);
+                ,converter ,0,true);
         newWindow.button.setOnAction(e->{
-            newWindow.defWindow.hide();
-            SortedBag<Card> choice = newWindow.options.getSelectionModel().getSelectedItem();
+            SortedBag<Card> choice;
+            newWindow.defaultWindow.hide();
+
+            if(newWindow.options.getSelectionModel().getSelectedItem() != null)
+                choice = newWindow.options.getSelectionModel().getSelectedItem();
+            //case when nothing got selected -> player doesn't want to get road
+            else
+                choice = SortedBag.of();
             //idk can this thing be null?
             chooseCardsH.onChooseCards(choice);
         });
-        newWindow.defWindow.setScene(newWindow.scene);
+        newWindow.defaultWindow.setScene(newWindow.scene);
+        newWindow.defaultWindow.show();
     }
 
     private void setHandlersToNull(){
@@ -212,13 +211,15 @@ public class GraphicalPlayer {
         this.claimRouteH.set(null);
     }
 
+
+
     /**
      * is it really worth the hustle?
      * @param <T>
      */
    private class  DefaultWindowBuilder <T>{
         private final Button button;
-        private final Stage defWindow;
+        private final Stage defaultWindow;
         private final ListView<T> options;
         private final Scene scene;
 
@@ -229,9 +230,9 @@ public class GraphicalPlayer {
                 , int minObjSelected
                 , boolean closableByCross){
 
-            this.defWindow = new Stage(StageStyle.UTILITY);
-            defWindow.initModality(Modality.WINDOW_MODAL);
-            defWindow.initOwner(GraphicalPlayer.this.window);
+            this.defaultWindow = new Stage(StageStyle.UTILITY);
+            defaultWindow.initModality(Modality.WINDOW_MODAL);
+            defaultWindow.initOwner(GraphicalPlayer.this.window);
             VBox content = new VBox();
 
             TextFlow textFlow = new TextFlow();
@@ -242,24 +243,27 @@ public class GraphicalPlayer {
             this.options = new ListView<>(elements);
             if(converter != null)
                 options.setCellFactory(v -> new TextFieldListCell<>(converter));
-            if (multipleChoice)
+            if (multipleChoice);
                 options.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
-            this.button = new Button();
+            this.button = new Button("Choose");
             //disables button if the necessary amount of stuff wasn't selected
             if (minObjSelected > 0)
                 button.disableProperty()
-                        .bind(new SimpleBooleanProperty(
-                                Bindings.size(options.getSelectionModel().getSelectedItems()).get() < minObjSelected));
+                        .bind(
+                                Bindings.lessThan(Bindings.size(options.getSelectionModel().getSelectedItems())
+                                        , minObjSelected));
             //action on button left to define later on
-            if (closableByCross)
-                defWindow.setOnCloseRequest(Event::consume);
+            if (!closableByCross)
+                defaultWindow.setOnCloseRequest(Event::consume);
 
             content.getChildren().add(textFlow);
             content.getChildren().add(options);
             content.getChildren().add(this.button);
 
             this.scene = new Scene(content);
+            scene.getStylesheets().add("styles/chooser.css");
+
         }
    }
 
@@ -272,7 +276,7 @@ public class GraphicalPlayer {
 
             @Override
             public SortedBag<Card> fromString(String string) {
-                SortedBag.Builder<Card> bobTheBuilder = new SortedBag.Builder<Card>();
+                SortedBag.Builder<Card> bobTheBuilder = new SortedBag.Builder<>();
                 String[] ciphers = string
                         .split(Pattern.quote(Info.COMA_SEPARATOR+" "), -1);
                 //TODO FINISH DECODING PROPERLY

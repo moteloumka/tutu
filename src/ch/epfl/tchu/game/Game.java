@@ -58,36 +58,28 @@ public final class Game {
 
         //the number of tickets chosen by each player is communicated to all the players
         for(Map.Entry<PlayerId,Player> m : players.entrySet()){
-
             Info info = new Info(playerNames.get(m.getKey()));
-
             tell(info.keptTickets(gameState.playerState(m.getKey()).ticketCount()),players);
         }
 
         //the game is played here
         //gets out of the cycle only if lastTurnBegins() of GameState returns true
         //(in the end of one's turn)
-
-        System.out.println("------- GAME BEGINS --------- \n\n");
-
         boolean hasPlayedLastTurn = false;
 
         do {
-
             PlayerId currentPlayerId = gameState.currentPlayerId();
             Player currentPlayer = players.get(currentPlayerId);
-            //choosing the kind of turn
-            Player.TurnKind turnKind = currentPlayer.nextTurn();
+            update(gameState,players);
             Info info = new Info(playerNames.get(currentPlayerId));
+            tell(info.canPlay(),players);
 
             if (gameState.lastPlayer() == currentPlayerId)
                 hasPlayedLastTurn = true;
 
-            tell(info.canPlay(),players);
-
-
-
-                switch (turnKind){
+            //choosing the kind of turn
+            Player.TurnKind turnKind = currentPlayer.nextTurn();
+            switch (turnKind){
 
                 case DRAW_TICKETS:
 
@@ -129,17 +121,11 @@ public final class Game {
 
                     Route routeToClaim;
                     SortedBag<Card> initialCards;
-                    boolean canClaimRoute;
 
-                    do {
-                        //find out what we're trying to claim
-                        routeToClaim = currentPlayer.claimedRoute();
-                        //find out with which cards the player is willing to claim the route
-                        initialCards = currentPlayer.initialClaimCards();
-                        //checks if claiming the route is possible
-                        canClaimRoute = gameState.currentPlayerState().canClaimRoute(routeToClaim);
-                    }while (!canClaimRoute);
-
+                    //find out what we're trying to claim
+                    routeToClaim = currentPlayer.claimedRoute();
+                    //find out with which cards the player is willing to claim the route
+                    initialCards = currentPlayer.initialClaimCards();
 
                     if(routeToClaim.level()== Route.Level.UNDERGROUND){
                         SortedBag<Card> interCards = SortedBag
@@ -163,8 +149,7 @@ public final class Game {
                             //constructing  a list of combinations of additional cards the player can give
                             List<SortedBag<Card>> options = gameState.currentPlayerState()
                                     .possibleAdditionalCards(addCardCount
-                                            ,initialCards
-                                            ,drawnCards);
+                                            ,initialCards);
                             //checking if the player posses at least one possible combination
                             if (options.stream().anyMatch(interCards::contains)){
 
@@ -274,56 +259,6 @@ public final class Game {
         else
             //announcing the draw
             tell(Info.draw(winners,maxPts),players);
-
-        /**
-        EnumMap<PlayerId, Integer> pointMap = new EnumMap<>(PlayerId.class);
-        //finding out what is the length of longest trail (can happen for more than 1 player)
-        //also puts the keys in pointMap
-        int maxLength = 0;
-        for(Map.Entry<PlayerId,Player> m : players.entrySet()) {
-            int playerLongestLength = Trail
-                    .longest(gameState.playerState(m.getKey()).routes())
-                    .length();
-            if (playerLongestLength > maxLength){
-                maxLength = playerLongestLength;
-            }
-            pointMap.put(m.getKey(), gameState.playerState(m.getKey()).finalPoints());
-        }
-
-        //receiving info on longest trail bonus for each player that has the longest trail
-        //and adding bonus points if necessary
-        for(Map.Entry<PlayerId,Player> m : players.entrySet()) {
-            Trail longestTrail = Trail.longest(gameState.playerState(m.getKey()).routes());
-            if (longestTrail.length() == maxLength){
-                Info info = new Info(playerNames.get(m.getKey()));
-                //announcing to everyone who got the bonus
-                tell(info.getsLongestTrailBonus(longestTrail), players);
-                //adding the bonus points to the players who got the bonus
-                pointMap.replace(m.getKey(),
-                        pointMap.get(m.getKey()) + Constants.LONGEST_TRAIL_BONUS_POINTS);
-            }
-        }
-
-        int maxPoints = Collections.max(pointMap.values());
-        int minPoints = Collections.min(pointMap.values());
-        List<PlayerId> potentialWinners = new ArrayList<>();
-
-        for(Map.Entry<PlayerId,Player> m : players.entrySet()) {
-            if (pointMap.get(m.getKey()) == maxPoints){
-                potentialWinners.add(m.getKey());}
-        }
-
-
-        if (potentialWinners.size()==1) {
-            Info info = new Info(playerNames.get(potentialWinners.get(0)));
-            //announcing the winner
-            tell(info.won(maxPoints, minPoints), players);
-        }
-        else {
-            //announcing the draw
-            Info.draw(new ArrayList<>(playerNames.values()), maxPoints);
-        }
-         */
     }
 
     private static void tell(String string, Map<PlayerId,Player> players){

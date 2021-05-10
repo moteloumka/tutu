@@ -113,7 +113,6 @@ class PlayerStateTest {
             for (int i = 0; i + batchSize < cards.size(); i += batchSize) {
                 var nextI = i + batchSize;
                 var cardsToAdd = cards.subList(i, nextI);
-                playerState = playerState.withAddedCards(SortedBag.of(cardsToAdd));
                 assertEquals(SortedBag.of(cards.subList(0, nextI)), playerState.cards());
             }
         }
@@ -252,8 +251,7 @@ class PlayerStateTest {
             assertThrows(IllegalArgumentException.class, () -> {
                 playerState.possibleAdditionalCards(
                         additionalCardsCount,
-                        SortedBag.of(Card.BLUE),
-                        SortedBag.of(3, Card.RED));
+                        SortedBag.of(Card.BLUE));
             });
         }
     }
@@ -264,14 +262,12 @@ class PlayerStateTest {
         assertThrows(IllegalArgumentException.class, () -> {
             playerState.possibleAdditionalCards(
                     1,
-                    SortedBag.of(),
-                    SortedBag.of(3, Card.RED));
+                    SortedBag.of());
         });
         assertThrows(IllegalArgumentException.class, () -> {
             playerState.possibleAdditionalCards(
                     1,
-                    SortedBag.of(List.of(Card.RED, Card.BLUE, Card.WHITE)),
-                    SortedBag.of(3, Card.RED));
+                    SortedBag.of(List.of(Card.RED, Card.BLUE, Card.WHITE)));
         });
     }
 
@@ -282,8 +278,7 @@ class PlayerStateTest {
             assertThrows(IllegalArgumentException.class, () -> {
                 playerState.possibleAdditionalCards(
                         1,
-                        SortedBag.of(Card.BLUE),
-                        SortedBag.of(drawnCardsCount, Card.RED));
+                        SortedBag.of(Card.BLUE));
             });
         }
     }
@@ -310,8 +305,7 @@ class PlayerStateTest {
                                 3 - additionalCount, otherCard);
                         var actualPAC = playerState.possibleAdditionalCards(
                                 additionalCount,
-                                initialCards,
-                                drawnCards);
+                                initialCards);
                         var expectedPAC = totalCarCardsCount <= 6
                                 ? List.of(SortedBag.of(additionalCount, carCard))
                                 : List.<SortedBag<Card>>of();
@@ -333,7 +327,7 @@ class PlayerStateTest {
                 var drawnCards = SortedBag.of(3, carCard);
                 for (var additionalCardsCount = 1; additionalCardsCount <= 3; additionalCardsCount++) {
                     var actualPAC = playerState
-                            .possibleAdditionalCards(additionalCardsCount, initialCards, drawnCards);
+                            .possibleAdditionalCards(additionalCardsCount, initialCards);
                     var expectedPAC = new ArrayList<SortedBag<Card>>();
                     for (int locoCount = 0; locoCount <= additionalCardsCount; locoCount++) {
                         var carCount = additionalCardsCount - locoCount;
@@ -359,8 +353,7 @@ class PlayerStateTest {
                         3 - additionalCount, Card.BLUE);
                 var actualPAC = playerState.possibleAdditionalCards(
                         additionalCount,
-                        initialCards,
-                        drawnCards);
+                        initialCards);
                 var expectedPAC = totalCount <= 6
                         ? List.of(SortedBag.of(additionalCount, Card.LOCOMOTIVE))
                         : List.<SortedBag<Card>>of();

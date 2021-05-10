@@ -140,8 +140,8 @@ public final class ObservableGameState {
             }
 
             //updating all possible routes to claim by this player
-            canGetRoadMap.get(route).set(
-                    pubGS.currentPlayerId() == this.playerId
+            //add
+            canGetRoadMap.get(route).set(pubGS.currentPlayerId() == this.playerId
                             && owner(route).get() == null
                             && !neighborIsOwned
                             && playerState.canClaimRoute(route)

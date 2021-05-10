@@ -124,7 +124,7 @@ class DecksViewCreator {
         for (int slot : Constants.FACE_UP_CARD_SLOTS){
             ReadOnlyObjectProperty<Card> cp = obsGS.getVisibleCardProperty(slot);
             //creating visible components,adding CSS classes etc
-            StackPane general = slotCardViewCreator(cp,drawCardH);
+            StackPane general = slotCardViewCreator(cp,drawCardH,slot);
             //adding a listener on the color of the card by changing the color class if something changes
             cp.addListener((observable, oldValue, newValue) -> {
                 if (oldValue != null){
@@ -143,13 +143,14 @@ class DecksViewCreator {
     //these 2 methods are taken out of the ones above just to make reading easier
     //long live OOP
     private static StackPane slotCardViewCreator(ReadOnlyObjectProperty<Card> cp
-            ,ReadOnlyObjectProperty<ActionHandlers.DrawCardHandler> drawCardH){
+            ,ReadOnlyObjectProperty<ActionHandlers.DrawCardHandler> drawCardH
+            ,int slot){
 
         StackPane general = new StackPane();
         general.getStyleClass().add("card");
         //making it possible to click on visible cards
         general.setOnMouseClicked(event -> {
-            drawCardH.get().onDrawCard(cp.get().ordinal());
+            drawCardH.get().onDrawCard(slot);
         });
         general.disableProperty().bind(drawCardH.isNull());
 

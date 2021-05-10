@@ -32,13 +32,6 @@ public class PublicCardState {
         this.discardsSize = discardsSize;
     }
 
-    /**
-     *
-     * @return total size (face up with face down)
-     */
-    public int totalSize(){
-        return faceUpCards.size()+deckSize+discardsSize;
-    }
 
     /**
      *

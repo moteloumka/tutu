@@ -107,7 +107,12 @@ public final class Serdes {
                  String[] strings = strTab(betterSeparator,cipher);
                  int ticketCount = INTEGER.deserialize(strings[0]);
                  int cardCount   = INTEGER.deserialize(strings[1]);
-                 List<Route> routes = LIST_ROUTES.deserialize(strings[2]);
+
+                 List<Route> routes;
+                 if(strings[2].equals(""))
+                     routes = List.of();
+                 else
+                     routes = LIST_ROUTES.deserialize(strings[2]);
                  return new PublicPlayerState(ticketCount,cardCount,routes);
               }
            };
@@ -124,10 +129,11 @@ public final class Serdes {
               @Override
               public PlayerState deserialize(String cipher) {
                  String[] strings = strTab(betterSeparator,cipher);
-                 SortedBag<Ticket> tickets = BAG_TICKETS.deserialize(strings[0]);
+                 //SortedBag<Ticket> tickets = BAG_TICKETS.deserialize(strings[0]);
                  SortedBag<Card> cards = BAG_CARDS.deserialize(strings[1]);
                  List<Route> routes = LIST_ROUTES.deserialize(strings[2]);
-                 return new PlayerState(tickets,cards,routes);
+                 //return new PlayerState(tickets,cards,routes);
+                  return new PlayerState(SortedBag.of(),cards,routes);
               }
            };
 

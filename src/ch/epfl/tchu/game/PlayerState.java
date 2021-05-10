@@ -78,15 +78,6 @@ PlayerState extends PublicPlayerState {
 
     /**
      *
-     * @param additionalCards sorted Bag of cards we want to add to the player
-     * @return a new instance of the playerState with the cards added
-     */
-    public PlayerState withAddedCards(SortedBag<Card> additionalCards){
-        return new PlayerState(this.tickets,this.cards.union(additionalCards),this.routes());
-    }
-
-    /**
-     *
      * @param route the route that we want to claim
      * @return true player can claim the route, false otherwise
      */
@@ -119,19 +110,16 @@ PlayerState extends PublicPlayerState {
      *
      * @param additionalCardsCount the number of additional cards the player has to use to claim the tunnel
      * @param initialCards cards the player uses to claim the tunnel
-     * @param drawnCards cards drawn from the deck
      * @return the list of sorted bag of possible cards we can use to claim the tunnel
      */
 
     public List<SortedBag<Card>> possibleAdditionalCards
-            (int additionalCardsCount, SortedBag<Card> initialCards, SortedBag<Card> drawnCards){
+            (int additionalCardsCount, SortedBag<Card> initialCards){
 
         Preconditions.checkArgument(additionalCardsCount<=3 && additionalCardsCount >= 1,
                 "the number of additional cards has to be 1, 2 or 3");
         Preconditions.checkArgument(!initialCards.isEmpty() && initialCards.toSet().size() <= 2,
                 "initial cards can't have more than 2 diff type of cards");
-        Preconditions.checkArgument(drawnCards.size()==3,
-                "there  has to be exactly 3 drawn cards");
 
         List<Card> cardsTab = new ArrayList<>();
         for (Card card : initialCards){
