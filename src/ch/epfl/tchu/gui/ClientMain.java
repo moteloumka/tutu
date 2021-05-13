@@ -11,6 +11,7 @@ public class ClientMain extends Application {
     public void start(Stage primaryStage) {
         String hostName = getParameters().getRaw().get(0);
         int portNum = Integer.parseInt(getParameters().getRaw().get(1));
+
         GraphicalPlayerAdapter playerAdapter = new GraphicalPlayerAdapter();
         RemotePlayerClient remotePlayerClient = new RemotePlayerClient(playerAdapter,hostName,portNum);
         new Thread(remotePlayerClient::run).start();

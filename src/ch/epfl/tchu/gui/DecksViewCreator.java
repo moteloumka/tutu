@@ -41,7 +41,7 @@ class DecksViewCreator {
      */
     public static HBox createHandView(ObservableGameState obsGS){
         HBox handView = new HBox();
-        handView.getStylesheets().addAll("/styles/decks.css","/styles/colors.css");
+        handView.getStylesheets().addAll("decks.css","colors.css");
         ListView<Ticket> billets = new ListView<>(obsGS.getTicketsInHand());
         billets.setId("tickets");
         HBox hand = new HBox();
@@ -71,7 +71,7 @@ class DecksViewCreator {
             ,ReadOnlyObjectProperty<DrawTicketsHandler> drawTicketH
             ,ReadOnlyObjectProperty<DrawCardHandler> drawCardH) {
         VBox cardView = new VBox();
-        cardView.getStylesheets().addAll("styles/decks.css", "styles/colors.css");
+        cardView.getStylesheets().addAll("decks.css", "colors.css");
         cardView.setId("card-pane");
 
         //the following is code creating 2 buttons
@@ -193,7 +193,7 @@ class DecksViewCreator {
         //drawing the counter
         Text counter = new Text();
         counter.getStyleClass().add("count");
-        //seetting visibility and amount to show
+        //setting visibility and amount to show
         counter.textProperty().bind(Bindings.convert(amount));
         counter.visibleProperty().bind(Bindings.greaterThan(amount,1));
         //adding all these nodes as the "general" children
