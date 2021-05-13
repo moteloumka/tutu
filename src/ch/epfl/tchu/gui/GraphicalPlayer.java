@@ -8,6 +8,7 @@ import static ch.epfl.tchu.gui.MapViewCreator.createMapView;
 import static ch.epfl.tchu.gui.DecksViewCreator.*;
 import static ch.epfl.tchu.gui.InfoViewCreator.*;
 import static javafx.application.Platform.isFxApplicationThread;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import ch.epfl.tchu.gui.ActionHandlers.*;
 
@@ -32,6 +33,8 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.StringConverter;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 import java.util.ArrayList;
@@ -123,7 +126,7 @@ public class GraphicalPlayer {
         assert isFxApplicationThread();
         Preconditions.checkArgument(tickets.size()==3||tickets.size()==5
                 ,"the amount of tickets to chose from is incorrect");
-        String indication = "choose your tickets,retard";
+        String indication = "choose your tickets, kind sir";
         ObservableList<Ticket> obsTickets = FXCollections.observableArrayList(tickets.toList());
 
         DefaultWindowBuilder<Ticket> newWindow = new DefaultWindowBuilder<>(indication
@@ -164,7 +167,7 @@ public class GraphicalPlayer {
     public void chooseClaimCards(List<SortedBag<Card>> options, ChooseCardsHandler chooseCardsH){
         assert isFxApplicationThread();
         //same code as in chooseAddCards idk if it's work caring about??
-        Convertors.CardBagStringConverter converter = new Convertors.CardBagStringConverter();
+        CardBagStringConverter converter = new CardBagStringConverter();
         ObservableList<SortedBag<Card>> observableOptions = FXCollections.observableArrayList(options);
         DefaultWindowBuilder<SortedBag<Card>> newWindow = new DefaultWindowBuilder<>("sup"
                 ,false
@@ -182,7 +185,7 @@ public class GraphicalPlayer {
     public void chooseAdditionalCards(List<SortedBag<Card>> options, ChooseCardsHandler chooseCardsH){
         assert isFxApplicationThread();
 
-        Convertors.CardBagStringConverter converter = new Convertors.CardBagStringConverter();
+        CardBagStringConverter converter = new CardBagStringConverter();
         ObservableList<SortedBag<Card>> observableOptions = FXCollections.observableArrayList(options);
 
         DefaultWindowBuilder<SortedBag<Card>> newWindow = new DefaultWindowBuilder<>("sup"
@@ -243,7 +246,7 @@ public class GraphicalPlayer {
             this.options = new ListView<>(elements);
             if(converter != null)
                 options.setCellFactory(v -> new TextFieldListCell<>(converter));
-            if (multipleChoice);
+            if (multipleChoice)
                 options.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
             this.button = new Button("Choose");
@@ -267,8 +270,14 @@ public class GraphicalPlayer {
         }
    }
 
-    private static class Convertors {
+
+
+
+
+
+
         private static class CardBagStringConverter extends StringConverter<SortedBag<Card>> {
+
             @Override
             public String toString(SortedBag<Card> bag) {
                 return Info.cardNumerator(bag);
@@ -276,13 +285,10 @@ public class GraphicalPlayer {
 
             @Override
             public SortedBag<Card> fromString(String string) {
-                SortedBag.Builder<Card> bobTheBuilder = new SortedBag.Builder<>();
-                String[] ciphers = string
-                        .split(Pattern.quote(Info.COMA_SEPARATOR+" "), -1);
-                //TODO FINISH DECODING PROPERLY
-                return bobTheBuilder.build();
+                throw new UnsupportedOperationException();
             }
-        }
 
-    }
+
+
+        }
 }

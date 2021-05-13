@@ -25,5 +25,6 @@ public final class Stage11Test extends Application {
         Random rng = new Random();
         new Thread(() -> Game.play(players, names, tickets, rng))
                 .start();
+
     }
 }
