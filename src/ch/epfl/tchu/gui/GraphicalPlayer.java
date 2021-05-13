@@ -265,7 +265,7 @@ public class GraphicalPlayer {
             content.getChildren().add(this.button);
 
             this.scene = new Scene(content);
-            scene.getStylesheets().add("styles/chooser.css");
+            scene.getStylesheets().add("chooser.css");
 
         }
    }

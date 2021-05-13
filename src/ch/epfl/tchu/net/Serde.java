@@ -4,6 +4,7 @@ import ch.epfl.tchu.SortedBag;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -22,14 +23,14 @@ public interface Serde <T> {
 
             @Override
             public T deserialize(String cipher) {
-                return cipher.equals("") ? null : deSer.apply(cipher);
+                return deSer.apply(cipher);
             }
         };
     }
 
     static <T> Serde<T> oneOf(List<T> enumList){
-        Function<T,String> ser   = t -> String.valueOf(enumList.indexOf(t));
-        Function<String,T> deSer = t -> enumList.get(Integer.parseInt(t));
+        Function<T,String> ser   = t -> t == null ? "" : String.valueOf(enumList.indexOf(t));
+        Function<String,T> deSer = t -> t.equals("") ? null : enumList.get(Integer.parseInt(t));
         return Serde.of(ser,deSer);
     }
 
@@ -49,6 +50,7 @@ public interface Serde <T> {
                 String[] strings = cipher.split(Pattern.quote(str),-1);
                 List<T> list = Arrays.stream(strings)
                         .map(serde::deserialize)
+                        .filter(Objects::nonNull)
                         .collect(Collectors.toList());
                 return list.isEmpty() ? List.of() : list;
             }
@@ -72,6 +74,7 @@ public interface Serde <T> {
                 String[] strings = cipher.split(Pattern.quote(str),-1);
                 List<T> list = Arrays.stream(strings)
                         .map(serde::deserialize)
+                        .filter(Objects::nonNull)
                         .collect(Collectors.toList());
 
                 return list.isEmpty() ? SortedBag.of() : SortedBag.of(list);

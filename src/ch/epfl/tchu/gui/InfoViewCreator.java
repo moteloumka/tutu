@@ -25,7 +25,7 @@ class InfoViewCreator {
             , ObservableGameState obsGS
             , ObservableList<Text> infos){
         VBox mainColumn = new VBox();
-        mainColumn.getStylesheets().addAll("styles/info.css","styles/colors.css");
+        mainColumn.getStylesheets().addAll("info.css","colors.css");
         VBox playerStats = new VBox();
         playerStats.setId("player-stats");
 

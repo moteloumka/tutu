@@ -61,7 +61,7 @@ class MapViewCreator {
             , ObjectProperty<ClaimRouteHandler> claimRouteH
             , CardChooser cardChooser){
         Pane carte = new Pane();
-        carte.getStylesheets().addAll("/styles/map.css","/styles/colors.css");
+        carte.getStylesheets().addAll("map.css","colors.css");
         ImageView imageView = new ImageView();
         carte.getChildren().add(imageView);
         //creating each road

@@ -68,6 +68,7 @@ class SerdesTest {
         for(PlayerId id : PlayerId.ALL){
             assertEquals(String.valueOf(id.ordinal()),playerId.serialize(id));
         }
+        assertEquals("",playerId.serialize(null));
     }
 
     @Test
@@ -75,6 +76,7 @@ class SerdesTest {
         Serde<PlayerId> playerId = Serdes.PLAYER_ID;
         for(PlayerId id : PlayerId.ALL)
             assertEquals(id,playerId.deserialize(String.valueOf(id.ordinal())));
+        assertNull(playerId.deserialize(""));
     }
 
     @Test
@@ -120,6 +122,7 @@ class SerdesTest {
                 sb.append(Serdes.basicSeparator);
         }
         assertEquals(sb.toString(),cadListSerde.serialize(tickets));
+        assertEquals("",cadListSerde.serialize(List.of()));
     }
 
     @Test
