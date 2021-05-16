@@ -21,9 +21,12 @@ public final class RemotePlayerProxy implements Player {
 
     @Override
     public void initPlayers(PlayerId ownId, Map<PlayerId, String> playerNames) {
+        List<String> namesInOrder = new ArrayList<>();
+        for(PlayerId p : PlayerId.ALL)
+            namesInOrder.add(playerNames.get(p));
         List<String> message = List.of(MessageId.INIT_PLAYERS.name()
                 ,Serdes.PLAYER_ID.serialize(ownId)
-                ,Serdes.LIST_STRINGS.serialize(new ArrayList<>(playerNames.values())));
+                ,Serdes.LIST_STRINGS.serialize(namesInOrder));
         send(message);
     }
 
@@ -111,10 +114,11 @@ public final class RemotePlayerProxy implements Player {
     }
     //method used to receive via socket
     private String receive(){
-        try (BufferedReader r =
-                     new BufferedReader(
-                             new InputStreamReader(socket.getInputStream(),
-                                     US_ASCII))){
+        try{
+            BufferedReader r =
+                    new BufferedReader(
+                            new InputStreamReader(socket.getInputStream(),
+                                    US_ASCII));
             return r.readLine();
         } catch (IOException e) {
             throw new UncheckedIOException(e);

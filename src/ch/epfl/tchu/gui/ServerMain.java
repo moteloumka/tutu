@@ -26,7 +26,7 @@ public class ServerMain extends Application {
         try{
             ServerSocket s0 = new ServerSocket(5108);
             Socket s = s0.accept();
-            GraphicalPlayerAdapter graphicalPlayer = new GraphicalPlayerAdapter();
+            GraphicalPlayerAdapter graphicalPlayer = new GraphicalPlayerAdapter("main dude");
             RemotePlayerProxy remotePlayer = new RemotePlayerProxy(s);
             //i guess we just sort of assume that player one is the server lad
             Map<PlayerId, Player> players = Map.of(PLAYER_1, graphicalPlayer, PLAYER_2, remotePlayer);

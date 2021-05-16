@@ -11,6 +11,9 @@ import java.util.concurrent.BlockingQueue;
 import static javafx.application.Platform.runLater;
 
 public final class GraphicalPlayerAdapter implements Player {
+    //DELETE THIS
+    String debugName;
+
     private GraphicalPlayer graphicalPlayer;
     private final BlockingQueue<SortedBag<Ticket>> initTickets = new ArrayBlockingQueue<>(1);
     private final BlockingQueue<Integer> slots = new ArrayBlockingQueue<>(1);
@@ -20,9 +23,22 @@ public final class GraphicalPlayerAdapter implements Player {
 
     public GraphicalPlayerAdapter() { }
 
+    /**
+     * DO NOT FORGET TO DELETE
+     * @param s
+     */
+    public GraphicalPlayerAdapter(String s){
+        this.debugName = s;
+    }
+
+    /**
+     *  DO NOT FORGET TO FELET THE DEBUG THING
+     * @param ownId name of the player
+     * @param playerNames map with all the names of players
+     */
     @Override
     public void initPlayers(PlayerId ownId, Map<PlayerId, String> playerNames) {
-       runLater(() -> this.graphicalPlayer = new GraphicalPlayer(ownId,playerNames));
+       runLater(() -> this.graphicalPlayer = new GraphicalPlayer(ownId,playerNames,debugName));
     }
 
     @Override

@@ -35,7 +35,6 @@ public final class Game {
                 gameState.currentPlayerId()));
 
         //communicating to each player the name of the first one
-        //players.forEach((k,v) -> v.receiveInfo(infoOnFirstPlayer.willPlayFirst()));
         tell(infoOnFirstPlayer.willPlayFirst(),players);
 
         //distributing (5) tickets to each player
