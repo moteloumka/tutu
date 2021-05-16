@@ -23,22 +23,9 @@ public final class GraphicalPlayerAdapter implements Player {
 
     public GraphicalPlayerAdapter() { }
 
-    /**
-     * DO NOT FORGET TO DELETE
-     * @param s
-     */
-    public GraphicalPlayerAdapter(String s){
-        this.debugName = s;
-    }
-
-    /**
-     *  DO NOT FORGET TO FELET THE DEBUG THING
-     * @param ownId name of the player
-     * @param playerNames map with all the names of players
-     */
     @Override
     public void initPlayers(PlayerId ownId, Map<PlayerId, String> playerNames) {
-       runLater(() -> this.graphicalPlayer = new GraphicalPlayer(ownId,playerNames,debugName));
+       runLater(() -> this.graphicalPlayer = new GraphicalPlayer(ownId,playerNames));
     }
 
     @Override

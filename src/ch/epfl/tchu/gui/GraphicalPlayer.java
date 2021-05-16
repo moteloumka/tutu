@@ -55,18 +55,6 @@ public class GraphicalPlayer {
 
     public Scene scene;
 
-    /**
-     * DEBUG STUFF -> DELETE L8ER ON
-     * @param playerId
-     * @param playerNames
-     * @param s
-     */
-    public GraphicalPlayer(PlayerId playerId, Map<PlayerId,String> playerNames, String s){
-        this(playerId,playerNames);
-        window.setTitle(String.format(WINDOW_NAME_TEMPLATE,playerNames.get(playerId))+" "+s);
-    }
-
-
     public GraphicalPlayer(PlayerId playerId, Map<PlayerId,String> playerNames){
         assert isFxApplicationThread();
 
