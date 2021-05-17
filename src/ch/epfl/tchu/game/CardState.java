@@ -91,8 +91,6 @@ public final class CardState extends PublicCardState{
      * @return card state with reshuffled deck from the discarded cards
      */
     public CardState withDeckRecreatedFromDiscards(Random rng){
-        if(this.outOfGameCards.isEmpty())
-            System.out.println("the garbage do be empty");
         Preconditions.checkArgument(this.isDeckEmpty(),
                 "deck has to be empty to mix");
 
@@ -112,7 +110,7 @@ public final class CardState extends PublicCardState{
      * debugging method (delete this later on)
      * @return
      */
-    public boolean garbageIsEmpty(){
+    private boolean garbageIsEmpty(){
         return this.outOfGameCards.isEmpty();
     }
 }

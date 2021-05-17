@@ -64,8 +64,10 @@ public final class Info {
             case LOCOMOTIVE:
                 answer.append(LOCOMOTIVE_CARD);
                 break;
+            default:
+                throw new Error();
         }
-        return answer.toString() + StringsFr.plural(Math.abs(count));
+        return answer.append(StringsFr.plural(Math.abs(count))).toString();
     }
 
 
@@ -222,7 +224,7 @@ public final class Info {
     /**
      * states the player got the longest trail
      * @param longestTrail the longest trail
-     * @return the string stating who gest the bonus from longest trail
+     * @return the string stating who gets the bonus from longest trail
      */
     public String getsLongestTrailBonus(Trail longestTrail){
         return String.format(GETS_BONUS, this.playerName, trail2Stations(longestTrail));

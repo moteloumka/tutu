@@ -41,7 +41,7 @@ public final class StationPartition implements StationConnectivity {
 
     public final static class Builder {
         //future Array of references
-        private int[] buildTab;
+        private final int[] buildTab;
 
         /**
          * public StationPartition.Builder builder

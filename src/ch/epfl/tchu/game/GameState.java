@@ -38,7 +38,6 @@ public final class GameState extends PublicGameState {
                 currentPlayerId,
                 pubPlayerState,
                 lastPlayer);
-
         this.ticketDeck   = tickets;
         this.cardState    = cardState;
         this.playerStates = Map.copyOf(playerStates);
@@ -106,7 +105,6 @@ public final class GameState extends PublicGameState {
         return new GameState(cardState
                 ,starter
                 ,makePublic(psMap)
-                //as I see it, it' the first tour -> the id if the lastPlayer doesn't exist yet
                 ,null
                 ,ticketDeck
                 ,psMap);
@@ -186,10 +184,6 @@ public final class GameState extends PublicGameState {
      * @return same game state but with card deck recreated from discarded cards (new instance though)
      */
     public GameState withCardsDeckRecreatedIfNeeded(Random rng){
-        if(this.cardState.garbageIsEmpty() && this.cardState.isDeckEmpty())
-            System.out.println(this.playerStates.get(PlayerId.PLAYER_1).cards().size()+" "
-            +this.playerStates.get(PlayerId.PLAYER_2).cards().size());
-
         CardState cardStateVar = this.cardState;
         if(this.cardState.isDeckEmpty())
             cardStateVar = this.cardState.withDeckRecreatedFromDiscards(rng);
@@ -328,7 +322,6 @@ public final class GameState extends PublicGameState {
     private static Map<PlayerId,PublicPlayerState> makePublic(Map<PlayerId,PlayerState> psm) {
         Map<PlayerId,PublicPlayerState> pubMap = new EnumMap<>(PlayerId.class);
         psm.forEach(pubMap::put);
-        //psm.forEach((k,v) -> pubMap.put(k, (PublicPlayerState) v));
         return pubMap;
     }
 

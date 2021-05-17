@@ -11,8 +11,6 @@ import java.util.concurrent.BlockingQueue;
 import static javafx.application.Platform.runLater;
 
 public final class GraphicalPlayerAdapter implements Player {
-    //DELETE THIS
-    String debugName;
 
     private GraphicalPlayer graphicalPlayer;
     private final BlockingQueue<SortedBag<Ticket>> initTickets = new ArrayBlockingQueue<>(1);

@@ -35,9 +35,7 @@ PlayerState extends PublicPlayerState {
     public static PlayerState initial(SortedBag<Card> initialCards){
         Preconditions.checkArgument(initialCards.size()==4,
                 "nb initial cards has to be 4");
-        SortedBag.Builder<Ticket> ticketBuilder = new SortedBag.Builder<>();
-        SortedBag<Ticket> tickets = ticketBuilder.build();
-
+        SortedBag<Ticket> tickets = SortedBag.of();
         List<Route> routes = List.of();
 
         return new PlayerState(tickets,initialCards,routes);
@@ -128,8 +126,7 @@ PlayerState extends PublicPlayerState {
         }
 
         SortedBag.Builder<Card> builder = new SortedBag.Builder<>();
-        //
-        //
+
         int locoCards = this.cards.countOf(Card.LOCOMOTIVE)- initialCards.countOf(Card.LOCOMOTIVE) ;
         if (locoCards > 0)
             builder.add(locoCards,Card.LOCOMOTIVE);

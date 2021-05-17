@@ -212,14 +212,14 @@ public final class Route {
         List<Integer> points = Constants.ROUTE_CLAIM_POINTS;
         //no need in precondition check bc there is one in the class constructor
         //shall we start from 1 instead of 0?
-        for (int i = 0; i < points.size(); i++) {
-            if (this.length==i){
-                return points.get(i);
-            }
-        }
+//        for (int i = 0; i < points.size(); i++) {
+//            if (this.length==i){
+//                return points.get(i);
+//            }
+//        }
         //not sure if this is a good decision, technically the method isn't ever supposed to get here
         //but without a return in the end the program wouldn't compile
-        return 0;
+        return points.get(length());
     }
 
 

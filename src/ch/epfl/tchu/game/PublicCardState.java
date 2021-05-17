@@ -26,7 +26,6 @@ public class PublicCardState {
         Preconditions.checkArgument(discardsSize >= 0,
                 "discard card size can't be < 0");
 
-        //this secures the "immuabilité" (is this necessary?)
         this.faceUpCards  = List.copyOf(faceUpCards);
         this.deckSize     = deckSize;
         this.discardsSize = discardsSize;
@@ -45,7 +44,7 @@ public class PublicCardState {
      * @return all the face up Cards from the table
      */
     public List<Card> faceUpCards() {
-        return new ArrayList<>(faceUpCards);
+        return faceUpCards;
     }
 
     /**

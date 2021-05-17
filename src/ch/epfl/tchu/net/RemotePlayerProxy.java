@@ -80,13 +80,13 @@ public final class RemotePlayerProxy implements Player {
 
     @Override
     public Route claimedRoute() {
-        send(List.of(MessageId.CLAIMED_ROUTE.name()));
+        send(List.of(MessageId.ROUTE.name()));
         return Serdes.ROUTE.deserialize(receive());
     }
 
     @Override
     public SortedBag<Card> initialClaimCards() {
-        send(List.of(MessageId.INITIAL_CLAIM_CARDS.name()));
+        send(List.of(MessageId.CARDS.name()));
         return Serdes.BAG_CARDS.deserialize(receive());
     }
 

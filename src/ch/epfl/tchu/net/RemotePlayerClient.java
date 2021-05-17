@@ -104,14 +104,16 @@ public final class RemotePlayerClient {
                         w.flush();
                         break;
 
-                    case CLAIMED_ROUTE:
+                    //case CLAIMED_ROUTE:
+                    case ROUTE:
                         Route routeToClaim = player.claimedRoute();
                         w.write(Serdes.ROUTE.serialize(routeToClaim));
                         w.write('\n');
                         w.flush();
                         break;
 
-                    case INITIAL_CLAIM_CARDS:
+                    //case INITIAL_CLAIM_CARDS:
+                    case CARDS:
                         SortedBag<Card> initialClaimCards = player.initialClaimCards();
                         w.write(Serdes.BAG_CARDS.serialize(initialClaimCards));
                         w.write('\n');

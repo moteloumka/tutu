@@ -8,8 +8,8 @@ import java.util.*;
  * @author Gullien (316143)
  */
 public final class Ticket implements Comparable<Ticket> {
-    private List<Trip> trips;
-    private String text;
+    private final List<Trip> trips;
+    private final String text;
 
     /**
      * @param trips list of trips the ticket contains. Must be at least one.
@@ -18,15 +18,16 @@ public final class Ticket implements Comparable<Ticket> {
     public Ticket(List<Trip> trips){
         Preconditions.checkArgument(!(trips==null || trips.size()==0));
         //checking that all trips leave from a station with the same name
-        this.trips = Objects.requireNonNull(trips, "trips must not be null");
+        Objects.requireNonNull(trips, "trips must not be null");
 
         for (Trip t : trips) {
             if (!(trips.get(0).from().name().equals(t.from().name()))) {
                 throw new IllegalArgumentException();
             }
+        }
     this.trips = List.copyOf(trips);
     this.text = computeText();
-       }
+
     }
 
     /**
@@ -50,7 +51,7 @@ public final class Ticket implements Comparable<Ticket> {
      * does the computation for the text method
      * @return the text of ticket
      */
-    private String computeText(){
+    private  String computeText(){
         String ticketText = "";
         ticketText += this.trips.get(0).from().toString() + " - ";
         TreeSet <String> toList = new TreeSet<>();
@@ -72,6 +73,7 @@ public final class Ticket implements Comparable<Ticket> {
     /**
      * @return the same as the text() method
      */
+    @Override
     public String toString(){
         return this.text;
     }
