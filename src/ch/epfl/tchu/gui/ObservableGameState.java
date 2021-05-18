@@ -34,8 +34,6 @@ public final class ObservableGameState {
 
     //PlayerState properties
     private final ObservableList<Ticket> ticketsInHand = FXCollections.observableArrayList();
-    private final List<ObjectProperty<Ticket>> ticketsInHandProp =
-            new ArrayList<>(List.of(new SimpleObjectProperty<>(null)));
     private final Map<Card,IntegerProperty> numberOfCardInHand = new EnumMap<>(Card.class);
     private final Map<Route,BooleanProperty> canGetRoadMap = new HashMap<>();
 
@@ -140,7 +138,6 @@ public final class ObservableGameState {
             }
 
             //updating all possible routes to claim by this player
-            //add
             canGetRoadMap.get(route).set(pubGS.currentPlayerId() == this.playerId
                             && owner(route).get() == null
                             && !neighborIsOwned

@@ -6,7 +6,15 @@ import ch.epfl.tchu.game.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.regex.Pattern;
+/**
+ * @author Nikolay (314355)
+ * @author Gullien (316143)
+ */
 
+/**
+ * this class defines a unique to create serdes for different types of objects we hav in our program
+ * it's really the same idea for eveery one of them, there's no point copying the text for each method
+ */
 public final class Serdes {
    private Serdes(){};
 
@@ -69,9 +77,7 @@ public final class Serdes {
 
    //--------COMPOSED STUFF--------------
 
-    //java sux so we gotta define all this manually instead of creating a cheeky method(((
     //every time we're defining a unique way to encode/decode an object
-    
    public final static Serde<PublicCardState> PUB_CARD_STATE =
            new Serde<PublicCardState>() {
               @Override
@@ -133,7 +139,6 @@ public final class Serdes {
                  SortedBag<Card> cards = BAG_CARDS.deserialize(strings[1]);
                  List<Route> routes = LIST_ROUTES.deserialize(strings[2]);
                  return new PlayerState(tickets,cards,routes);
-                  //return new PlayerState(SortedBag.of(),cards,routes);
               }
            };
 
@@ -147,6 +152,14 @@ public final class Serdes {
                          ,PUB_PLAYER_STATE.serialize(obj.playerState(PlayerId.PLAYER_1))
                          ,PUB_PLAYER_STATE.serialize(obj.playerState(PlayerId.PLAYER_2))
                          ,PLAYER_ID.serialize(obj.lastPlayer()) );
+//                 List<String> strings1 = new ArrayList<>();
+//                 strings1.add(INTEGER.serialize(obj.ticketsCount()));
+//                 strings1.add(PUB_CARD_STATE.serialize(obj.cardState()));
+//                 strings1.add(PLAYER_ID.serialize(obj.currentPlayerId()));
+//                 PlayerId.ALL.forEach(p->
+//                         strings1.add(PUB_PLAYER_STATE.serialize(obj.playerState(p))));
+//                 strings1.add(PLAYER_ID.serialize(obj.lastPlayer()) );
+
                  return String.join(String.valueOf(ogSeparator),strings);
               }
 
@@ -156,14 +169,19 @@ public final class Serdes {
                  int ticketsCount = INTEGER.deserialize(strings[0]);
                  PublicCardState pubCardState = PUB_CARD_STATE.deserialize(strings[1]);
                  PlayerId currentPlayer = PLAYER_ID.deserialize(strings[2]);
-
-                 PublicPlayerState pubPlayer1 = PUB_PLAYER_STATE.deserialize(strings[3]);
-                 PublicPlayerState pubPlayer2 = PUB_PLAYER_STATE.deserialize(strings[4]);
                  Map<PlayerId,PublicPlayerState> playerStateMap = new EnumMap<>(PlayerId.class);
-                 playerStateMap.put(PlayerId.PLAYER_1,pubPlayer1);
-                 playerStateMap.put(PlayerId.PLAYER_2,pubPlayer2);
 
-                 PlayerId lastPlayer = PLAYER_ID.deserialize(strings[5]);
+                  for (PlayerId playerId : PlayerId.ALL){
+                     PublicPlayerState publicPlayerState =
+                             PUB_PLAYER_STATE.deserialize(strings[3+ playerId.ordinal()]);
+                     playerStateMap.put(playerId,publicPlayerState);
+                 }
+//                 PublicPlayerState pubPlayer1 = PUB_PLAYER_STATE.deserialize(strings[3]);
+//                 PublicPlayerState pubPlayer2 = PUB_PLAYER_STATE.deserialize(strings[4]);
+//                 playerStateMap.put(PlayerId.PLAYER_1,pubPlayer1);
+//                 playerStateMap.put(PlayerId.PLAYER_2,pubPlayer2);
+
+                 PlayerId lastPlayer = PLAYER_ID.deserialize(strings[strings.length-1]);
                  return new PublicGameState(ticketsCount
                          ,pubCardState
                          ,currentPlayer

@@ -15,13 +15,27 @@ import java.util.stream.Collectors;
 
 import static java.nio.charset.StandardCharsets.US_ASCII;
 
+/**
+ * @author Nikolay (314355)
+ * @author Gullien (316143)
+ */
+
+/**
+ * an instance of this class handles communication with the server from the client
+ */
 public final class RemotePlayerClient {
     private final Player player;
     private final Socket socket;
     private final BufferedReader r;
     private final BufferedWriter w;
 
-
+    /**
+     * Connects to the socket, creates instances of BufferedReader and BufferedWriter
+     * That will later be used iin the run method
+     * @param player instance of RemotePlayerProxy, existing on the host computer/server
+     * @param socketName IP adress of the socket
+     * @param port port number
+     */
     public RemotePlayerClient(Player player, String socketName, int port) {
         this.player = player;
         try{
@@ -39,6 +53,11 @@ public final class RemotePlayerClient {
         }
 
     }
+
+    /**
+     * constantly listenning to what the socket is sending until connection is cut off (with the end of thee game)
+     * also sends data back to the server through an instance of RemotePlayerProxy (that is on thee server computer)
+     */
     public void run(){
         String s;
          try {

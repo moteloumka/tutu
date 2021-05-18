@@ -1,5 +1,10 @@
 package ch.epfl.tchu.net;
 
+/**
+ * Enum used to communicate which methods to use when multiplayer mode on diff computers
+ * @author Nikolay (314355)
+ * @author Gullien (316143)
+ */
 public enum MessageId {
     INIT_PLAYERS,
     RECEIVE_INFO,
@@ -9,9 +14,7 @@ public enum MessageId {
     NEXT_TURN,
     CHOOSE_TICKETS,
     DRAW_SLOT,
-    //CLAIMED_ROUTE,
     ROUTE,
-    //INITIAL_CLAIM_CARDS,
     CARDS,
     CHOOSE_ADDITIONAL_CARDS
 }

@@ -79,6 +79,5 @@ public final class Trip {
         else return -(this.points);
     }
 
-
     }
 

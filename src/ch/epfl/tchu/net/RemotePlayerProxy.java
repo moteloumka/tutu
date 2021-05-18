@@ -8,16 +8,38 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static java.nio.charset.StandardCharsets.US_ASCII;
 
+/**
+ * @author Nikolay (314355)
+ * @author Gullien (316143)
+ */
+
+/**
+ * an instance of RemotePlayerProxy exists on the gosting server/computer
+ * and communicates with the instances of RemotePlayerClient on the clients commuters
+ * it updates them on the current game situation and gets responses from them (if needed)
+ * by sending encoded data (Serdes)/ by receiving the same Serdes
+ * and decoding them back into instances of Objects defined in this project
+ *
+ * This class implements player to be able to be seen as an instance of a player by the game
+ * the implementations are just the way Objects have to be encoded and sent
+ * or received as strings and decoded back into objects
+ */
 public final class RemotePlayerProxy implements Player {
+
     public final static char SPACE_CHAR = ' ';
     private final Socket socket;
+
+    /**
+     * the constructor will be called upon launching the game in ServerMain by the host
+     * @param socket the socket to which clients could then connect
+     */
     public RemotePlayerProxy( Socket socket){
         this.socket = socket;
     }
+
 
     @Override
     public void initPlayers(PlayerId ownId, Map<PlayerId, String> playerNames) {
