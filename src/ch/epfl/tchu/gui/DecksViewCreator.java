@@ -16,7 +16,10 @@ import ch.epfl.tchu.gui.ActionHandlers.DrawCardHandler;
 import ch.epfl.tchu.gui.ActionHandlers.DrawTicketsHandler;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
-
+/**
+ *  @author Nikolay (314355)
+ *  @author Gullien (316143)
+ */
 
 class DecksViewCreator {
     private final static int CARD_CONTOUR_WIDTH = 60;
@@ -25,7 +28,6 @@ class DecksViewCreator {
     private final static int CARD_FILLED_HEIGHT = 70;
     private final static int CARD_IMAGE_WIDTH = 40;
     private final static int CARD_IMAGE_HEIGHT = 70;
-
     private final static int BUTTON_SCALE_WIDTH = 50;
     private final static int BUTTON_SCALE_HEIGHT = 5;
 

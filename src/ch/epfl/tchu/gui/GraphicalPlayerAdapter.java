@@ -9,6 +9,20 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
 import static javafx.application.Platform.runLater;
+/**
+ *  @author Nikolay (314355)
+ *  @author Gullien (316143)
+ */
+
+/**
+ * an adapter for the class GraphicalPlayer, acting as a Player,
+ * the implementations call methods of the instance of GraphicalPlayer
+ * that is an attribute of this class. When calling these methods, the instance of
+ * GraphicalPlayerAdapter creates the handlers that are passed as params,
+ * these handlers usually consist of waiting until the player puts some Object
+ * in one of the BlockingQueue attributes of this instance. Returning the content if demanded.
+ * This way the method game() gets information on the players choices.
+ */
 
 public final class GraphicalPlayerAdapter implements Player {
 
@@ -57,6 +71,7 @@ public final class GraphicalPlayerAdapter implements Player {
             throw new Error();
         }
     }
+
 
     @Override
     public TurnKind nextTurn() {

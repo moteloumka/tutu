@@ -16,7 +16,15 @@ import java.util.Map;
 import java.util.Random;
 
 import static ch.epfl.tchu.game.PlayerId.*;
+/**
+ *  @author Nikolay (314355)
+ *  @author Gullien (316143)
+ */
 
+/**
+ * similar in it's usage to ClientMain, this class only serves to create connection
+ * this time the main method is ran on the host's computer
+ */
 public class ServerMain extends Application {
     private final static int SERVER_NUMBER = 5108;
     public static void main(String[] args) { launch(args);}
@@ -32,6 +40,8 @@ public class ServerMain extends Application {
         try{
             ServerSocket s0 = new ServerSocket(SERVER_NUMBER);
             Socket s = s0.accept();
+            //as soon as the host receives information that a client has connected,
+            //the two players are created and the game starts in a new thread
             GraphicalPlayerAdapter graphicalPlayer = new GraphicalPlayerAdapter();
             RemotePlayerProxy remotePlayer = new RemotePlayerProxy(s);
             //i guess we just sort of assume that player one is the server lad

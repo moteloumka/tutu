@@ -15,11 +15,24 @@ import javafx.scene.text.TextFlow;
 import java.util.Map;
 
 import static ch.epfl.tchu.gui.StringsFr.PLAYER_STATS;
+/**
+ *  @author Nikolay (314355)
+ *  @author Gullien (316143)
+ */
 
 class InfoViewCreator {
     private static final int CIRCLE_RADIUS = 5;
     private InfoViewCreator(){}
-
+    /**
+     * called upon creation of a the gui of a particular player n the class GraphicalPlayer
+     * creates the info bar found on the left of the users interface
+     * @param playerId the id of thee player who's gui is being created
+     * @param playerNames names of the players in the game
+     * @param obsGS information will be taken from here to update info state
+     * @param infos list of information that will be updated in the GraphicalPlayer,
+     *              yet this list will be updated with the method bind
+     * @return new instance of VBox that has all the needed information shown
+     */
     public static VBox createInfoView(PlayerId playerId
             , Map<PlayerId,String> playerNames
             , ObservableGameState obsGS

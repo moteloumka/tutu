@@ -23,6 +23,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ *  @author Nikolay (314355)
+ *  @author Gullien (316143)
+ */
 
 class MapViewCreator {
     //constants for positioning shapes

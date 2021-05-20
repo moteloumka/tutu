@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
  * it's really the same idea for eveery one of them, there's no point copying the text for each method
  */
 public final class Serdes {
-   private Serdes(){};
+   private Serdes(){}
 
     public final static char basicSeparator = ',';
     public final static char betterSeparator = ';';
@@ -113,12 +113,7 @@ public final class Serdes {
                  String[] strings = strTab(betterSeparator,cipher);
                  int ticketCount = INTEGER.deserialize(strings[0]);
                  int cardCount   = INTEGER.deserialize(strings[1]);
-
-                 List<Route> routes;
-                 if(strings[2].equals(""))
-                     routes = List.of();
-                 else
-                     routes = LIST_ROUTES.deserialize(strings[2]);
+                  List<Route>  routes = LIST_ROUTES.deserialize(strings[2]);
                  return new PublicPlayerState(ticketCount,cardCount,routes);
               }
            };
@@ -152,13 +147,6 @@ public final class Serdes {
                          ,PUB_PLAYER_STATE.serialize(obj.playerState(PlayerId.PLAYER_1))
                          ,PUB_PLAYER_STATE.serialize(obj.playerState(PlayerId.PLAYER_2))
                          ,PLAYER_ID.serialize(obj.lastPlayer()) );
-//                 List<String> strings1 = new ArrayList<>();
-//                 strings1.add(INTEGER.serialize(obj.ticketsCount()));
-//                 strings1.add(PUB_CARD_STATE.serialize(obj.cardState()));
-//                 strings1.add(PLAYER_ID.serialize(obj.currentPlayerId()));
-//                 PlayerId.ALL.forEach(p->
-//                         strings1.add(PUB_PLAYER_STATE.serialize(obj.playerState(p))));
-//                 strings1.add(PLAYER_ID.serialize(obj.lastPlayer()) );
 
                  return String.join(String.valueOf(ogSeparator),strings);
               }
@@ -171,15 +159,10 @@ public final class Serdes {
                  PlayerId currentPlayer = PLAYER_ID.deserialize(strings[2]);
                  Map<PlayerId,PublicPlayerState> playerStateMap = new EnumMap<>(PlayerId.class);
 
-                  for (PlayerId playerId : PlayerId.ALL){
-                     PublicPlayerState publicPlayerState =
-                             PUB_PLAYER_STATE.deserialize(strings[3+ playerId.ordinal()]);
-                     playerStateMap.put(playerId,publicPlayerState);
-                 }
-//                 PublicPlayerState pubPlayer1 = PUB_PLAYER_STATE.deserialize(strings[3]);
-//                 PublicPlayerState pubPlayer2 = PUB_PLAYER_STATE.deserialize(strings[4]);
-//                 playerStateMap.put(PlayerId.PLAYER_1,pubPlayer1);
-//                 playerStateMap.put(PlayerId.PLAYER_2,pubPlayer2);
+                 PublicPlayerState pubPlayer1 = PUB_PLAYER_STATE.deserialize(strings[3]);
+                 PublicPlayerState pubPlayer2 = PUB_PLAYER_STATE.deserialize(strings[4]);
+                 playerStateMap.put(PlayerId.PLAYER_1,pubPlayer1);
+                 playerStateMap.put(PlayerId.PLAYER_2,pubPlayer2);
 
                  PlayerId lastPlayer = PLAYER_ID.deserialize(strings[strings.length-1]);
                  return new PublicGameState(ticketsCount

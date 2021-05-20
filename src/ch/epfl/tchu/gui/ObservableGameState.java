@@ -13,7 +13,10 @@ import javafx.collections.ObservableList;
 import javax.management.loading.ClassLoaderRepository;
 import java.util.*;
 import java.util.stream.Collectors;
-
+/**
+ *  @author Nikolay (314355)
+ *  @author Gullien (316143)
+ */
 public final class ObservableGameState {
     private PublicGameState pubGameState;
     private PlayerState playerState;
@@ -188,6 +191,7 @@ public final class ObservableGameState {
     }
 
     /**
+     * @param playerId who's cards are we counting?
      * @return view on the (property) amount of cards this player has in its hands
      */
     public ReadOnlyIntegerProperty getCardsInHandCount(PlayerId playerId) {

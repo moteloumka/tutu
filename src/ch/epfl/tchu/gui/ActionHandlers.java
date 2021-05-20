@@ -2,13 +2,17 @@ package ch.epfl.tchu.gui;
 
 import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.game.*;
+/**
+ *  @author Nikolay (314355)
+ *  @author Gullien (316143)
+ */
 
 public interface ActionHandlers {
     /**
      * the only method of this interface is called when the player gets new tickets
      */
     @FunctionalInterface
-    public interface DrawTicketsHandler{
+     interface DrawTicketsHandler{
         /**
          * tells the program what to do when a ticket is being drawn
          */
@@ -19,7 +23,7 @@ public interface ActionHandlers {
      * the only method of this interface is called when the player gets new cards
      */
     @FunctionalInterface
-    public interface DrawCardHandler{
+     interface DrawCardHandler{
         /**
          * tells the program what to do when a visible card placed on slot "slot" is being taken
          * @param slot the placement of the card
@@ -32,7 +36,7 @@ public interface ActionHandlers {
      * the only method of this interface is called when the player tries getting a new route
      */
     @FunctionalInterface
-    public interface ClaimRouteHandler{
+     interface ClaimRouteHandler{
         /**
          * tells the program what to do when the "route" is being taken with "cards"
          * @param route the route that's being taken
@@ -45,7 +49,7 @@ public interface ActionHandlers {
      * this functional interface is called upon when a choice of tickets by a player has to be communicated to the program
      */
     @FunctionalInterface
-    public interface ChooseTicketsHandler{
+     interface ChooseTicketsHandler{
         /**
          * handles the decision the player has made by choosing "tickets"
          * @param tickets the set of tickets the player wants to chose
@@ -57,7 +61,7 @@ public interface ActionHandlers {
      * this functional interface is called upon when a choice of cards by a player has to be communicated to the program
      */
     @FunctionalInterface
-    public interface ChooseCardsHandler{
+     interface ChooseCardsHandler{
         /**
          * handles the decision the player has made by choosing "cards"
          * @param cards the set of cards the player wants to chose
