@@ -1,4 +1,7 @@
 /* Cards */
+.list-cell .doneTicket{
+    /*-fx-background-color: rgba(74, 208, 74, 0.62);*/
+}
 
 .card .outside {
     -fx-arc-width: 10;

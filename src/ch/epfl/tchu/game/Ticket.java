@@ -92,6 +92,23 @@ public final class Ticket implements Comparable<Ticket> {
     }
 
     /**
+     * tells if the tickets trips have all been connected
+     * @return true if they are connected
+     */
+    public boolean isFullyDone(StationConnectivity stationConnectivity ){
+        return trips.stream().allMatch(trip -> trip.points(stationConnectivity) > 0);
+    }
+
+    /**
+     * tells if some of this tickets trips have been connected
+     * @return true if some are connected, yet some still aren't
+     */
+    public boolean isPartlyDone(StationConnectivity stationConnectivity){
+        return (trips.stream().anyMatch(trip -> trip.points(stationConnectivity) > 0)
+                && trips.stream().anyMatch(trip -> trip.points(stationConnectivity) < 0));
+    }
+
+    /**
      * compares both tickets by alphabetical order.
      * @param that the ticket with which we're comparing this ticket
      * @return negative int if this comes before that, 0 if same ticket, positive int if this comes after that

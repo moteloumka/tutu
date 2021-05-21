@@ -3,19 +3,32 @@ package ch.epfl.tchu.gui;
 import ch.epfl.tchu.game.Card;
 import ch.epfl.tchu.game.Constants;
 import ch.epfl.tchu.game.Ticket;
+import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
+import javafx.scene.control.ListCell;
+
 import javafx.scene.control.ListView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import ch.epfl.tchu.gui.ActionHandlers.DrawCardHandler;
 import ch.epfl.tchu.gui.ActionHandlers.DrawTicketsHandler;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+
+import java.util.function.Function;
+
 /**
  *  @author Nikolay (314355)
  *  @author Gullien (316143)
@@ -34,6 +47,39 @@ class DecksViewCreator {
     private final static String NULL_COLOR_CSS_CLASS = "NEUTRAL";
 
     private DecksViewCreator(){}
+
+    private static void setListenerOnTickets( ListView<Ticket> billets
+            , ObservableList<Ticket> ticketsContent
+            , Function<Ticket, ReadOnlyBooleanProperty> whenToListen
+            , Function<Ticket, ReadOnlyBooleanProperty> fullyDone
+            , Function<Ticket, ReadOnlyBooleanProperty> partlyDone){
+
+        //if (!ticketsContent.isEmpty())
+        ticketsContent.addListener((ListChangeListener<Ticket>) c -> {
+            billets.getItems().forEach(ticket ->
+                whenToListen.apply(ticket).addListener((observable, oldValue, newValue) ->
+                    billets.setCellFactory(listView -> new ListCell<>() {
+                        @Override
+                        protected void updateItem(Ticket item, boolean empty) {
+                            System.out.println("updateItem called");
+                            super.updateItem(item, empty);
+                            if (empty || item == null) {
+                                setText(null);
+                                setGraphic(null);}
+                            else {
+                                if (fullyDone.apply(item).get())
+                                    setTextFill(Color.GREEN);
+                                else if (partlyDone.apply(item).get())
+                                    setTextFill(Color.YELLOW);
+                                else setTextFill(Color.RED);
+
+                                setText(item.toString());
+                            }
+                        }
+                    })
+                ));
+        });}
+
     /**
      * creates the hand view,
      * will be placed horizontally in the bottom of the screen, contains (from left to right) :
@@ -44,7 +90,29 @@ class DecksViewCreator {
     public static HBox createHandView(ObservableGameState obsGS){
         HBox handView = new HBox();
         handView.getStylesheets().addAll("decks.css","colors.css");
-        ListView<Ticket> billets = new ListView<>(obsGS.getTicketsInHand());
+        ObservableList<Ticket> ticketsContent = obsGS.getTicketsInHand();
+        ListView<Ticket> billets = new ListView<>(ticketsContent);
+
+        billets.setCellFactory(listView -> new ListCell<Ticket>() {
+            @Override
+            protected void updateItem(Ticket item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                    setGraphic(null);}
+                       else {
+                           if (obsGS.isFullyDone(item).get())
+                                setTextFill(Color.GREEN);
+                           else if (obsGS.isPartlyDone(item).get())
+                               setTextFill(Color.YELLOW);
+                           else setTextFill(Color.RED);
+
+                           setText(item.toString());
+                        }
+            }});
+        setListenerOnTickets(billets,ticketsContent,obsGS::isFullyDone,obsGS::isFullyDone,obsGS::isPartlyDone);
+        setListenerOnTickets(billets,ticketsContent,obsGS::isPartlyDone,obsGS::isFullyDone,obsGS::isPartlyDone);
+
         billets.setId("tickets");
         HBox hand = new HBox();
         hand.setId("hand-pane");
@@ -58,7 +126,7 @@ class DecksViewCreator {
         }
         handView.getChildren().addAll(billets,hand);
         return handView;
-    };
+    }
 
     /**
      * creates new horizontal view on the right

@@ -174,6 +174,15 @@ PlayerState extends PublicPlayerState {
         return ans;
     }
 
+    public boolean isFullyDone(Ticket ticket){
+        StationPartition partition = partitionConstructor();
+        return ticket.isFullyDone(partition);
+    }
+
+    public boolean isPartlyDone(Ticket ticket){
+        StationPartition partition = partitionConstructor();
+        return ticket.isPartlyDone(partition);
+    }
     /**
      *
      * @return the points gained from tickets and from the routes the player has claimed

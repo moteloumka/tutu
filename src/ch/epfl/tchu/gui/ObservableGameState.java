@@ -4,13 +4,11 @@ import ch.epfl.tchu.Preconditions;
 import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.game.*;
 
-import javafx.beans.Observable;
 import javafx.beans.property.*;
-import javafx.beans.value.ObservableObjectValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-import javax.management.loading.ClassLoaderRepository;
+import java.security.spec.RSAOtherPrimeInfo;
 import java.util.*;
 import java.util.stream.Collectors;
 /**
@@ -41,6 +39,9 @@ public final class ObservableGameState {
     private final Map<Route,BooleanProperty> canGetRoadMap = new HashMap<>();
 
     private final List<List<Route>> neighbors;
+
+    private final Map<Ticket,BooleanProperty> fullyCompletedMap = new HashMap<>();
+    private final Map<Ticket,BooleanProperty> partlyCompletedMap = new HashMap<>();
 
 
     /**
@@ -121,8 +122,20 @@ public final class ObservableGameState {
         }
         //we dont throw away tickets until the end of the game -> we can only add them (?)
         for (Ticket ticket : playerState.tickets()){
-            if (ticketsInHand.stream().noneMatch(t -> t.equals(ticket)))
+            if (ticketsInHand.stream().noneMatch(t -> t.equals(ticket))){
                 ticketsInHand.add(ticket);
+                fullyCompletedMap.put(ticket,new SimpleBooleanProperty(this.playerState.isFullyDone(ticket)));
+                partlyCompletedMap.put(ticket, new SimpleBooleanProperty(this.playerState.isPartlyDone(ticket)));
+            }
+            else{
+                fullyCompletedMap.get(ticket).set(this.playerState.isFullyDone(ticket));
+                partlyCompletedMap.get(ticket).set(this.playerState.isPartlyDone(ticket));
+                if (fullyCompletedMap.get(ticket).get())
+                    System.out.println(ticket+" "+this.playerId);
+                if(partlyCompletedMap.get(ticket).get())
+                    System.out.println(ticket+" "+this.playerId);
+
+            }
         }
 
         for (Route route : routes){
@@ -254,6 +267,13 @@ public final class ObservableGameState {
         return pubGameState.canDrawTickets();
     }
 
+    public ReadOnlyBooleanProperty isFullyDone(Ticket ticket){
+        return this.fullyCompletedMap.get(ticket);
+    }
+
+    public ReadOnlyBooleanProperty isPartlyDone(Ticket ticket){
+        return this.partlyCompletedMap.get(ticket);
+    }
     /**
      * called when this.playerId wants to claim a route
      * @param route the route in question

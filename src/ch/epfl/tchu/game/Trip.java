@@ -73,10 +73,9 @@ public final class Trip {
      */
 
     public int points(StationConnectivity connectivity){
-        if (connectivity.connected(this.from, this.to)){
+        if (connectivity.connected(this.from, this.to))
             return this.points;
-        }
-        else return -(this.points);
+         return -(this.points);
     }
 
     }

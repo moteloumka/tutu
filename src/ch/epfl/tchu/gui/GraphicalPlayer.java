@@ -8,10 +8,8 @@ import static ch.epfl.tchu.gui.MapViewCreator.createMapView;
 import static ch.epfl.tchu.gui.DecksViewCreator.*;
 import static ch.epfl.tchu.gui.InfoViewCreator.*;
 import static javafx.application.Platform.isFxApplicationThread;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import ch.epfl.tchu.gui.ActionHandlers.*;
-
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
@@ -33,9 +31,6 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.StringConverter;
-import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
-
 
 import java.util.ArrayList;
 import java.util.List;
