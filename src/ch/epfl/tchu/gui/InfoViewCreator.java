@@ -63,6 +63,7 @@ class InfoViewCreator {
         individualStat.getStyleClass().add(playerId.name());
         Circle circle = new Circle(CIRCLE_RADIUS);
         circle.getStyleClass().add("filled");
+
         Text text = new Text();
         text.textProperty().bind(Bindings.format(PLAYER_STATS
                 ,playerNames.get(playerId)

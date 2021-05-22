@@ -26,11 +26,20 @@ import static ch.epfl.tchu.game.PlayerId.*;
  * this time the main method is ran on the host's computer
  */
 public class ServerMain extends Application {
-    private final static int SERVER_NUMBER = 5108;
-    public static void main(String[] args) { launch(args);}
+    private final static int SERVER_NUMBER = Constants.GEN_PORT_NUM;
+    private final List<String> names;
+    //public static void main(String[] args) { launch(args);}
+    /**
+     * We added a constructor to this class
+     * to be able to create a game when the program is already running
+     * @param names the names of the players
+     */
+    public ServerMain(List<String> names){
+        this.names = names;
+    }
     @Override
     public void start(Stage primaryStage) {
-        List<String> names = getParameters().getRaw();
+
         Preconditions.checkArgument(names.size() == Constants.PLAYERS_COUNT
                 , "this game is supposed to have exactly "
                         +Constants.PLAYERS_COUNT+ " names for the same amount of players");

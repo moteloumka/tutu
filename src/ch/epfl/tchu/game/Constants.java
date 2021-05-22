@@ -116,7 +116,12 @@ public final class Constants {
     public static final int CARDS_DRAWN_PER_TOUR = 2;
 
     /**
-     *
+     * constant we added for precondition checks
      */
     public static final int PLAYERS_COUNT = 2;
+
+    /**
+     * generic port number
+     */
+    public static final int GEN_PORT_NUM = 5108;
 }

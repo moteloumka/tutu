@@ -68,4 +68,9 @@ public interface ActionHandlers {
          */
         void onChooseCards(SortedBag<Card> cards);
     }
+
+    @FunctionalInterface
+    interface CloseLoadingScreen{
+        void onCloseLoadingScreen();
+    }
 }
