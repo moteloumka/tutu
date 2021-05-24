@@ -18,22 +18,22 @@ import java.util.List;
 
 public class WaitingScreen {
 
-    public static void hostScreenCreator(EntryCreator entryCreator ,ActionHandlers.CloseLoadingScreen closeHandler, Stage gameParent) {
+    public static void hostScreenCreator(EntryCreator entryCreator ,ActionHandlers.CloseLoadingScreen closeHandler, Stage gameParent, Stage loadingStage) {
         Image image = ImageGetter.getImage("/Users/kola/Desktop/java.gif");
         List<String> info = List.of("Waiting for players to connect..."
                     ,"Tell other players your address : "+ getAddress()
                     ,"Tell other players your port number : "+getPortNum());
-        buildBasicScreen(info,image,gameParent,closeHandler);
+        buildBasicScreen(info,image,gameParent,closeHandler, loadingStage);
     }
-    public static void clientWaitingScreen(EntryCreator entryCreator , ActionHandlers.CloseLoadingScreen closeHandler,Stage gameParent){
+    public static void clientWaitingScreen(EntryCreator entryCreator , ActionHandlers.CloseLoadingScreen closeHandler,Stage gameParent, Stage loadingStage){
         Image image = ImageGetter.getImage("/Users/kola/Desktop/search.gif");
         List<String> info = List.of("Connecting to server..."
                 ,"Currently connecting to server : "+entryCreator.getAddress()
                 ,"Port number : "+entryCreator.getPortNum());
-        buildBasicScreen(info,image,gameParent,closeHandler);
+        buildBasicScreen(info,image,gameParent,closeHandler, loadingStage);
     }
-    private static void buildBasicScreen(List<String> info, Image image, Stage gameParent, ActionHandlers.CloseLoadingScreen closeHandler){
-        Stage stage = new Stage();
+    private static void buildBasicScreen(List<String> info, Image image, Stage gameParent, ActionHandlers.CloseLoadingScreen closeHandler, Stage loadingStage){
+        Stage stage = loadingStage;
         VBox pane = new VBox();
         pane.getStylesheets().add("daGame.css");
         pane.setId("connectionScreen");

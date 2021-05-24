@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Handler;
 import java.util.stream.Collectors;
-
+import static javafx.application.Platform.runLater;
 
 public class EntryCreator {
 
@@ -146,16 +146,24 @@ public class EntryCreator {
      */
     private void startDisGame(Stage gameParent){
         ServerMain server = new ServerMain(new ArrayList<>(getNames().values()));
+        Stage loadingStage = new Stage();
+
         Thread thread = new Thread(()->server.start(new Stage()));
         ActionHandlers.CloseLoadingScreen closeHandler = thread::stop;
-        WaitingScreen.hostScreenCreator(this,closeHandler ,gameParent);
+
+        WaitingScreen.hostScreenCreator(this,closeHandler ,gameParent, loadingStage);
+
+        runLater(()->server.start(loadingStage));
 
     }
     private void joinDisGame(Stage gameParent){
         ClientMain client = new ClientMain(getAddress(),getPortNum());
         Thread thread = new Thread(()->client.start(new Stage()));
+
         ActionHandlers.CloseLoadingScreen closeHandler = thread::stop;
-        WaitingScreen.clientWaitingScreen(this ,closeHandler,gameParent);
+        Stage loadingStage = new Stage();
+        WaitingScreen.clientWaitingScreen(this ,closeHandler,gameParent,loadingStage);
+        runLater(()->client.start(loadingStage));
     }
 
     /**

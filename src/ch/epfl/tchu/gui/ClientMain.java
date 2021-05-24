@@ -20,8 +20,8 @@ public class ClientMain extends Application {
     /**
      * We added a constructor to this class
      * to be able to create a game when the program is already running
-     * @param address the IP address
-     * @param portNumber the port number
+//     * @param address the IP address
+//     * @param portNumber the port number
      */
     public ClientMain(String address, int portNumber){
         this.hostName = address;
@@ -31,7 +31,9 @@ public class ClientMain extends Application {
     @Override
     public void start(Stage primaryStage) {
         GraphicalPlayerAdapter playerAdapter = new GraphicalPlayerAdapter();
+        System.out.println("connection incoming");
         RemotePlayerClient remotePlayerClient = new RemotePlayerClient(playerAdapter,hostName,portNum);
+        //primaryStage.close();
         new Thread(remotePlayerClient::run).start();
     }
 }

@@ -13,11 +13,14 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListCell;
 
 import javafx.scene.control.ListView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -27,6 +30,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
+import java.util.Objects;
 import java.util.function.Function;
 
 /**
@@ -54,19 +58,18 @@ class DecksViewCreator {
             , Function<Ticket, ReadOnlyBooleanProperty> fullyDone
             , Function<Ticket, ReadOnlyBooleanProperty> partlyDone){
 
-        //if (!ticketsContent.isEmpty())
-        ticketsContent.addListener((ListChangeListener<Ticket>) c -> {
-            billets.getItems().forEach(ticket ->
-                whenToListen.apply(ticket).addListener((observable, oldValue, newValue) ->
+        ticketsContent.addListener((ListChangeListener<Ticket>) c ->
+                billets.getItems().forEach(ticket ->{
+            try {
+                whenToListen.apply(ticket).addListener((observable, oldValue, newValue) -> {
                     billets.setCellFactory(listView -> new ListCell<>() {
                         @Override
                         protected void updateItem(Ticket item, boolean empty) {
-                            System.out.println("updateItem called");
                             super.updateItem(item, empty);
                             if (empty || item == null) {
                                 setText(null);
-                                setGraphic(null);}
-                            else {
+                                setGraphic(null);
+                            } else {
                                 if (fullyDone.apply(item).get())
                                     setTextFill(Color.GREEN);
                                 else if (partlyDone.apply(item).get())
@@ -76,9 +79,13 @@ class DecksViewCreator {
                                 setText(item.toString());
                             }
                         }
-                    })
-                ));
-        });}
+                    });
+                });
+            }catch (NullPointerException ignored){ }
+                }));
+    }
+
+
 
     /**
      * creates the hand view,

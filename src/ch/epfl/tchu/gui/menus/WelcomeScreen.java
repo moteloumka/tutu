@@ -23,13 +23,12 @@ import java.util.List;
 
 import javafx.util.Duration;
 
-public class WelcomeScreen extends Application {
-    private BorderPane layout;
+public  class WelcomeScreen extends Application {
     @Override
     public void start(Stage primaryStage) throws IOException {
 
 
-        layout = new BorderPane();
+        BorderPane layout = new BorderPane();
         layout.getStylesheets().setAll("daGame.css");
         layout.getStyleClass().add("blueback");
 
