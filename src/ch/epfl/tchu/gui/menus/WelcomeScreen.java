@@ -51,8 +51,8 @@ public  class WelcomeScreen extends Application {
         vbox.getChildren().add(strings);
 
         //creating the image objects
-        Image image = ImageGetter.getImage("/Users/kola/IdeaProjects/tCHu/res/vaporTrain.gif");
-        Image title = ImageGetter.getImage("/Users/kola/IdeaProjects/tCHu/res/wordartNoGame.png");
+        Image image = new Image("vaporTrain.gif");
+        Image title = new Image("wordartNoGame.png");
 
 
         //Creating the image view for the wagon

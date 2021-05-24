@@ -130,11 +130,6 @@ public final class ObservableGameState {
             else{
                 fullyCompletedMap.get(ticket).set(this.playerState.isFullyDone(ticket));
                 partlyCompletedMap.get(ticket).set(this.playerState.isPartlyDone(ticket));
-                if (fullyCompletedMap.get(ticket).get())
-                    System.out.println(ticket+" "+this.playerId);
-                if(partlyCompletedMap.get(ticket).get())
-                    System.out.println(ticket+" "+this.playerId);
-
             }
         }
 
