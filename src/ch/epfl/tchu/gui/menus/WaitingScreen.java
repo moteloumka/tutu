@@ -19,14 +19,14 @@ import java.util.List;
 public class WaitingScreen {
 
     public static void hostScreenCreator(EntryCreator entryCreator ,ActionHandlers.CloseLoadingScreen closeHandler, Stage gameParent, Stage loadingStage) {
-        Image image = ImageGetter.getImage("/Users/kola/Desktop/java.gif");
+        Image image = ImageGetter.getImage("/Users/kola/IdeaProjects/tCHu/res/java.gif");
         List<String> info = List.of("Waiting for players to connect..."
                     ,"Tell other players your address : "+ getAddress()
                     ,"Tell other players your port number : "+getPortNum());
         buildBasicScreen(info,image,gameParent,closeHandler, loadingStage);
     }
     public static void clientWaitingScreen(EntryCreator entryCreator , ActionHandlers.CloseLoadingScreen closeHandler,Stage gameParent, Stage loadingStage){
-        Image image = ImageGetter.getImage("/Users/kola/Desktop/search.gif");
+        Image image = ImageGetter.getImage("/Users/kola/IdeaProjects/tCHu/res/search.gif");
         List<String> info = List.of("Connecting to server..."
                 ,"Currently connecting to server : "+entryCreator.getAddress()
                 ,"Port number : "+entryCreator.getPortNum());
