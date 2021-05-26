@@ -1,0 +1,57 @@
+.root{
+    -fx-cursor: pointer;
+}
+
+VBox {
+    -fx-spacing: 10;
+    -fx-alignment: center;
+    -fx-padding: 20;
+    -fx-max-width: 450;
+}
+
+HBox{
+    -fx-spacing: 20;
+    -fx-alignment: center;
+
+}
+
+.correctText{
+    -fx-border-color: green;
+}
+.wrongText{
+    -fx-border-width: 2px;
+    -fx-border-radius: 5;
+    -fx-border-color: red;
+}
+Text {
+    -fx-font-scale: 20;
+}
+
+#gameChoice{
+    -fx-min-width: 200;
+    -fx-min-height: 350;
+}
+#connectionScreen{
+    -fx-min-width: 450;
+}
+
+.list-cell:hover {
+    -fx-background-color: transparent;
+}
+.list-view {
+    -fx-background-color: transparent;
+}
+
+.Button{
+    -fx-margin: 10px;
+    -fx-position:relative;
+    -fx-min-width: 30 ;
+    /*-fx-border-color: red;*/
+}
+.blueback{
+    -fx-background-image: url(bigMan.jpg);
+}
+
+.biggie{
+    -fx-background-image: url(bigMan.jpg);
+}
