@@ -10,9 +10,14 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -23,6 +28,7 @@ import javafx.stage.Stage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.logging.Handler;
 import java.util.stream.Collectors;
 import static javafx.application.Platform.runLater;
@@ -33,6 +39,7 @@ public class EntryCreator {
     private final Stage stage;
     private final ObjectProperty<String> name1prop = new SimpleObjectProperty<>("");
     private final ObjectProperty<String> name2prop = new SimpleObjectProperty<>("");
+    private final ObjectProperty<String> imageProp1 = new SimpleObjectProperty<>(null);
     private final Button confirm1;
     private final Button confirm2;
     private final BorderPane pane;
@@ -48,6 +55,8 @@ public class EntryCreator {
     }
 
     public void createNameEntryScreen(Stage ogParent, Stage gameParent){
+        VBox daBox = new VBox();
+        HBox utilButtons = new HBox();
 
         TextField name1 = new TextField();
         TextField name2 = new TextField();
@@ -62,6 +71,7 @@ public class EntryCreator {
             name2.setPromptText("enter name : player2");
             explanation = new Text("Please enter player names");
             mainButtonText = "Host";
+
         }
         else{
             pane.getStyleClass().add("ipPage");
@@ -109,11 +119,14 @@ public class EntryCreator {
             ChoiceScreen.gameTypeWindow(gameParent);
         });
 
-        HBox utilButtons = new HBox();
+
         utilButtons.getChildren().addAll(masterConfirm, back);
 
-        VBox daBox = new VBox();
-        daBox.getChildren().addAll(explanation,player1Line,player2Line,utilButtons);
+
+        daBox.getChildren().addAll(explanation,player1Line,player2Line);
+        if (playerType == PlayerType.HOST)
+            daBox.getChildren().addAll(imagesNShit(1),imagesNShit(2));
+        daBox.getChildren().add(utilButtons);
 
         pane.setCenter(daBox);
         Scene scene = new Scene(pane);
@@ -179,6 +192,32 @@ public class EntryCreator {
             else
                 name.getStyleClass().add("wrongText");
         }
+        private VBox imagesNShit(int playerNumber){
+        Text playerNum = new Text("choose player "+playerNumber+" image");
+        HBox images = new HBox();
+        HBox switches = new HBox();
+        switches.setStyle("-fx-spacing: 50");
+        ToggleGroup toggleGroup = new ToggleGroup();
+        List<String> imageNames = List.of("icon1.jpeg","icon2.jpeg","icon3.jpeg","icon4.jpeg");
+        imageNames.forEach(s -> {
+            ImageView imv = new ImageView();
+            imv.setImage(new Image(s));
+            imv.setFitHeight(50);
+            imv.setFitWidth(50);
+            images.getChildren().add(imv);
+            ToggleButton toggleButton = new ToggleButton();
+            toggleButton.setToggleGroup(toggleGroup);
+            switches.getChildren().add(toggleButton);
+            toggleButton.setOnAction((e)->imageProp1.set(s));
+
+        });
+        //switches.getChildren().add(groupSwitches);
+        VBox group = new VBox();
+        group.getChildren().addAll(playerNum,images,switches);
+
+        return group;
+        }
+
 
 
 }

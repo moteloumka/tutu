@@ -6,7 +6,9 @@ import ch.epfl.tchu.game.PlayerId;
 import javafx.beans.binding.Bindings;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Separator;
+import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
@@ -21,7 +23,7 @@ import static ch.epfl.tchu.gui.StringsFr.PLAYER_STATS;
  */
 
 class InfoViewCreator {
-    private static final int CIRCLE_RADIUS = 5;
+    private static final int CIRCLE_RADIUS = 8;
     private InfoViewCreator(){}
     /**
      * called upon creation of a the gui of a particular player n the class GraphicalPlayer
@@ -58,7 +60,7 @@ class InfoViewCreator {
 
     private static TextFlow individualPlayerStatsCreator(PlayerId playerId
             ,Map<PlayerId,String> playerNames
-            ,ObservableGameState obsGS ){
+            ,ObservableGameState obsGS){
         TextFlow individualStat = new TextFlow();
         individualStat.getStyleClass().add(playerId.name());
         Circle circle = new Circle(CIRCLE_RADIUS);

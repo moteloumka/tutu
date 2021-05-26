@@ -73,7 +73,7 @@ class DecksViewCreator {
                                 if (fullyDone.apply(item).get())
                                     setTextFill(Color.GREEN);
                                 else if (partlyDone.apply(item).get())
-                                    setTextFill(Color.YELLOW);
+                                    setTextFill(Color.ORANGE);
                                 else setTextFill(Color.RED);
 
                                 setText(item.toString());
@@ -111,7 +111,7 @@ class DecksViewCreator {
                            if (obsGS.isFullyDone(item).get())
                                 setTextFill(Color.GREEN);
                            else if (obsGS.isPartlyDone(item).get())
-                               setTextFill(Color.YELLOW);
+                               setTextFill(Color.ORANGE);
                            else setTextFill(Color.RED);
 
                            setText(item.toString());

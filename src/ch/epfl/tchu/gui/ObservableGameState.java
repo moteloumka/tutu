@@ -113,9 +113,11 @@ public final class ObservableGameState {
             wagonCount.get(pID).set(pubPS.carCount());
             constructionPoints.get(pID).set(pubPS.claimPoints());
 
-            for (Route route : routes)
+            for (Route route : routes){
                 if (pubPS.routes().contains(route))
                     routesOwners.get(route).set(pID);
+            }
+
 
             for (Card card : Card.ALL)
                 numberOfCardInHand.get(card).set(playerState.cards().countOf(card));
@@ -134,7 +136,6 @@ public final class ObservableGameState {
         }
 
         for (Route route : routes){
-
             //verification if a neighbor route exists and if it's already taken
             //in which case, it won't be possible to get the original route in one's possession
             boolean neighborIsOwned = false;
@@ -150,9 +151,9 @@ public final class ObservableGameState {
 
             //updating all possible routes to claim by this player
             canGetRoadMap.get(route).set(pubGS.currentPlayerId() == this.playerId
-                            && owner(route).get() == null
-                            && !neighborIsOwned
-                            && playerState.canClaimRoute(route)
+                    && owner(route).get() == null
+                    && !neighborIsOwned
+                    && playerState.canClaimRoute(route)
             );
         }
     }

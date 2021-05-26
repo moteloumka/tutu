@@ -10,10 +10,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -33,14 +30,16 @@ public  class WelcomeScreen extends Application {
         layout.getStyleClass().add("blueback");
 
         //DarkMode switch
-        ToggleButton lightMode = new ToggleButton();
-        ToggleButton darkMode = new ToggleButton();
-        ToggleGroup darkGroup = new ToggleGroup();
-        darkGroup.getToggles().addAll(lightMode,darkMode);
-
-        HBox hBox = new HBox();
-        hBox.getChildren().addAll(lightMode,darkMode);
-        //layout.setTop(hBox);
+//        ToggleButton lightMode = new ToggleButton();
+//        lightMode.setStyle("-fx-image: url(bigMan.jpg)");
+//        ToggleButton darkMode = new ToggleButton();
+//        ToggleGroup darkGroup = new ToggleGroup();
+//
+//        darkGroup.getToggles().addAll(lightMode,darkMode);
+//
+//        HBox hBox = new HBox();
+//        hBox.getChildren().addAll(lightMode,darkMode);
+//        layout.setTop(hBox);
 
 
         //list stuff
