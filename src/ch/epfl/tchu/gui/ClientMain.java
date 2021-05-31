@@ -31,9 +31,7 @@ public class ClientMain extends Application {
     @Override
     public void start(Stage primaryStage) {
         GraphicalPlayerAdapter playerAdapter = new GraphicalPlayerAdapter();
-        System.out.println("connection incoming");
         RemotePlayerClient remotePlayerClient = new RemotePlayerClient(playerAdapter,hostName,portNum);
-        //primaryStage.close();
         new Thread(remotePlayerClient::run).start();
     }
 }

@@ -124,8 +124,8 @@ public class EntryCreator {
 
 
         daBox.getChildren().addAll(explanation,player1Line,player2Line);
-        if (playerType == PlayerType.HOST)
-            daBox.getChildren().addAll(imagesNShit(1),imagesNShit(2));
+//        if (playerType == PlayerType.HOST)
+//            daBox.getChildren().addAll(imagesNShit(1),imagesNShit(2));
         daBox.getChildren().add(utilButtons);
 
         pane.setCenter(daBox);
@@ -192,7 +192,15 @@ public class EntryCreator {
             else
                 name.getStyleClass().add("wrongText");
         }
-        private VBox imagesNShit(int playerNumber){
+
+    /**
+     * to be used if you want to have some images with button choices created
+     * your image names have to be icon1, icon2... icon4
+     * (we abandoned the idea of giving this choice since the icons are too small in the end )
+     * @param playerNumber
+     * @return
+     */
+    private VBox imagesNShit(int playerNumber){
         Text playerNum = new Text("choose player "+playerNumber+" image");
         HBox images = new HBox();
         HBox switches = new HBox();
